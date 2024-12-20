@@ -1,0 +1,7 @@
+name: RelizcSMPCurrencyPlugin
+main: net.itsrelizc.smp.insurance.Main
+version: 1.0.0
+author: Relizc
+api-version: 1.20
+depend: [ProtocolLib, RelizcBundlerNewAPI]
+      

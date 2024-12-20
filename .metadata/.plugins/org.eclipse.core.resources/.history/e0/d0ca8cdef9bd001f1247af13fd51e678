@@ -1,0 +1,27 @@
+package net.itsrelizc.diamonds;
+
+import java.util.HashMap;
+
+import org.bukkit.entity.Player;
+import org.json.simple.JSONObject;
+
+import net.itsrelizc.bundler.JSON;
+
+public class DiamondPurse {
+	
+	private static HashMap<Player, Long> balance = new HashMap<Player, Long>();
+	
+	public static void loadPurse(Player player) {
+		JSONObject content = JSON.loadDataFromDataBase("diamond_purse.json");
+		
+		long value = (long) content.get(player.getUniqueId());
+		
+		balance.put(player, value);
+		
+	}
+	
+	public static long getPurse(Player player) {
+		return balance.getOrDefault(player, (long) -1);
+	}
+
+}

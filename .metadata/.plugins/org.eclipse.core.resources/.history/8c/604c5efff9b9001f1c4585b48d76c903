@@ -1,0 +1,21 @@
+package net.itsrelizc.diamonds;
+
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
+public class DiamondUtils {
+	
+	public double scanValue(ItemStack i) {
+		
+		ItemMeta im = i.getItemMeta();
+		boolean f = false;
+		for (String s : im.getLore()) {
+			if (s.startsWith("§7价值: §b")) {
+				return Double.valueOf(s.substring("§7价值: §b".length(), s.length() - 4));
+				
+			}
+		}
+		
+	}
+
+}

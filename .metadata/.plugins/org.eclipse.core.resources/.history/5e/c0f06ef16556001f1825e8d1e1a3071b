@@ -1,0 +1,26 @@
+package net.itsrelizc.players.locales;
+
+import java.util.List;
+
+import org.bukkit.entity.Player;
+
+import net.itsrelizc.commands.RelizcCommand;
+import net.itsrelizc.string.ChatUtils;
+
+public class LangSelector extends RelizcCommand {
+
+	public LangSelector() {
+		super("language", "chooses a language", "none", "main.player", ChatUtils.fromArgs("lang", "语言"));
+		// TODO Auto-generated constructor stub
+	}
+	
+	@Override
+	public boolean onPlayerExecute(Player player, String[] args) {
+		
+		
+		
+		return true;
+		
+	}
+
+}

@@ -1,0 +1,21 @@
+package net.itsrelizc.diamonds;
+
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerPickupItemEvent;
+
+import net.itsrelizc.string.ChatUtils;
+
+public class DiamondPickUpWatchdog implements Listener {
+	
+	@EventHandler
+	public void a(PlayerPickupItemEvent event) {
+		
+		if (event.getItem().getType().toString().equalsIgnoreCase("DIAMOND")) {
+			ChatUtils.broadcastSystemMessage("diamondchecker", "picked up");
+			DiamondUtils.scanValueThenCreate(event.getItem().getItemStack());
+		}
+		
+	}
+	
+}

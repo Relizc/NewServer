@@ -1,0 +1,8 @@
+name: RelizcBundlerNewAPI
+main: net.itsrelizc.bundler.Main
+version: 1.0.0
+author: Relizc
+api-version: 1.13
+depend: [ProtocolLib]
+   
+      

@@ -1,0 +1,76 @@
+package net.itsrelizc.smp.modsmp.commands;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.vehicle.VehicleExitEvent;
+import org.bukkit.plugin.Plugin;
+
+import net.itsrelizc.commands.RelizcCommand;
+import net.itsrelizc.string.ChatUtils;
+
+public class SitCommand extends RelizcCommand implements Listener {
+	
+	public static Map<Player, ArmorStand> map = new HashMap<Player, ArmorStand>();
+
+	public SitCommand() {
+		super("sit", "lets u to sit down!");
+	}
+	
+	@Override
+	public boolean onPlayerExecute(Player player, String[] args) {
+		
+		if (map.keySet().contains(player)) {
+			player.sendMessage("§c你已经坐下了！");
+			return true;
+		}
+		
+		ArmorStand ent = (ArmorStand) player.getWorld().spawnEntity(player.getLocation().add(0, -1.7, 0), EntityType.ARMOR_STAND);
+		ent.setVisible(false);
+		
+		ent.setPassenger(player);
+		
+		map.put(player, ent);
+		
+		return true;
+		
+	}
+	
+	public static void enable(Plugin plugin) {
+		
+		Bukkit.getPluginManager().registerEvents(new SitCommand(), plugin);
+		
+	}
+	
+	@EventHandler
+	public void exit(VehicleExitEvent event) {
+		
+		event.getExited().sendMessage(event.getVehicle().toString() + " " + event.getExited().toString());
+		
+		if (event.getVehicle() instanceof ArmorStand) {
+			
+			if (event.getExited() instanceof Player) {
+				
+				Player player = (Player) event.getExited();
+				
+				if (map.keySet().contains(player)) {
+					ArmorStand entity = (ArmorStand) event.getVehicle();
+					entity.remove();
+					
+					map.remove(player);
+				}
+				
+			}
+			
+		}
+		
+	}
+
+}

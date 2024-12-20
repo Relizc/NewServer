@@ -1,0 +1,14 @@
+package net.itsrelizc.players.locales;
+
+import java.util.List;
+
+import net.itsrelizc.commands.RelizcCommand;
+
+public class LangSelector extends RelizcCommand {
+
+	public LangSelector() {
+		super(name, description, usage, permission, alias);
+		// TODO Auto-generated constructor stub
+	}
+
+}

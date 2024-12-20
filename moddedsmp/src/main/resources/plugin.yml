@@ -1,0 +1,38 @@
+name: RelizcSMP
+main: net.itsrelizc.smp.modsmp.Main
+version: 1.0.0
+author: Relizc
+api-version: 1.20
+depend: [ProtocolLib, RelizcBundlerNewAPI, RelizcSMPHomePlugin]
+commands:
+   ban:
+      usage: "§cInvalid Usage! /ban <Player: Player Name> <Reason: Text>"
+      permission: main.player
+   mute:
+      usage: "§c展未应用"
+      permission: main.player
+   tpa:
+      usage: "§c弱智！正确用法： /tpa <玩家名称>" 
+      permission: main.player
+   tpy:
+      usage: "§c弱智！正确用法： /tpy <玩家名称>" 
+      permission: main.player
+   tpn:
+      usage: "§c弱智！正确用法： /tpn <玩家名称>" 
+      permission: main.player
+   testbukkitpleaseignore:
+      usage: fw
+      permission: main.admin
+   shop:
+      usage: none
+      permission: main.player
+   tps:
+      usage: none
+      permission: main.player
+   updates:
+      usage: none
+      permission: main.player
+   lol:
+      usage: none
+      permission: main.player
+      
