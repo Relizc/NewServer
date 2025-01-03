@@ -17,7 +17,12 @@ import org.json.simple.parser.ParseException;
 
 
 public class JSON {
+	
+//	public static String PREFIX = "F:/";
+	public static String PREFIX = "/home/ubuntu/minecraft-data/";
+	
 	public static JSONObject pathLoadData(String path) {
+		path = path.replace("\\", "/");
 		JSONParser parser = new JSONParser();
 		Object object = null;
 		try {
@@ -38,10 +43,11 @@ public class JSON {
 	}
 	
 	public static JSONObject loadDataFromDataBase(String name) {
-		return pathLoadData("F:\\" + name);
+		return pathLoadData(PREFIX + name);
 	}
 	
 	public static void pathSaveData(String path, JSONObject data) {
+		path = path.replace("\\", "/");
 		FileWriter file;
 		try {
 			file = new FileWriter(path);
@@ -54,7 +60,7 @@ public class JSON {
 	}
 	
 	public static void saveDataFromDataBase(String name, JSONObject data) {
-		pathSaveData("F:\\" + name, data);
+		pathSaveData(PREFIX + name, data);
 	}
 	
 	public static boolean checkAccountExsists(Player player) {

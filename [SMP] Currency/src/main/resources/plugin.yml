@@ -3,5 +3,5 @@ main: net.itsrelizc.smp.currency.Main
 version: 1.0.0
 author: Relizc
 api-version: 1.20
-depend: [ProtocolLib, RelizcBundlerNewAPI, RelizcSMPHomePlugin]
+depend: [RelizcBundlerNewAPI]
       

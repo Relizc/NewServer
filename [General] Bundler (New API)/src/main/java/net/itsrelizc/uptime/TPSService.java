@@ -60,19 +60,20 @@ public class TPSService {
 		
 		double t = TPSUtils.getTPS();
 		
-		int a = Bukkit.getWorld("world").getEntities().size();
-		World nether = Bukkit.getWorld("world_nether");
-		World nether_alt = Bukkit.getWorld("DIM-1");
-		int b = -2;
-		if (nether == null && nether_alt == null) b = -1;
-		if (nether == null) b = nether_alt.getEntities().size();
-		if (nether_alt == null) b = nether.getEntities().size();
-		World end = Bukkit.getWorld("world_the_end");
-		World end_alt = Bukkit.getWorld("DIM1");
-		int c = -2;
-		if (end == null && end_alt == null) c = -1;
-		if (end == null) c = end_alt.getEntities().size();
-		if (end_alt == null) c = end.getEntities().size();
+//		int a = Bukkit.getWorld("world").getEntities().size();
+//		World nether = Bukkit.getWorld("world_nether");
+//		World nether_alt = Bukkit.getWorld("DIM-1");
+//		int b = -2;
+//		if (nether == null && nether_alt == null) b = -1;
+//		if (nether == null) b = nether_alt.getEntities().size();
+//		if (nether_alt == null) b = nether.getEntities().size();
+//		World end = Bukkit.getWorld("world_the_end");
+//		World end_alt = Bukkit.getWorld("DIM1");
+//		int c = -2;
+//		if (end == null && end_alt == null) c = -1;
+//		if (end == null) c = end_alt.getEntities().size();
+//		if (end_alt == null) c = end.getEntities().size();
+		int a = -1, b = -1, c = -1;
 		
 		return String.format(str,
 					eval(t), t,

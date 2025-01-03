@@ -2,9 +2,12 @@ package net.itsrelizc.diamonds;
 
 import java.util.List;
 
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.tags.ItemTagType;
 
+import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.string.ChatUtils;
 
 public class DiamondUtils {
@@ -29,8 +32,11 @@ public class DiamondUtils {
 		}
 		
 		List<String> lore = im.getLore();
-		lore.add("§7价值: §b0.9 ct");
+		lore.add("§7价值: §b0.1 ct");
 		im.setLore(lore);
+		
+		NamespacedKey key = new NamespacedKey(EventRegistery.main, "diamondValue");
+		im.getCustomTagContainer().setCustomTag(key, ItemTagType.LONG, 100l);
 		
 		i.setItemMeta(im);
 		

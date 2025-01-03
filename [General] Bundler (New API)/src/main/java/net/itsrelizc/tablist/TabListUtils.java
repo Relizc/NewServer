@@ -83,28 +83,30 @@ public class TabListUtils implements Listener {
 		TablistPair k = content.get(player);
 		
 //		System.out.println("Attempted update tablist error1");
-		PacketContainer p = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.PLAYER_LIST_HEADER_FOOTER);
+//		PacketContainer p = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.PLAYER_LIST_HEADER_FOOTER);
 //		System.out.println("Attempted update tablist error2");
 		String s = String.format(Locale.get(player, "smp.tablist.title"), Main.type, Bukkit.getOnlinePlayers().size(), Bukkit.getMaxPlayers(), 0);
 //		System.out.println("Attempted update tablist error3");
-		p.getChatComponents().write(0, WrappedChatComponent.fromText(k.h + s)).write(1, WrappedChatComponent.fromText(Locale.get(player, "smp.tablist.footer") + k.f));
+//		p.getChatComponents().write(0, WrappedChatComponent.fromText(k.h + s)).write(1, WrappedChatComponent.fromText(Locale.get(player, "smp.tablist.footer") + k.f));
 //		p.getChatComponents().write(0, WrappedChatComponent.fromText("Hello")).write(1, WrappedChatComponent.fromText("world"));
 //		System.out.println("Attempted update tablist error4");
 		
-		TaskDelay.delayTask(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					ProtocolLibrary.getProtocolManager().sendServerPacket(player, p);
-				} catch (InvocationTargetException e) {
-					// TODO Auto-generated catch block
-					System.out.println("Attempted update tablist error");
-					e.printStackTrace();
-				}
-			}
-			
-		}, 10L);
+//		TaskDelay.delayTask(new Runnable() {
+//
+//			@Override
+//			public void run() {
+//				try {
+//					ProtocolLibrary.getProtocolManager().sendServerPacket(player, p);
+//				} catch (InvocationTargetException e) {
+//					// TODO Auto-generated catch block
+//					System.out.println("Attempted update tablist error");
+//					e.printStackTrace();
+//				}
+//			}
+//			
+//		}, 10L);
+		
+		player.setPlayerListHeaderFooter(k.h + s, Locale.get(player, "smp.tablist.footer") + k.f);
 		
 //		System.out.println("Attempted update tablist complete");
 

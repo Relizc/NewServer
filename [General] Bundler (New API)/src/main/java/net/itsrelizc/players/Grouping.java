@@ -1,7 +1,9 @@
 package net.itsrelizc.players;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
@@ -18,6 +20,8 @@ import org.bukkit.event.player.PlayerLoginEvent.Result;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
+
+import net.itsrelizc.events.EventRegistery;
 
 public class Grouping implements Listener {
 	
@@ -52,6 +56,8 @@ public class Grouping implements Listener {
 	@EventHandler
 	public void _a(PlayerJoinEvent event) {
 		event.getPlayer().setScoreboard(board);
+		
+		
 	}
 	
 	@EventHandler(priority=EventPriority.LOWEST)
@@ -62,11 +68,18 @@ public class Grouping implements Listener {
 		
 		Rank r = Rank.findByPermission(p.permission);
 		
-		if (showPrefix) {
-			event.getPlayer().setPlayerListName(r.displayName + " " + event.getPlayer().getName());
-		} else {
-			event.getPlayer().setPlayerListName(r.displayName.substring(0, 2) + event.getPlayer().getName());
-		}
+		Bukkit.getScheduler().scheduleSyncDelayedTask(EventRegistery.main, new Runnable() {
+
+			@Override
+			public void run() {
+				if (showPrefix) {
+					event.getPlayer().setPlayerListName(r.displayName + " " + event.getPlayer().getName());
+				} else {
+					event.getPlayer().setPlayerListName(r.displayName.substring(0, 2) + event.getPlayer().getName());
+				}
+			}
+			
+		}, 10L);
 		
 		event.getPlayer().setOp(r.useop);
 	}
@@ -80,6 +93,10 @@ public class Grouping implements Listener {
 	public void _b(AsyncPlayerChatEvent event) {
 		Profile p = Profile.findByOwner(event.getPlayer());
 		event.setFormat(Rank.findByPermission(p.permission).displayName + " " + event.getPlayer().getDisplayName() + "§7: §r" + event.getMessage());
+	}
+	
+	public static Collection<Team> getTeams() {
+		return rankedTeam.values();
 	}
 	
 }

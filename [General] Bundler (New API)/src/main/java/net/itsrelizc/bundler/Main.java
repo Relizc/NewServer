@@ -2,6 +2,7 @@ package net.itsrelizc.bundler;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import net.itsrelizc.commands.CSetTabListName;
 import net.itsrelizc.commands.CommandRegistery;
 import net.itsrelizc.commands.RelizcCommand;
 import net.itsrelizc.events.EventRegistery;
@@ -13,7 +14,7 @@ import net.itsrelizc.tablist.TabListUtils;
 
 public class Main extends JavaPlugin {
 	
-	public static String type = "1.20.1模组生存";
+	public static String type = "1.20.1 模组生存";
 	
 	@Override
 	public void onEnable() {
@@ -26,8 +27,11 @@ public class Main extends JavaPlugin {
 		Locale.load_all();
 		
 		CommandRegistery.register(new LangSelector());
+		CommandRegistery.register(new CSetTabListName());
 		
 		EventRegistery.main = this;
+		
+		
 	}
 
 }

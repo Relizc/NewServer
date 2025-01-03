@@ -21,7 +21,7 @@ public class Locale {
 	public static void load_all() {
 		
 		for (Language l : Language.values()) {
-			JSONObject a1 = JSON.loadDataFromDataBase("lang\\" + l.toString() + ".json");
+			JSONObject a1 = JSON.loadDataFromDataBase("lang\\" + l.toString().toLowerCase() + ".json");
 			HashMap<String, String> eng = new HashMap<String, String>();
 			for (Object key : a1.keySet()) {
 				String result = (String) a1.get(key);

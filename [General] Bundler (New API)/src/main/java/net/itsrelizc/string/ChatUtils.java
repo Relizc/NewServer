@@ -83,6 +83,16 @@ public class ChatUtils {
 		else return "";
 	}
 	
+	/*
+	 * Sorts an array by padding it with Minecraft color codes (§0-9a-f)
+	 * Used to sort tab complete commands
+	 * 
+	 * */
+	public static List<String> configOrder(List<String> initial) {
+		return initial;
+		
+	}
+	
 	public static void broadcastSystemMessage(String channel, String message) {
 		Bukkit.broadcastMessage(channel.toUpperCase() + " §r§8> §r" + message);
 	}
@@ -138,8 +148,20 @@ public class ChatUtils {
 		return a;
 	}
 	
+	public static List<String> reversedFromGeneticString(String list[]) {
+		List<String> a = new ArrayList<String>();
+		for (int i = list.length - 1; i >= 0; i --) {
+			a.add(list[i]);
+		}
+		return a;
+	}
+	
 	public static List<String> fromArgs(String... list) {
 		return fromGeneticString(list);
+	}
+	
+	public static List<String> reversedFromArgs(String... list) {
+		return reversedFromGeneticString(list);
 	}
 	
 	public static List<String> fromNewList() {

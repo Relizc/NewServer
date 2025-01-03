@@ -15,7 +15,6 @@ import org.json.simple.parser.JSONParser;
 
 import net.itsrelizc.bundler.JSON;
 import net.itsrelizc.players.locales.Locale;
-import net.minecraft.locale.Language;
 
 public class Profile {
 	

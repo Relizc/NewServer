@@ -11,10 +11,10 @@ public class DiamondPickUpWatchdog implements Listener {
 	@EventHandler
 	public void a(PlayerPickupItemEvent event) {
 		
-		ChatUtils.broadcastSystemMessage("diamondchecker", "picked up " + event.getItem().getType().toString());
+//		ChatUtils.broadcastSystemMessage("diamondchecker", "picked up " + event.getItem().getType().toString());
 		
 		if (event.getItem().getItemStack().getType().toString().equalsIgnoreCase("DIAMOND")) {
-			ChatUtils.broadcastSystemMessage("diamondchecker", "picked up diamond");
+//			ChatUtils.broadcastSystemMessage("diamondchecker", "picked up diamond");
 			DiamondUtils.scanValueThenCreate(event.getItem().getItemStack());
 		}
 		

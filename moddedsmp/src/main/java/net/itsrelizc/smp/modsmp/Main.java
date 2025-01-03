@@ -13,6 +13,7 @@ import net.itsrelizc.commands.CommandRegistery;
 import net.itsrelizc.diamonds.DiamondCommand;
 import net.itsrelizc.diamonds.DiamondCounter;
 import net.itsrelizc.diamonds.DiamondPurse;
+import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.players.locales.Locale;
 import net.itsrelizc.smp.modsmp.commands.LOLCommand;
 import net.itsrelizc.smp.modsmp.commands.ShopCommand;
@@ -22,6 +23,7 @@ import net.itsrelizc.smp.modsmp.commands.TPAccept;
 import net.itsrelizc.smp.modsmp.commands.TPDeny;
 import net.itsrelizc.smp.modsmp.commands.TestItemGet;
 import net.itsrelizc.smp.modsmp.commands.UpdateBook;
+import net.itsrelizc.smp.modsmp.events.KunKeepInventory;
 import net.itsrelizc.smp.modsmp.events.LoginLogoutHandler;
 import net.itsrelizc.smp.modsmp.items.ItemUser;
 import net.itsrelizc.smp.modsmp.menus.Contract;
@@ -50,10 +52,8 @@ public class Main extends JavaPlugin {
 		
 		this.getCommand("lol").setExecutor(new LOLCommand());
 		
-		DropItemClear.enable();
-		
 		CommandRegistery.register(new SitCommand());
-		CommandRegistery.register(new DiamondCommand());
+		
 		SitCommand.enable(this);
 		
 		
@@ -67,8 +67,8 @@ public class Main extends JavaPlugin {
 				//Bukkit.broadcastMessage(net.itsrelizc.uptime.TPSUtils.getDelayYieldAsFormattedString());
 				
 				for (Player p : Bukkit.getOnlinePlayers()) {
-//					TabListUtils.updateFooter(p, String.format(Locale.get(p, "general.tablist.diamondsleft"), (float) DiamondCounter.remaining) + TPSService.getTablistDisplayInfo(p));
-					TabListUtils.updateFooter(p, String.format(Locale.get(p, "general.tablist.diamondsleft"), (float) DiamondCounter.remaining, DiamondPurse.getPurse(p)) + "[Server Insights unavaliable]");
+					TabListUtils.updateFooter(p, String.format(Locale.get(p, "general.tablist.diamondsleft"), (float) DiamondCounter.remaining, DiamondPurse.getPurse(p), DiamondPurse.getBloodSugar(p)) + TPSService.getTablistDisplayInfo(p));
+//					TabListUtils.updateFooter(p, String.format(Locale.get(p, "general.tablist.diamondsleft"), (float) DiamondCounter.remaining, DiamondPurse.getPurse(p)) + "[Server Insights unavaliable]");
 				}
 			}
 			
@@ -78,11 +78,15 @@ public class Main extends JavaPlugin {
 		
 		DiamondCounter.enable(this);
 		
+		EventRegistery.register(new KunKeepInventory());
+		
 	}
 	
 	@Override
 	public void onDisable() {
 		DiamondCounter.save();
 	}
+	
+	
 
 }

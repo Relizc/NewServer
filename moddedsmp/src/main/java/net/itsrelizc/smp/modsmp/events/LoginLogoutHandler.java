@@ -21,9 +21,7 @@ import net.itsrelizc.string.ChatUtils;
 import net.md_5.bungee.api.chat.TextComponent;
 
 public class LoginLogoutHandler implements Listener {
-	
-	private static HashMap<Player, Integer> events = new HashMap<Player, Integer>();
-	
+		
 	@EventHandler
 	public void playerjoin(PlayerJoinEvent event) {
 		
@@ -53,14 +51,6 @@ public class LoginLogoutHandler implements Listener {
 		
 		DiamondPurse.loadPurse(event.getPlayer());
 		
-		
-	}
-	
-	@EventHandler
-	public void playerLeave(PlayerQuitEvent event) {
-		
-		Bukkit.getScheduler().cancelTask(events.get(event.getPlayer()));
-		events.remove(event.getPlayer());
 		
 	}
 	

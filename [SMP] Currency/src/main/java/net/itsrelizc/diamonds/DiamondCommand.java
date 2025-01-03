@@ -10,7 +10,7 @@ import net.minecraft.world.item.ItemStack;
 public class DiamondCommand extends RelizcCommand {
 	
 	public DiamondCommand() {
-		super("diamond", "main.admin");
+		super("diamond");
 		// TODO Auto-generated constructor stub
 	}
 
