@@ -18,8 +18,8 @@ import org.json.simple.parser.ParseException;
 
 public class JSON {
 	
-//	public static String PREFIX = "F:/";
-	public static String PREFIX = "/home/ubuntu/minecraft-data/";
+	public static String PREFIX = "F:/";
+//	public static String PREFIX = "/home/ubuntu/minecraft-data/";
 	
 	public static JSONObject pathLoadData(String path) {
 		path = path.replace("\\", "/");

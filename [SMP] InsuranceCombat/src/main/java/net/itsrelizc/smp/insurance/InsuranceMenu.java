@@ -8,6 +8,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import net.itsrelizc.menus.ItemGenerator;
 import net.itsrelizc.menus.Menu2;
 import net.itsrelizc.menus.MenuTemplate2;
+import net.itsrelizc.menus.Skull;
 import net.itsrelizc.players.locales.Locale;
 
 
@@ -31,6 +32,14 @@ public class InsuranceMenu extends MenuTemplate2 {
 	private org.bukkit.inventory.ItemStack plan_c() {
 		
 		return ItemGenerator.generate(Material.GRAY_DYE, 1, Locale.get(this.getPlayer(), "item.insurance_plan_notopen.name"));
+	}
+	
+	private ItemStack description() {
+		return ItemGenerator.generate(Skull.getCustomSkull("http://textures.minecraft.net/texture/2ec76e301b2c9cf96a96cd10b7312a62ca3aef2e23918b5b69474b5051f559b"), 
+				1, 
+				Locale.get(this.getPlayer(), "item.insurance_justin.name"), 
+				null);
+		
 	}
 
 	public InsuranceMenu(String title) {

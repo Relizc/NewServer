@@ -6,8 +6,6 @@ import java.util.UUID;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
-
-import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -135,10 +133,7 @@ public class ChatUtils {
 		component.setText(component.getText() + " ↗");
 		component.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url));
 	}
-	
-	public static String randomString(int len) {
-		return RandomStringUtils.randomAlphabetic(len);
-	}
+
 	
 	public static List<String> fromGeneticString(String list[]) {
 		List<String> a = new ArrayList<String>();
