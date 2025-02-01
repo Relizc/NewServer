@@ -13,7 +13,8 @@ public class Locale {
 	public static enum Language {
 		EN_US,
 		ZH_CN,
-		ZH_TW, JA_JP
+		ZH_TW, JA_JP, KO_KR, ES_ES
+		
 	}
 	
 	public static HashMap<String, HashMap<String, String>> locales = new HashMap<String, HashMap<String, String>>();
@@ -23,14 +24,17 @@ public class Locale {
 		for (Language l : Language.values()) {
 			JSONObject a1 = JSON.loadDataFromDataBase("lang\\" + l.toString().toLowerCase() + ".json");
 			HashMap<String, String> eng = new HashMap<String, String>();
+			int lang = 0;
 			for (Object key : a1.keySet()) {
 				String result = (String) a1.get(key);
 				eng.put((String) key, result);
 				
-				System.out.println("Loading " + l + ": " + key + " " + result);
+				lang += 1;
 			}
 			
 			locales.put(l.toString(), eng);
+			
+			System.out.println("Loaded " + lang + " localizations of language " + l.toString());
 		}
 		
 		
@@ -54,9 +58,11 @@ public class Locale {
 	}
 	
 	public static void sendLanguageInfo(Player player) {
-		player.sendMessage("§a您的默认语言以设置为 中文 (简体)。输入 /lang 以切换语言 §7[简体中文覆盖程度: 100%]");
-		player.sendMessage("§a您的預設語言以設定為 中文 (簡體)。輸入 /lang 以切換語言 §7[繁體中文覆蓋程度: 0%]");
-		player.sendMessage("§aYour default language has been set to Chinese (Simplified). Type in /lang to switch languages. §7[English (US) Coverage: 0%]");
+		player.sendMessage("§a您的默认语言以设置为 中文 (简体)。输入 /lang 以切换语言");
+		player.sendMessage("§a您的預設語言以設定為 中文 (簡體)。輸入 /lang 以切換語言");
+		player.sendMessage("§aYour default language has been set to Chinese (Simplified). Type in /lang to switch languages.");
+		player.sendMessage("§a기본 언어는 중국어(간체)로 설정되어 있습니다. 언어를 전환하려면 /lang을 입력하세요.");
+		player.sendMessage("§aデフォルトの言語は中国語（簡体字）に設定されています。言語を切り替えるには/langと入力してください");
 	}
 	
 	public static void changeLanguage(Player player, Language lang) {

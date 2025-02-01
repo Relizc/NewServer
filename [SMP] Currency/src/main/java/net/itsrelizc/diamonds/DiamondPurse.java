@@ -14,6 +14,9 @@ public class DiamondPurse {
 	private static HashMap<Player, Long> bloodsugar = new HashMap<Player, Long>();
 	
 	public static void loadPurse(Player player) {
+		
+		if (balance.containsKey(player) || bloodsugar.containsKey(player)) return;
+		
 		JSONObject content = JSON.loadDataFromDataBase("diamond_purse.json");
 		
 		if (content.get(player.getUniqueId().toString()) == null) {

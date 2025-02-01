@@ -46,12 +46,7 @@
            <type>jar</type>
            <scope>provided</scope>
        	</dependency>
-       	<dependency>
-           <groupId>com.mojang</groupId>
-           <artifactId>authlib</artifactId>
-           <version>4.0.43</version><!--change this value depending on the version or use LATEST-->
-           <type>jar</type>
-       	</dependency>
+
 		<dependency>
     		<groupId>com.comphenix.protocol</groupId>
     		<artifactId>ProtocolLib</artifactId>
