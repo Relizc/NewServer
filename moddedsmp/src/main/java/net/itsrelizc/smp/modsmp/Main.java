@@ -14,6 +14,7 @@ import net.itsrelizc.diamonds.DiamondCommand;
 import net.itsrelizc.diamonds.DiamondCounter;
 import net.itsrelizc.diamonds.DiamondPurse;
 import net.itsrelizc.events.EventRegistery;
+import net.itsrelizc.gunmod.blood.Container;
 import net.itsrelizc.players.locales.Locale;
 import net.itsrelizc.smp.modsmp.commands.LOLCommand;
 import net.itsrelizc.smp.modsmp.commands.ShopCommand;
@@ -59,6 +60,8 @@ public class Main extends JavaPlugin {
 		
 		net.itsrelizc.uptime.TPSUtils.start(this);
 		
+		
+		
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
 
 			@Override
@@ -67,7 +70,8 @@ public class Main extends JavaPlugin {
 				//Bukkit.broadcastMessage(net.itsrelizc.uptime.TPSUtils.getDelayYieldAsFormattedString());
 				
 				for (Player p : Bukkit.getOnlinePlayers()) {
-					TabListUtils.updateFooter(p, String.format(Locale.get(p, "general.tablist.diamondsleft"), (float) DiamondCounter.remaining, DiamondPurse.getPurse(p), DiamondPurse.getBloodSugar(p)) + TPSService.getTablistDisplayInfo(p));
+					Container c = Container.get(p);
+					TabListUtils.updateFooter(p, String.format(Locale.get(p, "general.tablist.diamondsleft"), (float) DiamondCounter.remaining, DiamondPurse.getPurse(p), DiamondPurse.getBloodSugar(p), c.getHead(), c.getChest(), c.getLegs()) + TPSService.getTablistDisplayInfo(p));
 //					TabListUtils.updateFooter(p, String.format(Locale.get(p, "general.tablist.diamondsleft"), (float) DiamondCounter.remaining, DiamondPurse.getPurse(p)) + "[Server Insights unavaliable]");
 				}
 			}

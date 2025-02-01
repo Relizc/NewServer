@@ -3,9 +3,11 @@ package net.itsrelizc.gunmod.blood;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -32,8 +34,6 @@ public class SwapHands implements Listener {
 	
 	public static Material TACZ_AMMO = Material.getMaterial("TACZ_AMMO");
 	
-	public static ItemStack TACZ_556x45 = getAmmo("tacz:556x45");
-	
 	private static Map<Player, Map<Integer, ItemStack>> replacer = new HashMap<Player, Map<Integer, ItemStack>>();
 	private static Map<Player, Integer> check_id = new HashMap<Player, Integer>();
 	
@@ -44,8 +44,8 @@ public class SwapHands implements Listener {
 	
 	private static Map<Player, Boolean> check_replaced = new HashMap<Player, Boolean>();
 	
-	public static ItemStack getAmmo(String id) {
-		ItemStack item = ItemGenerator.generate(TACZ_AMMO, 60);
+	public static ItemStack getAmmo(Player player, String id) {
+		ItemStack item = ItemGenerator.generate(TACZ_AMMO, 60, Locale.get(player, "bullet.dummyammo"), Locale.get(player, "bullet.dummyammo.lore"));
 		NBTTagCompound tag = new NBTTagCompound();
 		NBT.setString(tag, "AmmoId", id);
 		return NBT.setCompound(item, tag);
@@ -162,7 +162,7 @@ public class SwapHands implements Listener {
 					
 					replacer.get(player).put(slot, item);
 					
-					player.getInventory().setItem(slot, TACZ_556x45.clone());
+					player.getInventory().setItem(slot, getAmmo(player, "tacz:556x45"));
 					
 					
 				}
@@ -217,7 +217,7 @@ public class SwapHands implements Listener {
 		} else {
 			
 			for (int bullet = 0; bullet < ammoindex; bullet ++) {
-				Bukkit.broadcastMessage("ADDING: " + NBT.getCompound(list, bullet));
+//				Bukkit.broadcastMessage("ADDING: " + NBT.getCompound(list, bullet));
 				NBT.addItem(mag_final, NBT.getCompound(list, bullet));
 			}
 			
@@ -229,20 +229,70 @@ public class SwapHands implements Listener {
 		}
 		
 		ItemStack mag = new ItemStack(RELIZC_MAGAZINE_55645STANAG_30, 1);
+		
 		NBTTagCompound item = new NBTTagCompound();
-		
 		NBTTagCompound final_tag = new NBTTagCompound();
-		NBT.setCompound(final_tag, "Items", mag_final);
-		NBT.setInteger(final_tag, "Size", 33);
-		NBT.setCompound(item, "ShitFuck", final_tag);
 		
-//		Bukkit.broadcastMessage(item.toString());
+		NBT.setCompound(final_tag, "Items", mag_final);
+		NBT.setCompound(item, "Inventory", final_tag);
 		
 		mag = NBT.setCompound(mag, item);
 		
-		Bukkit.broadcastMessage(NBT.getNBT(mag).toString());
+//		Bukkit.broadcastMessage(item.toString());
 		
-		player.getInventory().addItem(mag.clone());
+		org.bukkit.util.Consumer<Item> func = (im) -> {
+			
+//			Bukkit.broadcastMessage(item.getItemStack().getType().toString());
+			
+			
+			NBTTagCompound a1 = NBT.getCompound(im);
+			NBTTagCompound a2 = NBT.getCompound(a1, "Item");
+			NBTTagCompound a3 = NBT.getCompound(a2, "tag");
+			NBTTagCompound a4 = NBT.getCompound(a3, "Inventory");
+			NBTTagList a5 = NBT.getNBTArray(a4, "Items", NBTTagType.TAG_Compound);
+			
+//			Bukkit.broadcastMessage("Before:" + a1.toString());
+
+			// Set Forge -> Item.ForgeCaps.Parent.Items
+			NBTTagCompound b1 = new NBTTagCompound();
+			NBT.setCompound(b1, "Items", a5);
+			
+			NBTTagCompound b2 = new NBTTagCompound();
+			NBT.setCompound(b2, "Parent", b1);
+
+			NBT.setCompound(a2, "ForgeCaps", b2);
+			
+			NBT.setCompound(a2, "tag", a3);
+			NBT.setCompound(a1, "Item", a2);
+			
+//			
+//			Bukkit.broadcastMessage("After:" + a1.toString());
+			
+			NBT.setCompound(im, a1);
+			
+			
+			
+		};
+		
+		Item im = player.getWorld().dropItemNaturally(player.getLocation(), mag, func);
+		
+		// Get Vanilla -> Item.tag.Inventory.Items
+		
+		
+//		NBTTagCompound final_tag = new NBTTagCompound();
+		
+//		NBT.setInteger(final_tag, "Size", 33);
+		
+		
+//		Bukkit.broadcastMessage(item.toString());
+		
+//		
+//		
+//		mag = NBT.setCompound(mag, item);
+		
+//		Bukkit.broadcastMessage(NBT.getNBT(mag).toString());
+		
+//		player.getInventory().addItem(mag.clone());
 		
 	}
 	

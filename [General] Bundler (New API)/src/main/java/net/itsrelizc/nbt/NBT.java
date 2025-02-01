@@ -421,7 +421,7 @@ public class NBT {
 		net.minecraft.world.entity.Entity nmsEntity = ((CraftEntity) entity).getHandle();
 		
 		NBTTagCompound cur = new NBTTagCompound();
-		nmsEntity.e(cur);
+		nmsEntity.f(cur);
 		
 		return cur;
 	}

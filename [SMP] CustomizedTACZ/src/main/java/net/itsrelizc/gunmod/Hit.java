@@ -11,8 +11,10 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_20_R1.persistence.CraftPersistentDataContainer;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -26,12 +28,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 import org.joml.Math;
+import org.json.simple.JSONObject;
 
 import com.mohistmc.bukkit.entity.MohistModsEntity;
 
 import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.events.TaskDelay;
+import net.itsrelizc.gunmod.blood.Container;
 import net.itsrelizc.gunmod.blood.SwapHands;
+import net.itsrelizc.gunmod.craft.CartridgeAssemblerListener;
 import net.itsrelizc.nbt.NBT;
 import net.itsrelizc.nbt.NBT.NBTTagType;
 import net.itsrelizc.players.locales.Locale;
@@ -64,28 +69,32 @@ public class Hit implements Listener {
 	}
 	
 	private static Map<MohistModsEntity, BallisticInformation> content = new HashMap<MohistModsEntity, BallisticInformation>();
+	private static Map<MohistModsEntity, NBTTagCompound> bullet_info = new HashMap<MohistModsEntity, NBTTagCompound>();
 	
-	@EventHandler
+	@EventHandler(priority=EventPriority.HIGHEST)
 	public void damage(EntityDamageByEntityEvent event) {
 //		ChatUtils.broadcastSystemMessage("ballistics", "Hit by " + event.getEntityType() + " " + event.getEntity().getClass() + " " + event.getDamager().getType().getClass() + " " + event.getDamager().getClass());
 	
-		if (event.getDamager() instanceof MohistModsEntity && event.getEntity() instanceof Player) {
+		if (!(event.getEntity() instanceof LivingEntity)) return;
+		
+		if (event.getDamager() instanceof MohistModsEntity) {
 			
 			MohistModsEntity mod = (MohistModsEntity) event.getDamager();
 			
 			
 			if (mod.getType() == BULLET) {
 				
-				event.setDamage(0);
-				
 				if (!content.containsKey(mod)) return;
 				
-				boolean delta = content.size() > 9;
+				boolean delta = false;
 				
 				long a = System.currentTimeMillis();
 				
 				BallisticInformation info = content.get(mod);
 				Player player = (Player) info.player;
+				
+				event.setDamage(0);
+				event.setCancelled(false);
 				
 				int result = 0; // 1 = feet 2 = legs 3 = thorax 4 = head 0=miss
 				
@@ -133,19 +142,11 @@ public class Hit implements Listener {
 					
 				}
 				
-				String answer = "Missed!";
-				switch (result) {
-				case 1:
-					answer = "Feet";
-				case 2:
-					answer = "Legs";
-				case 3:
-					answer = "Thorax";
-				case 4:
-					answer = "Head";
-				}
+//				Bukkit.broadcastMessage(String.valueOf(result));
 				
-				Bukkit.broadcastMessage(String.valueOf(result));
+				NBTTagCompound tag = bullet_info.get(mod);
+//				Bukkit.broadcastMessage(tag.toString());
+				
 //				Bukkit.broadcastMessage("bs: " + content.get(mod).speed);
 //				Bukkit.broadcastMessage("g: " + Hit.g);
 //				Bukkit.broadcastMessage("Hit Feet: " + detectPart(player, event.getEntity(), mod, 0, 0.4, 0.28));
@@ -157,7 +158,24 @@ public class Hit implements Listener {
 				
 //				Bukkit.broadcastMessage("algTime: " + (b-a) + "ms L:" + content.size());
 				
+				double finalDamage = processDamage(player, (LivingEntity) event.getEntity(), result, tag);
+				if (finalDamage <= 0) {
+					event.setCancelled(true);
+					
+				} else {
+					if (event.getEntity() instanceof Player) {
+						processPartDamage(player, (Player) event.getEntity(), result, finalDamage);
+					} else {
+						event.setDamage(finalDamage);
+					}
+				}
+				
+				
+				player.sendMessage("damage " + finalDamage);
+//				processPartDamage(player, result, finalDamage);
+				
 				content.remove(mod);
+				bullet_info.remove(mod);
 
 
 				
@@ -170,6 +188,53 @@ public class Hit implements Listener {
 	}
 
 	
+	private void processPartDamage(Player player, Player damager, int result, double finalDamage) {
+		Container.processDamage(player, damager, result, finalDamage);
+	}
+
+
+	private double processDamage(Player player, org.bukkit.entity.LivingEntity victim, int result, NBTTagCompound tag) {
+		
+		ItemStack protector;
+		if (result == 0) {
+			return 0d;
+		} else if (result == 1) {
+			protector = victim.getEquipment().getBoots();
+		} else if (result == 2) {
+			protector = victim.getEquipment().getLeggings();
+		} else if (result == 3) {
+			protector = victim.getEquipment().getChestplate();
+		} else {
+			protector = victim.getEquipment().getHelmet();
+		}
+		
+		JSONObject armorInfo = (JSONObject) CartridgeAssemblerListener.database.get(protector.getType().toString());
+		double defense;
+		if (armorInfo == null) {
+			defense = 0;
+		} else {
+			defense = (double) armorInfo.get("base");
+		}
+		
+		String[] a = NBT.getString(tag, "id").split("_");
+		
+		String bullet = "RELIZC_BULLET_" + a[1] + "_" + a[3].toUpperCase(); // relizc:cartridge_55645_copper_m855
+//		player.sendMessage(bullet);
+		JSONObject data = (JSONObject) CartridgeAssemblerListener.database.get(bullet);
+		int energy = NBT.getInteger(NBT.getCompound(tag, "tag"), "energy");
+		
+		double pen = (double) data.get("pen");
+		
+		if (pen < defense) {
+			return 0;
+		} else {
+			return (double) data.get("base");
+		}
+		
+		
+	}
+
+
 	private boolean detectPart(Player player, org.bukkit.entity.Entity entity, MohistModsEntity mod, double yi, double yf, double size, double speed, boolean delta) {
 		
 
@@ -295,11 +360,10 @@ public class Hit implements Listener {
 				
 				NBTTagCompound current = NBT.getCompound(ammo, index - 1);
 				
-				NBTTagCompound entityNBT = NBT.getCompound(event.getEntity());
-				NBT.setCompound(entityNBT, "BulletType", current);
-				NBT.setCompound(event.getEntity(), entityNBT);
+
+				bullet_info.put(mod, current);
 				
-				Bukkit.broadcastMessage(entityNBT.toString());
+//				Bukkit.broadcastMessage(entityNBT.toString());
 				
 				NBT.setInteger(data, "AmmoIndex", index - 1);
 				
@@ -307,7 +371,7 @@ public class Hit implements Listener {
 				
 				
 			} else {
-				event.setCancelled(true);
+//				event.setCancelled(true);
 			}
 			
 			
@@ -318,14 +382,13 @@ public class Hit implements Listener {
 			Vector vec = mod.getVelocity();
 			double speed = vec.length() * 20;
 			
-			CraftPersistentDataContainer item = mod.getPersistentDataContainer();
-			
 			content.put(mod, new BallisticInformation(speed, player));
 			TaskDelay.delayTask(new Runnable() {
 
 				@Override
 				public void run() {
 					content.remove(mod);
+					bullet_info.remove(mod);
 				}
 				
 			}, 20L);

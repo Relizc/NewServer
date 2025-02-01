@@ -33,7 +33,7 @@
 		<dependency>
            <groupId>org.spigotmc</groupId>
            <artifactId>spigot</artifactId>
-           <version>1.19-R0.1-SNAPSHOT</version><!--change this value depending on the version or use LATEST-->
+           <version>1.20.1-R0.1-SNAPSHOT</version><!--change this value depending on the version or use LATEST-->
            <type>jar</type>
            <scope>provided</scope>
        	</dependency>
@@ -68,6 +68,11 @@
 			<groupId>net.itsrelizc.smp</groupId>
 			<artifactId>currencysmp</artifactId>
 			<version>1.5.0</version>
+		</dependency>
+		<dependency>
+			<groupId>net.itsrelizc.smp</groupId>
+			<artifactId>gunmod</artifactId>
+			<version>1.0.0</version>
 		</dependency>
    </dependencies>
 
