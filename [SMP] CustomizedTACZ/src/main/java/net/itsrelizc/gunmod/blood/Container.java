@@ -9,6 +9,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -16,6 +17,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import net.itsrelizc.events.EventRegistery;
+import net.itsrelizc.events.TaskDelay;
 import net.minecraft.world.level.block.MultifaceSpreader.e;
 
 public class Container {
@@ -43,7 +45,6 @@ public class Container {
 			c.refill();
 			
 			event.getPlayer().setHealth(40);
-			event.getPlayer().setMaxHealth(40);
 			
 		}
 		
@@ -61,7 +62,14 @@ public class Container {
 			
 			Player player = (Player) event.getEntity();
 			if (event.getFinalDamage() >= player.getHealth()) {
-				event.setDamage(Double.MIN_NORMAL);
+				
+				Container c = bodyPart.get(player);
+				
+				if (c.head > 0 && c.thorax > 0) {
+					c.updateHealth();
+					event.setCancelled(true);
+				}
+				
 			}
 			
 			player.setMaxHealth(40);
@@ -82,7 +90,14 @@ public class Container {
 				c.damageLegs(per * 4, null);
 			}
 			
-			c.updateHealth();
+			TaskDelay.delayTask(new Runnable() {
+
+				@Override
+				public void run() {
+					c.updateHealth();
+				}
+				
+			}, 1L);
 		}
 		
 	}
@@ -124,11 +139,23 @@ public class Container {
 			rem = rem / 8;
 			this.legs = 0;
 			
-			this.damageHead(rem * 1, who);
-			this.damageChest(rem * 3, who);
+			this.head -= rem * 1;
+			updateHealth();
+			if (this.head <= 0) {
+				this.player.damage(999999d, player); // dead
+			}
+			
+			
+			this.thorax -= rem * 3;
+			updateHealth();
+			if (this.thorax <= 0) {
+				this.player.damage(999999d, player); // dead
+			}
 			
 			this.player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, PotionEffect.INFINITE_DURATION, 1, true), true); 
 		}
+		
+		updateHealth();
 		
 	}
 	

@@ -32,6 +32,14 @@
 	    </repository>
    	</repositories>
    <dependencies>
+		
+		<dependency>
+           <groupId>org.spigotmc</groupId>
+           <artifactId>spigot-api</artifactId>
+           <version>1.20.1-R0.1-SNAPSHOT</version><!--change this value depending on the version or use LATEST-->
+           <type>jar</type>
+           <scope>provided</scope>
+       	</dependency>
 		<dependency>
            <groupId>org.spigotmc</groupId>
            <artifactId>spigot</artifactId>
@@ -40,12 +48,13 @@
            <scope>provided</scope>
        	</dependency>
        	<dependency>
-           <groupId>org.spigotmc</groupId>
-           <artifactId>spigot-api</artifactId>
-           <version>1.20.1-R0.1-SNAPSHOT</version><!--change this value depending on the version or use LATEST-->
+           <groupId>com.mojang</groupId>
+           <artifactId>authlib</artifactId>
+           <version>4.0.43</version><!--change this value depending on the version or use LATEST-->
            <type>jar</type>
            <scope>provided</scope>
        	</dependency>
+		
 
 		<dependency>
     		<groupId>com.comphenix.protocol</groupId>

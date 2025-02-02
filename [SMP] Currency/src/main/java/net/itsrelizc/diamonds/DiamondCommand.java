@@ -1,11 +1,10 @@
 package net.itsrelizc.diamonds;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import net.itsrelizc.commands.RelizcCommand;
 import net.itsrelizc.players.locales.Locale;
-import net.minecraft.world.item.ItemStack;
+
 
 public class DiamondCommand extends RelizcCommand {
 	

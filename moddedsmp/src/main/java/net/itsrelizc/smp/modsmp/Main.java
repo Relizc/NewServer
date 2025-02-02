@@ -24,9 +24,8 @@ import net.itsrelizc.smp.modsmp.commands.TPAccept;
 import net.itsrelizc.smp.modsmp.commands.TPDeny;
 import net.itsrelizc.smp.modsmp.commands.TestItemGet;
 import net.itsrelizc.smp.modsmp.commands.UpdateBook;
-import net.itsrelizc.smp.modsmp.events.KunKeepInventory;
+import net.itsrelizc.smp.modsmp.events.AnvilBan;
 import net.itsrelizc.smp.modsmp.events.LoginLogoutHandler;
-import net.itsrelizc.smp.modsmp.items.ItemUser;
 import net.itsrelizc.smp.modsmp.menus.Contract;
 import net.itsrelizc.smp.modsmp.menus.Shop;
 import net.itsrelizc.tablist.TabListUtils;
@@ -37,7 +36,6 @@ public class Main extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		Bukkit.getPluginManager().registerEvents(new LoginLogoutHandler(), this);
-		Bukkit.getPluginManager().registerEvents(new ItemUser(), this);
 		
 		Bukkit.getPluginManager().registerEvents(new Shop(), this);
 		
@@ -72,6 +70,8 @@ public class Main extends JavaPlugin {
 				for (Player p : Bukkit.getOnlinePlayers()) {
 					Container c = Container.get(p);
 					TabListUtils.updateFooter(p, String.format(Locale.get(p, "general.tablist.diamondsleft"), (float) DiamondCounter.remaining, DiamondPurse.getPurse(p), DiamondPurse.getBloodSugar(p), c.getHead(), c.getChest(), c.getLegs()) + TPSService.getTablistDisplayInfo(p));
+//					TabListUtils.updateFooter(p, String.format(Locale.get(p, "general.tablist.diamondsleft"), (float) DiamondCounter.remaining, DiamondPurse.getPurse(p), DiamondPurse.getBloodSugar(p), -1f, -1f, -1f) + TPSService.getTablistDisplayInfo(p));
+
 //					TabListUtils.updateFooter(p, String.format(Locale.get(p, "general.tablist.diamondsleft"), (float) DiamondCounter.remaining, DiamondPurse.getPurse(p)) + "[Server Insights unavaliable]");
 				}
 			}
@@ -81,8 +81,9 @@ public class Main extends JavaPlugin {
 		//Contract.enable(this);
 		
 		DiamondCounter.enable(this);
-		
-		EventRegistery.register(new KunKeepInventory());
+
+		EventRegistery.register(new AnvilBan());
+//		EventRegistery.register(new We());
 		
 	}
 	

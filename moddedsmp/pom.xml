@@ -30,13 +30,7 @@
 	    </repository>
    	</repositories>
    <dependencies>
-		<dependency>
-           <groupId>org.spigotmc</groupId>
-           <artifactId>spigot</artifactId>
-           <version>1.20.1-R0.1-SNAPSHOT</version><!--change this value depending on the version or use LATEST-->
-           <type>jar</type>
-           <scope>provided</scope>
-       	</dependency>
+
 		<dependency>
     		<groupId>com.comphenix.protocol</groupId>
     		<artifactId>ProtocolLib</artifactId>
@@ -57,13 +51,14 @@
 			<version>1.0.0</version>
 			<scope>provided</scope>
 		</dependency>
-
-
+		
 		<dependency>
 			<groupId>net.itsrelizc</groupId>
 			<artifactId>newbundler</artifactId>
 			<version>1.0.0</version>
+			<scope>provided</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>net.itsrelizc.smp</groupId>
 			<artifactId>currencysmp</artifactId>

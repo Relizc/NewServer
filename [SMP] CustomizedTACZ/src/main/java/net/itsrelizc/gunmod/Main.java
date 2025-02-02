@@ -7,6 +7,7 @@ import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.gunmod.blood.Container;
 import net.itsrelizc.gunmod.blood.SwapHands;
 import net.itsrelizc.gunmod.craft.CartridgeAssemblerListener;
+import net.itsrelizc.gunmod.craft.WeaponWorkstationBan;
 
 public class Main extends JavaPlugin {
 	
@@ -15,6 +16,7 @@ public class Main extends JavaPlugin {
 		EventRegistery.register(new Hit());
 		EventRegistery.register(new SwapHands());
 		EventRegistery.register(new CartridgeAssemblerListener());
+		EventRegistery.register(new WeaponWorkstationBan());
 		
 		Container.init();
 		
