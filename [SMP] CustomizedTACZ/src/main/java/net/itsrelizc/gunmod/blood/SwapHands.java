@@ -16,6 +16,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.events.TaskDelay;
@@ -23,14 +24,15 @@ import net.itsrelizc.menus.ItemGenerator;
 import net.itsrelizc.nbt.NBT;
 import net.itsrelizc.nbt.NBT.NBTTagType;
 import net.itsrelizc.players.locales.Locale;
-import net.itsrelizc.string.ChatUtils;
+import net.itsrelizc.string.StringUtils;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class SwapHands implements Listener {
 	
 	public static Material TACZ_MODERN_KINETIC_GUN = Material.getMaterial("TACZ_MODERN_KINETIC_GUN");
-	public static Material RELIZC_MAGAZINE_55645STANAG_30 = Material.getMaterial("RELIZC_MAGAZINE_55645STANAG_30");
+	public static Material RELIZC_MAGAZINE_55645STANAG_30 = Material.getMaterial("RELIZC_MAGAZINE_30_55645_STANAG");
+	public static final Material RELIZC_MAGAZINE_17_919_GLOCK_17ROUND = Material.getMaterial("RELIZC_MAGAZINE_17_919_GLOCK_17ROUND");
 	
 	public static Material TACZ_AMMO = Material.getMaterial("TACZ_AMMO");
 	
@@ -46,8 +48,9 @@ public class SwapHands implements Listener {
 	
 	public static ItemStack getAmmo(Player player, String id) {
 		ItemStack item = ItemGenerator.generate(TACZ_AMMO, 60, Locale.get(player, "bullet.dummyammo"), Locale.get(player, "bullet.dummyammo.lore"));
-		NBTTagCompound tag = new NBTTagCompound();
+		NBTTagCompound tag = NBT.getNBT(item);
 		NBT.setString(tag, "AmmoId", id);
+		
 		return NBT.setCompound(item, tag);
 	}
 	
@@ -65,8 +68,11 @@ public class SwapHands implements Listener {
 		}
 		
 		if (current != null && current.getType() == TACZ_MODERN_KINETIC_GUN) {
+			
+			NBTTagCompound nbt = NBT.getNBT(current);
+			String gunId = NBT.getString(nbt, "GunId");
 				
-			replaceAndPutMap(event.getPlayer());
+			replaceAndPutMap(event.getPlayer(), gunId);
 			startCheck(event.getPlayer());
 			
 		}
@@ -145,7 +151,53 @@ public class SwapHands implements Listener {
 		stopCheck(player);
 	}
 	
-	public static void replaceAndPutMap(Player player) {
+	private static class BulletInfo {
+		
+		public Material magazine;
+		public String taczAmmoId;
+		
+		public BulletInfo(Material mat, String id) {
+			magazine = mat;
+			taczAmmoId = id;
+		}
+		
+		
+	}
+	
+	private static Map<String, BulletInfo> gunIdToMagazine = new HashMap<String, BulletInfo>();
+	
+	static {
+		
+		
+		
+		gunIdToMagazine.put("tacz:m4a1", new BulletInfo(RELIZC_MAGAZINE_55645STANAG_30, "tacz:556x45"));
+		gunIdToMagazine.put("tacz:hk416d", new BulletInfo(RELIZC_MAGAZINE_55645STANAG_30, "tacz:556x45"));
+		gunIdToMagazine.put("tacz:m16a1", new BulletInfo(RELIZC_MAGAZINE_55645STANAG_30, "tacz:556x45"));
+		gunIdToMagazine.put("tacz:m16a4", new BulletInfo(RELIZC_MAGAZINE_55645STANAG_30, "tacz:556x45"));
+		gunIdToMagazine.put("tacz:scar_l", new BulletInfo(RELIZC_MAGAZINE_55645STANAG_30, "tacz:556x45"));
+		gunIdToMagazine.put("tacz:aug", new BulletInfo(RELIZC_MAGAZINE_55645STANAG_30, "tacz:556x45"));
+		gunIdToMagazine.put("mk16:sr16", new BulletInfo(RELIZC_MAGAZINE_55645STANAG_30, "tacz:556x45"));
+		gunIdToMagazine.put("mk16:sr15", new BulletInfo(RELIZC_MAGAZINE_55645STANAG_30, "tacz:556x45"));
+		gunIdToMagazine.put("mk16:mod2", new BulletInfo(RELIZC_MAGAZINE_55645STANAG_30, "tacz:556x45"));
+		gunIdToMagazine.put("mk16:m4urgi", new BulletInfo(RELIZC_MAGAZINE_55645STANAG_30, "tacz:556x45"));
+		gunIdToMagazine.put("mk16:m4urgi10", new BulletInfo(RELIZC_MAGAZINE_55645STANAG_30, "tacz:556x45"));
+		gunIdToMagazine.put("mk16:m4", new BulletInfo(RELIZC_MAGAZINE_55645STANAG_30, "tacz:556x45"));
+		gunIdToMagazine.put("mk16:m727bhd", new BulletInfo(RELIZC_MAGAZINE_55645STANAG_30, "tacz:556x45"));
+		gunIdToMagazine.put("mk16:m733", new BulletInfo(RELIZC_MAGAZINE_55645STANAG_30, "tacz:556x45"));
+		gunIdToMagazine.put("mk16:m723", new BulletInfo(RELIZC_MAGAZINE_55645STANAG_30, "tacz:556x45"));
+		gunIdToMagazine.put("mk16:m727", new BulletInfo(RELIZC_MAGAZINE_55645STANAG_30, "tacz:556x45"));
+		gunIdToMagazine.put("mk16:xm177", new BulletInfo(RELIZC_MAGAZINE_55645STANAG_30, "tacz:556x45"));
+		gunIdToMagazine.put("mk16:ak101", new BulletInfo(RELIZC_MAGAZINE_55645STANAG_30, "tacz:556x45"));
+		gunIdToMagazine.put("mk16:ak102", new BulletInfo(RELIZC_MAGAZINE_55645STANAG_30, "tacz:556x45"));
+		gunIdToMagazine.put("mk16:ak19", new BulletInfo(RELIZC_MAGAZINE_55645STANAG_30, "tacz:556x45"));
+		gunIdToMagazine.put("mk16:ak202", new BulletInfo(RELIZC_MAGAZINE_55645STANAG_30, "tacz:556x45"));
+		gunIdToMagazine.put("mk16:ak201", new BulletInfo(RELIZC_MAGAZINE_55645STANAG_30, "tacz:556x45"));
+		
+		gunIdToMagazine.put("tacz:glock_17", new BulletInfo(RELIZC_MAGAZINE_17_919_GLOCK_17ROUND, "tacz:9mm"));
+		
+	}
+	
+	public static void replaceAndPutMap(Player player, String gunId) {
 		
 		Map<Integer, ItemStack> map = new HashMap<Integer, ItemStack>();
 		replacer.put(player, map);
@@ -158,14 +210,14 @@ public class SwapHands implements Listener {
 			
 			if (item != null) {
 				
-				if (item.getType() == RELIZC_MAGAZINE_55645STANAG_30) {
-					
+				BulletInfo magtype = gunIdToMagazine.get(gunId);
+				
+				if (item.getType() == magtype.magazine) {
 					replacer.get(player).put(slot, item);
 					
-					player.getInventory().setItem(slot, getAmmo(player, "tacz:556x45"));
-					
-					
+					player.getInventory().setItem(slot, getAmmo(player, magtype.taczAmmoId));
 				}
+				
 				
 			}
 			

@@ -2,10 +2,13 @@ package net.itsrelizc.menus;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import net.itsrelizc.string.StringUtils;
 
 public class ItemGenerator {
 	
@@ -67,8 +70,47 @@ public class ItemGenerator {
 		}
 		m.setLore(l);
 		
+		t.setAmount(amount);
+		
 		t.setItemMeta(m);
 		return t;
+	}
+
+	public static ItemStack generateByList(ItemStack formed, int amount, String name, List<String> alt) {
+		ItemStack t = formed;
+		ItemMeta m = t.getItemMeta();
+		
+		m.setDisplayName(name);
+		m.setLore(alt);
+		
+		t.setAmount(amount);
+		
+		t.setItemMeta(m);
+		return t;
+	}
+	
+	public static ItemStack generateByList(Material formed, int amount, String name, List<String> alt) {
+		ItemStack t = generate(formed, amount);
+		ItemMeta m = t.getItemMeta();
+		
+		m.setDisplayName(name);
+		m.setLore(alt);
+		
+		t.setAmount(amount);
+		
+		t.setItemMeta(m);
+		return t;
+	}
+
+	public static ItemStack interactiveMenuItem(Material oakSign, String string, List<String> string2, String... interactives) {
+
+		string2.add(" ");
+		for (String s : interactives) {
+			string2.add(s);
+		}
+		
+		return ItemGenerator.generateByList(oakSign, 1, "§b▶§r " + string, string2);
+		
 	}
 	
 	

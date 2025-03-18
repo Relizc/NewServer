@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import net.itsrelizc.smp.modsmp.items.ItemLibrary;
-import net.itsrelizc.string.ChatUtils;
+import net.itsrelizc.string.StringUtils;
 
 public class TestItemGet implements CommandExecutor {
 	

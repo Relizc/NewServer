@@ -3,10 +3,14 @@ package net.itsrelizc.players.locales;
 import java.util.HashMap;
 
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.json.simple.JSONObject;
 
 import net.itsrelizc.bundler.JSON;
+import net.itsrelizc.nbt.NBT;
 import net.itsrelizc.players.Profile;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 
 public class Locale {
 	
@@ -45,12 +49,33 @@ public class Locale {
 	}
 	
 	public static String get(Player player, String namespace) {
-		try {
-			return locales.get(Profile.findByOwner(player).lang.toString()).getOrDefault(namespace, namespace);
-		} catch (Exception excep) {
-			System.out.println("Language Error: " + namespace + " for " + player);
+
+		return locales.get(Profile.findByOwner(player).lang.toString()).getOrDefault(namespace, namespace);
+
+	}
+	
+	public static Language getLanguage(Player player) {
+		return Profile.findByOwner(player).lang;
+	}
+	
+	public static ItemStack insertSmartLocale(ItemStack it, String localizedName, String... localizedLore) {
+		
+		NBTTagCompound tag = NBT.getNBT(it);
+		if (tag == null) tag = new NBTTagCompound();
+		
+		NBTTagCompound languages = new NBTTagCompound();
+		NBT.setString(languages, "name", localizedName);
+		
+		NBTTagList list = new NBTTagList();
+		for (String s : localizedLore) {
+			NBT.addItem(list, s);
 		}
-		return namespace;
+		
+		NBT.setCompound(languages, "lore", list);
+		
+		NBT.setCompound(tag, "smartlore", languages);
+		return NBT.setCompound(it, tag);
+		
 	}
 	
 	public static String get(Language code, String namespace) {

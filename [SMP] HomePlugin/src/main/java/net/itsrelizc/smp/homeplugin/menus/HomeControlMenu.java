@@ -5,7 +5,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 
 import net.itsrelizc.menus.ClassicMenu;
 import net.itsrelizc.menus.MenuTemplate;
-import net.itsrelizc.string.ChatUtils;
+import net.itsrelizc.string.StringUtils;
 
 public class HomeControlMenu extends MenuTemplate {
 	
@@ -13,7 +13,7 @@ public class HomeControlMenu extends MenuTemplate {
 	public boolean onClick(InventoryClickEvent event) {
 		
 		
-		ChatUtils.broadcastSystemMessage("testchanclick", event.toString());
+		StringUtils.broadcastSystemMessage("testchanclick", event.toString());
 		
 		return true;
 		
@@ -24,7 +24,7 @@ public class HomeControlMenu extends MenuTemplate {
 	@Override
 	public boolean onClose(InventoryCloseEvent event) {
 		
-		ChatUtils.broadcastSystemMessage("testchanclose", event.toString());
+		StringUtils.broadcastSystemMessage("testchanclose", event.toString());
 		// TODO Auto-generated method stub
 		return true;
 	}
@@ -32,7 +32,7 @@ public class HomeControlMenu extends MenuTemplate {
 	@Override
 	public void loadTemplate(ClassicMenu classicMenu) {
 		
-		ChatUtils.broadcastSystemMessage("testchanload", "ontemplateload");
+		StringUtils.broadcastSystemMessage("testchanload", "ontemplateload");
 		// TODO Auto-generated method stub
 		
 	}

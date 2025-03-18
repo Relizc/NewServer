@@ -15,6 +15,7 @@ import org.json.simple.parser.JSONParser;
 
 import net.itsrelizc.bundler.JSON;
 import net.itsrelizc.players.locales.Locale;
+import net.itsrelizc.players.locales.Locale.Language;
 
 public class Profile {
 	
@@ -33,6 +34,8 @@ public class Profile {
 	public long level;
 
 	public net.itsrelizc.players.locales.Locale.Language lang;
+
+	public long subscriptionEnd;
 	
 	public static List<Player> awaitCreation = new ArrayList<Player>();
 	public static List<Player> awaitSetUUID = new ArrayList<Player>();
@@ -57,9 +60,11 @@ public class Profile {
 		this.permission = -1L;
 		this.level = -1L;
 		
-		this.lang = null;
+		this.lang = Language.ZH_CN;
 		
 		this.realUUID = player.getUniqueId();
+		
+		this.subscriptionEnd = -1;
 		
 		addProfile(this);
 	}
@@ -116,6 +121,7 @@ public class Profile {
 			profiledata = new JSONObject();
 			profiledata.put("rank", 1L);
 			profiledata.put("lang", "ZH_CN");
+			profiledata.put("subscription", -1);
 			
 			c.put(this.realUUID.toString(), profiledata);
 			JSON.saveDataFromDataBase("players.json", c);
@@ -132,8 +138,73 @@ public class Profile {
 		
 		this.permission = (long) profiledata.get("rank");
 		this.level = (long) profiledata.get("rank");
+		this.subscriptionEnd = (long) profiledata.getOrDefault("subscription", -1L);
 		this.lang = net.itsrelizc.players.locales.Locale.Language.valueOf((String) profiledata.getOrDefault("lang", "EN_US"));
 
+	}
+	
+	public static enum SubscriptionType {
+		
+		DAY(24l * 60l * 60l * 1000l),
+		MONTH(30l * 24l * 60l * 60l * 1000l),
+		WEEK(7l * 24l * 60l * 60l * 1000l),
+		SEASON(3l * 30l * 24l * 60l * 60l * 1000l),
+		YEAR(365l * 24l * 60l * 60l * 1000l);
+		
+		public long millis;
+
+		private SubscriptionType(long millis) {
+			this.millis = millis;
+		}
+		
+	}
+	
+	public static void addSubscription(UUID uuid, SubscriptionType bundle) {
+		
+		JSONObject n = JSON.loadDataFromDataBase("players.json");
+		JSONObject c = (JSONObject) n.get(uuid.toString());
+		long cur = (long) c.get("subscription");
+		cur += bundle.millis * 1000;
+		c.put("subscription", cur);
+		n.put(uuid.toString(), c);
+		JSON.saveDataFromDataBase("players.json", n);
+		
+		Bukkit.broadcastMessage(String.valueOf(bundle.millis));
+	}
+	
+	public static void addSubscription(UUID uuid, long bundle) {
+//		
+//		JSONObject n = JSON.loadDataFromDataBase("players.json");
+//		JSONObject c = (JSONObject) n.get(uuid.toString());
+//		long cur = (long) c.get("subscription");
+//		cur += bundle.millis * 1000;
+//		c.put("subscription", cur);
+//		n.put(uuid.toString(), c);
+//		JSON.saveDataFromDataBase("players.json", n);
+	}
+	
+	public static void setSubscription(UUID uuid, SubscriptionType subscriptionType) {
+		
+		JSONObject n = JSON.loadDataFromDataBase("players.json");
+		JSONObject c = (JSONObject) n.get(uuid.toString());
+		long cur = System.currentTimeMillis();
+		cur += subscriptionType.millis;
+		c.put("subscription", cur);
+		n.put(uuid.toString(), c);
+		JSON.saveDataFromDataBase("players.json", n);
+		
+		Bukkit.broadcastMessage(String.valueOf(subscriptionType.millis));
+	}
+	
+	public static void setSubscription(UUID uuid, long mils) {
+		
+		JSONObject n = JSON.loadDataFromDataBase("players.json");
+		JSONObject c = (JSONObject) n.get(uuid.toString());
+		long cur = System.currentTimeMillis();
+		cur += mils * 1000;
+		c.put("subscription", cur);
+		n.put(uuid.toString(), c);
+		JSON.saveDataFromDataBase("players.json", n);
 	}
 	
 	public static Profile createProfile(Player player) {

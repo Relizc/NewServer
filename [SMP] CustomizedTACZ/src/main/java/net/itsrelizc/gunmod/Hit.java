@@ -21,6 +21,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -40,7 +41,7 @@ import net.itsrelizc.gunmod.craft.CartridgeAssemblerListener;
 import net.itsrelizc.nbt.NBT;
 import net.itsrelizc.nbt.NBT.NBTTagType;
 import net.itsrelizc.players.locales.Locale;
-import net.itsrelizc.string.ChatUtils;
+import net.itsrelizc.string.StringUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -71,7 +72,7 @@ public class Hit implements Listener {
 	private static Map<MohistModsEntity, BallisticInformation> content = new HashMap<MohistModsEntity, BallisticInformation>();
 	private static Map<MohistModsEntity, NBTTagCompound> bullet_info = new HashMap<MohistModsEntity, NBTTagCompound>();
 	
-	@EventHandler(priority=EventPriority.HIGHEST)
+	@EventHandler(priority=EventPriority.HIGH)
 	public void damage(EntityDamageByEntityEvent event) {
 //		ChatUtils.broadcastSystemMessage("ballistics", "Hit by " + event.getEntityType() + " " + event.getEntity().getClass() + " " + event.getDamager().getType().getClass() + " " + event.getDamager().getClass());
 	
@@ -95,6 +96,8 @@ public class Hit implements Listener {
 				
 				event.setDamage(0);
 				event.setCancelled(false);
+				
+//				if (event.getEntity() instanceof Player) Container.blacklisted.add((Player) event.getEntity());
 				
 				int result = 0; // 1 = feet 2 = legs 3 = thorax 4 = head 0=miss
 				
@@ -160,10 +163,14 @@ public class Hit implements Listener {
 				
 				double finalDamage = processDamage(player, (LivingEntity) event.getEntity(), result, tag);
 				if (finalDamage <= 0) {
-					event.setCancelled(true);
+//					event.setCancelled(true);
+//					event.setDamage(DamageModifier.BASE, 0);
+					
+//					System.out.println("No damage");
 					
 				} else {
 					if (event.getEntity() instanceof Player) {
+						event.setDamage(finalDamage);
 						processPartDamage(player, (Player) event.getEntity(), result, finalDamage);
 					} else {
 						event.setDamage(finalDamage);
@@ -171,7 +178,10 @@ public class Hit implements Listener {
 				}
 				
 				
-				player.sendMessage("damage " + finalDamage);
+				
+//				player.sendMessage("original " + event.getDamage());
+//				player.sendMessage("damage " + finalDamage);
+				
 //				processPartDamage(player, result, finalDamage);
 				
 				content.remove(mod);
@@ -188,8 +198,8 @@ public class Hit implements Listener {
 	}
 
 	
-	private void processPartDamage(Player player, Player damager, int result, double finalDamage) {
-		Container.processDamage(player, damager, result, finalDamage);
+	private void processPartDamage(Player player, Player victim, int result, double finalDamage) {
+		Container.processDamage(player, victim, result, finalDamage);
 	}
 
 
@@ -208,13 +218,21 @@ public class Hit implements Listener {
 			protector = victim.getEquipment().getHelmet();
 		}
 		
-		JSONObject armorInfo = (JSONObject) CartridgeAssemblerListener.database.get(protector.getType().toString());
 		double defense;
-		if (armorInfo == null) {
-			defense = 0;
+		
+		if (protector == null) {
+			defense = 0.02f;
 		} else {
-			defense = (double) armorInfo.get("base");
+			JSONObject armorInfo = (JSONObject) CartridgeAssemblerListener.database.get(protector.getType().toString());
+			
+			if (armorInfo == null) {
+				defense = 0.02f;
+			} else {
+				defense = (double) armorInfo.get("base");
+			}
 		}
+		
+		
 		
 		String[] a = NBT.getString(tag, "id").split("_");
 		
@@ -304,7 +322,7 @@ public class Hit implements Listener {
 		if (event.getItemDrop().getItemStack() == event.getPlayer().getItemInHand() && event.getItemDrop().getItemStack().getType() == SwapHands.TACZ_MODERN_KINETIC_GUN) {
 			
 			event.setCancelled(false);
-			ChatUtils.systemMessage(event.getPlayer(), Locale.get(event.getPlayer(), "tacz.weapon"), Locale.get(event.getPlayer(), "tacz.weapon.undroppable"));
+			StringUtils.systemMessage(event.getPlayer(), Locale.get(event.getPlayer(), "tacz.weapon"), Locale.get(event.getPlayer(), "tacz.weapon.undroppable"));
 			
 		}
 		

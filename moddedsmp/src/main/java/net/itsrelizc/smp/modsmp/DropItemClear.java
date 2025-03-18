@@ -13,7 +13,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 
 import net.itsrelizc.players.locales.Locale;
-import net.itsrelizc.string.ChatUtils;
+import net.itsrelizc.string.StringUtils;
 import net.md_5.bungee.api.chat.TextComponent;
 
 public class DropItemClear {
@@ -22,20 +22,20 @@ public class DropItemClear {
 	
 	public static void broadcast(int time) {
 		for (Player player : Bukkit.getOnlinePlayers()) {
-			ChatUtils.systemMessage(player, Locale.get(player, "smp.janitorjustin"), String.format(Locale.get(player, "smp.janitorjustin.inform"), time));
+			StringUtils.systemMessage(player, Locale.get(player, "smp.janitorjustin"), String.format(Locale.get(player, "smp.janitorjustin.inform"), time));
 		}
 	}
 	
 	public static void broadcast_v2(int time) {
 		for (Player player : Bukkit.getOnlinePlayers()) {
-			ChatUtils.systemMessage(player, Locale.get(player, "smp.janitorjustin"), String.format(Locale.get(player, "smp.janitorjustin.urgent"), time));
+			StringUtils.systemMessage(player, Locale.get(player, "smp.janitorjustin"), String.format(Locale.get(player, "smp.janitorjustin.urgent"), time));
 			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 10, 1);
 		}
 	}
 	
 	public static void broadcast_v3(int a) {
 		for (Player player : Bukkit.getOnlinePlayers()) {
-			ChatUtils.systemMessage(player, Locale.get(player, "smp.janitorjustin"), String.format(Locale.get(player, "smp.janitorjustin.complete"), a));
+			StringUtils.systemMessage(player, Locale.get(player, "smp.janitorjustin"), String.format(Locale.get(player, "smp.janitorjustin.complete"), a));
 			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 10, 0);
 		}
 	}

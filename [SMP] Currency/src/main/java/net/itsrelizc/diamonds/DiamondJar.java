@@ -6,17 +6,29 @@ import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.inventory.BrewEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.tags.ItemTagType;
+import org.bukkit.potion.Potion;
+
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
@@ -33,7 +45,7 @@ import com.comphenix.protocol.wrappers.nbt.NbtBase;
 import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.menus.ItemGenerator;
 import net.itsrelizc.players.locales.Locale;
-import net.itsrelizc.string.ChatUtils;
+import net.itsrelizc.string.StringUtils;
 
 public class DiamondJar implements Listener {
 	
@@ -89,7 +101,7 @@ public class DiamondJar implements Listener {
 		
 	}
 	
-	public static void createFor(Player player, long value) {
+	public static ItemStack createFor(Player player, long value) {
 		ItemStack pot = ItemGenerator.generate(Material.POTION, 1, Locale.get(player, "item.diamond_jar.name"), Locale.get(player, "item.diamond_jar.lore"), Locale.get(player, "item.diamond_jar.lore_2").formatted(value / 1000f));
 		PotionMeta meta = (PotionMeta) pot.getItemMeta();
 		meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -103,6 +115,8 @@ public class DiamondJar implements Listener {
 		
 		pot.setItemMeta(meta);
 		player.getInventory().addItem(pot);
+		
+		return pot;
 	}
 	
 	@EventHandler
@@ -121,5 +135,80 @@ public class DiamondJar implements Listener {
 			event.getItemDrop().setCustomName("§b0.100 ct");
 		}
 	}
+	
+	@EventHandler
+	public void brew(InventoryClickEvent event) {
+		
+		if (event.getInventory().getType() == InventoryType.BREWING) {
+			if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.POTION) {
+				
+				Long value = event.getCurrentItem().getItemMeta().getCustomTagContainer().getCustomTag(new NamespacedKey(EventRegistery.main, "diamondValue"), ItemTagType.LONG);
+				
+				if (value == null) return;
+				
+				event.setCancelled(true);
+				
+				Player player = (Player) event.getWhoClicked();
+				
+				player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_TRADE, 1f, 1f);
+				event.getWhoClicked().sendMessage(Locale.get((Player) event.getWhoClicked(), "item.diamond_potion.dontbrew"));
+				
+			}
+		}
+		
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+    public void onEntityDamage(EntityDamageEvent e) {
+
+        EntityDamageEvent.DamageCause cause = e.getCause();
+        double damage = e.getDamage();
+        double finalDamage = e.getFinalDamage();
+        EntityType entity = e.getEntity().getType();
+        
+       
+        
+//        Bukkit.broadcastMessage(cause.toString() + " " + e.getEntity().isDead() + " " +  e.getEntity().getLastDamageCause());
+        
+        if ( e.getEntity().getLastDamageCause() != null) return;
+
+        if (entity == EntityType.DROPPED_ITEM) {
+        	
+        	
+        	
+        	Item it = (Item) e.getEntity();
+        	ItemStack item = it.getItemStack();
+        	
+        	if (item.getType() == Material.DIAMOND) {
+        		it.getLocation().getWorld().spawnParticle(Particle.PORTAL, it.getLocation(), 100, 0, 0, 0, 0.5f);
+				it.getLocation().getWorld().spawnParticle(Particle.GLOW, it.getLocation(), 20, 0, 0, 0, 0.5f);
+				it.getLocation().getWorld().playSound(it.getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1f, 0f);
+				
+        		DiamondCounter.remaining += item.getAmount();
+        		return;
+        	}
+        	
+        	if (item.getType() != Material.POTION) return;
+        	
+        	Long value = item.getItemMeta().getCustomTagContainer().getCustomTag(new NamespacedKey(EventRegistery.main, "diamondValue"), ItemTagType.LONG);
+			
+			if (value == null) return;
+			
+			if (value % 1000 != 0) {
+				it.getLocation().getWorld().spawnParticle(Particle.PORTAL, it.getLocation(), 100, 0, 0, 0, 0.5f);
+				it.getLocation().getWorld().spawnParticle(Particle.GLOW, it.getLocation(), 20, 0, 0, 0, 0.5f);
+				it.getLocation().getWorld().playSound(it.getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1f, 0f);
+				
+				
+				
+			}
+			
+			long amt = value / 100;
+			
+			Item ent = it.getLocation().getWorld().dropItemNaturally(it.getLocation(), ItemGenerator.generate(Material.DIAMOND, (int) amt));
+			ent.setInvulnerable(true);
+        	
+        }
+    }
 
 }

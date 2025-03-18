@@ -47,6 +47,7 @@ public class PlayerJoin implements Listener {
 		a.setInvulnerable(true);
 		a.setInvisible(true);
 		
+		
 		tracker.put(event.getPlayer(), a);
 		messages.put(event.getPlayer(), 0);
 		
@@ -157,6 +158,16 @@ public class PlayerJoin implements Listener {
 			@Override
 			public void run() {
 				event.getPlayer().setPassenger(tracker.get(event.getPlayer()));
+				ArmorStand a = (ArmorStand) event.getPlayer().getWorld().spawnEntity(event.getPlayer().getLocation(), EntityType.ARMOR_STAND);
+				a.setMarker(true);
+				a.setInvulnerable(true);
+				a.setInvisible(true);
+				
+				
+				tracker.put(event.getPlayer(), a);
+				messages.put(event.getPlayer(), 0);
+				
+				event.getPlayer().setPassenger(a);
 				
 			}
 			

@@ -7,6 +7,10 @@
   <description>Helps you check the SMP mods</description>
   
   <build>
+	  
+	  
+	  
+	  
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -35,12 +39,52 @@
               <target>1.8</target>
           </configuration>
       </plugin>
+      
+      
+      <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>3.1.0</version>
+            <executions>
+                <execution>
+                    <phase>install</phase> <!-- Change phase if needed -->
+                    <goals>
+                        <goal>run</goal>
+                    </goals>
+                    <configuration>
+                        <target>
+                            <move file="target/modchecker-1.0.0.jar" tofile="C:/Users/relizc/Desktop/Modding/mod/run/mods/Enigma.jar"/>
+                        </target>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+      
     </plugins>
     
     
   </build>
   
   <dependencies>
+	  
+	<dependency>
+       <groupId>org.spigotmc</groupId>
+       <artifactId>spigot-api</artifactId>
+       <version>1.20.1-R0.1-SNAPSHOT</version><!--change this value depending on the version or use LATEST-->
+       <type>jar</type>
+       <scope>provided</scope>
+   	</dependency>
+	<dependency>
+       <groupId>org.spigotmc</groupId>
+       <artifactId>spigot</artifactId>
+       <version>1.20.1-R0.1-SNAPSHOT</version><!--change this value depending on the version or use LATEST-->
+       <type>jar</type>
+       <scope>provided</scope>
+   	</dependency>
 
+	<dependency>
+		<groupId>net.itsrelizc</groupId>
+		<artifactId>newbundler</artifactId>
+		<version>1.0.0</version>
+	</dependency>
   </dependencies>
 </project>

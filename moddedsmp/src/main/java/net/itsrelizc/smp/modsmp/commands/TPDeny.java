@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import net.itsrelizc.players.locales.Locale;
-import net.itsrelizc.string.ChatUtils;
+import net.itsrelizc.string.StringUtils;
 
 
 public class TPDeny implements CommandExecutor {
@@ -22,16 +22,16 @@ public class TPDeny implements CommandExecutor {
 		Player target = Bukkit.getPlayer(args[0]);
 		
 		if (target == null) {
-			ChatUtils.systemMessage(player, Locale.get(player, "commands.tpa"), String.format(Locale.get(player, "commands.tpy.notonline"), args[0]));
+			StringUtils.systemMessage(player, Locale.get(player, "commands.tpa"), String.format(Locale.get(player, "commands.tpy.notonline"), args[0]));
 			return true;
 		}
 		if (!TPACommand.tpas.containsKey(target)) {
-			ChatUtils.systemMessage(player, Locale.get(player, "commands.tpa"), String.format(Locale.get(player, "commands.tpy.norequest"), target.getDisplayName()));
+			StringUtils.systemMessage(player, Locale.get(player, "commands.tpa"), String.format(Locale.get(player, "commands.tpy.norequest"), target.getDisplayName()));
 			return true;
 		}
 		
-		ChatUtils.systemMessage(player, Locale.get(player, "commands.tpa"), String.format(Locale.get(player, "commands.tpn.success"), target.getDisplayName()));
-		ChatUtils.systemMessage(target, Locale.get(target, "commands.tpa"), String.format(Locale.get(player, "commands.tpn.agreed"), player.getDisplayName()));
+		StringUtils.systemMessage(player, Locale.get(player, "commands.tpa"), String.format(Locale.get(player, "commands.tpn.success"), target.getDisplayName()));
+		StringUtils.systemMessage(target, Locale.get(target, "commands.tpa"), String.format(Locale.get(player, "commands.tpn.agreed"), player.getDisplayName()));
 		
 		TPACommand.tpas.remove(target);
 		

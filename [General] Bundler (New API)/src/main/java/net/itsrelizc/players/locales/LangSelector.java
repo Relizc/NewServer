@@ -14,7 +14,7 @@ import net.itsrelizc.menus.MenuTemplate;
 import net.itsrelizc.menus.Skull;
 import net.itsrelizc.players.Profile;
 import net.itsrelizc.players.locales.Locale.Language;
-import net.itsrelizc.string.ChatUtils;
+import net.itsrelizc.string.StringUtils;
 
 public class LangSelector extends RelizcCommand {
 	

@@ -2,6 +2,9 @@ package net.itsrelizc.nbt;
 
 import java.util.Set;
 
+import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
@@ -273,6 +276,7 @@ net.minecraft.nbt.ListTag -> qx:
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 
 public class NBT {
 	
@@ -398,6 +402,10 @@ public class NBT {
 	public static void addItem(NBTTagList list, NBTTagCompound compound) {
 		list.add(compound);
 	}
+	
+	public static void addItem(NBTTagList list, String string) {
+		list.add(NBTTagString.a(string));
+	}
 
 	public static void setCompound(NBTTagCompound tag2, String string, NBTTagCompound tag) {
 		tag2.a(string, tag);
@@ -433,6 +441,14 @@ public class NBT {
 		
 		
 		
+	}
+
+	public static void setLong(NBTTagCompound tag, String string, long currentTimeMillis) {
+		tag.a(string, currentTimeMillis);
+	}
+
+	public static long getLong(NBTTagCompound tag, String string) {
+		return tag.i(string);
 	}
 
 

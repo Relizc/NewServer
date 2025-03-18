@@ -3,9 +3,11 @@ package net.itsrelizc.commands;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
@@ -13,7 +15,7 @@ import org.bukkit.entity.Player;
 
 import net.itsrelizc.players.Profile;
 import net.itsrelizc.players.locales.Locale;
-import net.itsrelizc.string.ChatUtils;
+import net.itsrelizc.string.StringUtils;
 import net.md_5.bungee.api.chat.TextComponent;
 
 public class RelizcCommand extends BukkitCommand {
@@ -22,7 +24,9 @@ public class RelizcCommand extends BukkitCommand {
 		
 		NUMBER("commands.general.number"),
 		TEXT("commands.general.text"),
+		PLAYER("commands.general.player"),
 		OPTION("commands.general.option");
+		
 
 		private String name;
 
@@ -41,49 +45,110 @@ public class RelizcCommand extends BukkitCommand {
 		private TabCompleteType[] tab;
 		private Player player;
 		private String description;
+		private List<String> preset = null;
+		private boolean optional = false;
 		
 		TabCompleteInfo(TabCompleteType[] type) {
 			tab = type;
 		}
 		
-		TabCompleteInfo(TabCompleteType[] type, Player player, String description) {
+		public TabCompleteInfo(TabCompleteType[] type, Player player, String description) {
 			tab = type;
 			this.player = player;
 			this.description = description;
 		}
 		
+		TabCompleteInfo(TabCompleteType[] type, Player player, String description, List<String> preset) {
+			tab = type;
+			this.player = player;
+			this.description = description;
+			this.preset = preset;
+		}
+		
+		public TabCompleteInfo(boolean optional, TabCompleteType[] tabCompleteTypes, Player sender, String string) {
+			tab = tabCompleteTypes;
+			this.player = sender;
+			this.description = string;
+			this.optional  = optional;
+		}
+
+		public TabCompleteInfo(boolean b, TabCompleteType[] tabCompleteTypes, Player sender, String string,
+				List<String> fromArgs) {
+			tab = tabCompleteTypes;
+			this.player = sender;
+			this.description = string;
+			this.preset = fromArgs;
+		}
+
 		public List<String> raw() {
 			
 			if (player == null) {
-				return ChatUtils.reversedFromArgs("TabComplete not supported for console");
+				return StringUtils.reversedFromArgs("TabComplete not supported for console");
 			}
 			
 			if (tab.length == 1) {
 				
-				for (String a : ChatUtils.fromArgs("1", "2", "3")) {
-					Bukkit.broadcastMessage(a);
-				}	
-				
-				for (String a : ChatUtils.reversedFromArgs("1", "2", "3")) {
-					Bukkit.broadcastMessage(a);
+				String add = "";
+				if (optional) {
+					add = "(" + Locale.get(player, "commands.general.optional") + ") ";
 				}
 				
-				return ChatUtils.fromArgs(
-						" " + Locale.get(player, "commands.general.tabcomplete.argdesc").formatted(Locale.get(player, tab[0].getName()), Locale.get(player, description)), // [输入一个%s: %s]
-						" " + Locale.get(player, "commands.general.tabcomplete.example").formatted(Locale.get(player, tab[0].getName()), Locale.get(player, tab[0].getName() + ".example")),
-						""
+				List<String> a = StringUtils.fromArgs(
+						" " + add + Locale.get(player, "commands.general.tabcomplete.argdesc").formatted(Locale.get(player, tab[0].getName()), Locale.get(player, description)) // [输入一个%s: %s]
 						);
+				
+				if (this.preset != null) {
+					return Stream.concat(a.stream(), preset.stream()).toList();
+				} else {
+					return a;
+				}
 			} else if (tab.length == 0) {
 				
-				return ChatUtils.fromArgs(
-						Locale.get(player, "commands.general.tabcomplete.noargs")
-						);
+				return StringUtils.fromArgs();
 				
 			} else {
-				return ChatUtils.fromArgs("some");
+				return StringUtils.fromArgs("some");
 			}
 			
 			
+		}
+
+		public static TabCompleteInfo presetPlayer(Player player, String description) {
+			List<String> s = StringUtils.fromNewList();
+			for (Player p : Bukkit.getOnlinePlayers()) {
+				s.add(p.getName());
+			}
+			return new TabCompleteInfo(new TabCompleteType[] {TabCompleteType.PLAYER}, player, Locale.get(player, description), s);
+		}
+
+		public static TabCompleteInfo presetNothing(Player player) {
+			return new TabCompleteInfo(new TabCompleteType[] {}, player, null);
+		}
+
+		public static TabCompleteInfo presetOption(Player sender, String string, List<String> names) {
+			return new TabCompleteInfo(new TabCompleteType[] {TabCompleteType.OPTION}, sender, Locale.get(sender, string), names);
+		}
+
+		public static TabCompleteInfo presetNumber(Player sender, String string) {
+			return new TabCompleteInfo(new TabCompleteType[] {TabCompleteType.NUMBER}, sender, Locale.get(sender, string));
+		}
+
+		public static TabCompleteInfo presetNumber(boolean optional, Player sender, String string) {
+			return new TabCompleteInfo(optional, new TabCompleteType[] {TabCompleteType.NUMBER}, sender, Locale.get(sender, string));
+		}
+		
+		public static TabCompleteInfo presetNumberDelocalized(boolean optional, Player sender, String string) {
+			return new TabCompleteInfo(optional, new TabCompleteType[] {TabCompleteType.NUMBER}, sender, string);
+		}
+		
+
+
+		public static TabCompleteInfo presetOfflinePlayer(Player sender, String string) {
+			List<String> s = StringUtils.fromNewList();
+			for (OfflinePlayer p : Bukkit.getOfflinePlayers()) {
+				s.add(p.getName());
+			}
+			return new TabCompleteInfo(new TabCompleteType[] {TabCompleteType.PLAYER}, sender, Locale.get(sender, string), s);
 		}
 		
 	}
@@ -145,7 +210,7 @@ public class RelizcCommand extends BukkitCommand {
 			
 			Player p = (Player) sender;
 			
-			if (Profile.findByOwner(p).level < this.relizcpermission) {
+			if (Profile.findByOwner(p).permission < this.relizcpermission) {
 				System.out.println("No level");
 				this.onNoPermission(p);
 				return true;
@@ -166,7 +231,7 @@ public class RelizcCommand extends BukkitCommand {
 			
 		}
 		
-		ChatUtils.systemMessage(sender, "§c§lERROR", "This command is not supported for Players nor Console! Feel free to reach out to server moderators if you have any concerns.");
+		StringUtils.systemMessage(sender, "§c§lERROR", "This command is not supported for Players nor Console! Feel free to reach out to server moderators if you have any concerns.");
 		
 		return true;
 	}
@@ -178,13 +243,13 @@ public class RelizcCommand extends BukkitCommand {
 	}
 	
 	public TabCompleteInfo onTabComplete(CommandSender sender, String alias, String[] args, Location location) {
-		return new TabCompleteInfo(new TabCompleteType[] {TabCompleteType.NUMBER}, (Player) sender, "commands.general.tabcomplete.test");
+		return new TabCompleteInfo(new TabCompleteType[] {}, (Player) sender, "commands.general.tabcomplete.test");
 		
 	}
 	
 	public void onError(CommandSender sender, Exception error) {
 		error.printStackTrace();
-		ChatUtils.systemMessage(sender, "§c§lERROR", "There was an error while running this command. Please contact the server moderators about this!");
+		StringUtils.systemMessage(sender, "§c§lERROR", "There was an error while running this command. Please contact the server moderators about this!");
 	} 
 	
 	public void onError(Player sender, Exception error) {
@@ -203,20 +268,20 @@ public class RelizcCommand extends BukkitCommand {
 			error.printStackTrace(pw);
 			String sStackTrace = sw.toString().replace("\t", "    ");
 			
-			ChatUtils.attachHover(b, Locale.get(sender, "commands.general.error_debug_stack") + "\n\n§7" + sStackTrace);
+			StringUtils.attachHover(b, Locale.get(sender, "commands.general.error_debug_stack") + "\n\n§7" + sStackTrace);
 			a.addExtra(b);
 		}
 		
-		ChatUtils.systemMessage(sender, Locale.get(sender, "commands.general.error"), a);
+		StringUtils.systemMessage(sender, Locale.get(sender, "commands.general.error"), a);
 	} 
 	
 	public void onNoPermission(Player sender) {
-		ChatUtils.systemMessage(sender, Locale.get(sender, "commands.general.error"), Locale.get(sender, "commands.general.error_nopermission"));
+		StringUtils.systemMessage(sender, Locale.get(sender, "commands.general.error"), Locale.get(sender, "commands.general.error_nopermission"));
 	}
 	
 	public boolean onConsoleExecute(ConsoleCommandSender sender, String[] args) {
 		
-		ChatUtils.systemMessage(sender, "§c§lERROR", "This command cannot be run by Console.");
+		StringUtils.systemMessage(sender, "§c§lERROR", "This command cannot be run by Console.");
 		
 		return true;
 		
@@ -224,7 +289,7 @@ public class RelizcCommand extends BukkitCommand {
 	
 	public boolean onPlayerExecute(Player sender, String[] args) {
 		
-		ChatUtils.systemMessage(sender, Locale.get(sender, "commands.general.error"), Locale.get(sender, "commands.general.error_noplayer"));
+		StringUtils.systemMessage(sender, Locale.get(sender, "commands.general.error"), Locale.get(sender, "commands.general.error_noplayer"));
 		
 		return true;
 		

@@ -4,14 +4,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import net.itsrelizc.api.RelizcInteractiveMenu;
+import net.itsrelizc.api.RelizcInteractiveMenuTemplate;
 import net.itsrelizc.events.EventRegistery;
 
-public class Menu2 implements Listener {
+public class Menu2 implements Listener, RelizcInteractiveMenu {
 	
 	private Inventory inventory;
 	private MenuTemplate2 currentTemplate;
@@ -48,6 +51,14 @@ public class Menu2 implements Listener {
 	public void clearItem(int slot) {
 		this.inventory.clear(slot);
 	}
+	
+	public void close() {
+		this.player.closeInventory();
+	}
+	
+	public RelizcInteractiveMenuTemplate getTemplate() {
+		return this.currentTemplate;
+	}
 
 	public Player getPlayer() {
 		// TODO Auto-generated method stub
@@ -56,10 +67,19 @@ public class Menu2 implements Listener {
 	
 	@EventHandler
 	public void event_onClick(InventoryClickEvent event) {
+		
+		
+		
 		if (((Player) event.getWhoClicked()) != player) {
 			return;
 		}
+		
+		
+		
 		event.setCancelled(true);
+		
+		if (event.getClick() == ClickType.DOUBLE_CLICK) return;
+		
 		this.currentTemplate.onClick(event);
 		
 //		Bukkit.broadcastMessage("invclick by " + event.getWhoClicked().getName());

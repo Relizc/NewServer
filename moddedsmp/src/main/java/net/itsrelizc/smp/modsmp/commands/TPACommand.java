@@ -10,7 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import net.itsrelizc.players.locales.Locale;
-import net.itsrelizc.string.ChatUtils;
+import net.itsrelizc.string.StringUtils;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -31,19 +31,19 @@ public class TPACommand implements CommandExecutor {
 
 		
 		if (target.getName().equalsIgnoreCase(player.getName())) {
-			ChatUtils.systemMessage(player, Locale.get(player, "commands.tpa"), Locale.get(player, "commands.tpa.errorself"));
+			StringUtils.systemMessage(player, Locale.get(player, "commands.tpa"), Locale.get(player, "commands.tpa.errorself"));
 			return true;
 		}
 		
 		cd.put(player, 300);
 		
 		if (target == null) {
-			ChatUtils.systemMessage(player, Locale.get(player, "commands.tpa"), Locale.get(player, "commands.tpa.errornotonline"));
+			StringUtils.systemMessage(player, Locale.get(player, "commands.tpa"), Locale.get(player, "commands.tpa.errornotonline"));
 			return true;
 		}
 		
 		if (tpas.keySet().contains(player)) {
-			ChatUtils.systemMessage(player, Locale.get(player, "commands.tpa"), Locale.get(player, "commands.tpa.alreadysent"));
+			StringUtils.systemMessage(player, Locale.get(player, "commands.tpa"), Locale.get(player, "commands.tpa.alreadysent"));
 			return true;
 		}
 		
@@ -54,15 +54,15 @@ public class TPACommand implements CommandExecutor {
 			@Override
 			public void run() {
 				if (tpas.containsKey(player)) {
-					ChatUtils.systemMessage(player, Locale.get(player, "commands.tpa"), Locale.get(player, "commands.tpa.expired"));
-					ChatUtils.systemMessage(target, Locale.get(target, "commands.tpa"), String.format(Locale.get(target, "commands.tpa.expired.totarget"), player.getDisplayName()));
+					StringUtils.systemMessage(player, Locale.get(player, "commands.tpa"), Locale.get(player, "commands.tpa.expired"));
+					StringUtils.systemMessage(target, Locale.get(target, "commands.tpa"), String.format(Locale.get(target, "commands.tpa.expired.totarget"), player.getDisplayName()));
 					tpas.remove(player);
 				}
 			}
 			
 		}, 1200L);
 		
-		ChatUtils.systemMessage(player, Locale.get(player, "commands.tpa"), String.format(Locale.get(player, "commands.tpa.send"), target.getDisplayName()));
+		StringUtils.systemMessage(player, Locale.get(player, "commands.tpa"), String.format(Locale.get(player, "commands.tpa.send"), target.getDisplayName()));
 		
 		TextComponent msg1 = new TextComponent(TextComponent.fromLegacyText(Locale.get(target, "commands.tpa.request.arg0")));
 		TextComponent msg2 = new TextComponent(TextComponent.fromLegacyText(Locale.get(target, "commands.tpa.request.arg1")));
@@ -79,10 +79,10 @@ public class TPACommand implements CommandExecutor {
 		msg1.addExtra(msg2);
 		msg1.addExtra(no);
 		
-		ChatUtils.systemMessage(target, Locale.get(target, "commands.tpa"), String.format(Locale.get(target, "commands.tpa.request.sendtoyou"), player.getDisplayName()));
-		ChatUtils.systemMessage(target, Locale.get(target, "commands.tpa"), String.format(Locale.get(target, "commands.tpa.expiretime")));
-		ChatUtils.systemMessage(target, Locale.get(target, "commands.tpa"), msg1);
-		ChatUtils.systemMessage(target, Locale.get(target, "commands.tpa"), String.format(Locale.get(target, "commands.tpa.request.alt"), player.getDisplayName(), player.getDisplayName()));
+		StringUtils.systemMessage(target, Locale.get(target, "commands.tpa"), String.format(Locale.get(target, "commands.tpa.request.sendtoyou"), player.getDisplayName()));
+		StringUtils.systemMessage(target, Locale.get(target, "commands.tpa"), String.format(Locale.get(target, "commands.tpa.expiretime")));
+		StringUtils.systemMessage(target, Locale.get(target, "commands.tpa"), msg1);
+		StringUtils.systemMessage(target, Locale.get(target, "commands.tpa"), String.format(Locale.get(target, "commands.tpa.request.alt"), player.getDisplayName(), player.getDisplayName()));
 		
 		
 		

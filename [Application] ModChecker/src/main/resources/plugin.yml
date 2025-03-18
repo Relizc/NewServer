@@ -1,0 +1,7 @@
+name: Enigma
+main: net.itsrelizc.modchecker.plugin.MainPlugin
+version: 1.0.0
+author: Relizc
+api-version: 1.13
+depend: [RelizcBundlerNewAPI]
+      

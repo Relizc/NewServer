@@ -1,6 +1,7 @@
 package net.itsrelizc.players;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -8,8 +9,11 @@ import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -29,6 +33,28 @@ public class Grouping implements Listener {
 	public static Scoreboard board;
 	
 	public static boolean showPrefix = true;
+	
+	public static class PostPlayerProfileGenerateEvent extends Event {
+		
+		private static final HandlerList handlers = new HandlerList();
+		 
+		public static HandlerList getHandlerList() {
+		    return handlers;
+		}
+
+		public PlayerLoginEvent event;
+
+		public PostPlayerProfileGenerateEvent(PlayerLoginEvent event) {
+			this.event = event;
+		}
+
+		@Override
+		public HandlerList getHandlers() {
+			// TODO Auto-generated method stub
+			return handlers;
+		}
+		
+	}
 	
 	public static void initlizeRankGroups(Plugin plugin) {
 		ScoreboardManager manager = Bukkit.getScoreboardManager();
@@ -60,6 +86,8 @@ public class Grouping implements Listener {
 		
 	}
 	
+	
+	
 	@EventHandler(priority=EventPriority.LOWEST)
 	public void _aO(PlayerLoginEvent event) {
 		
@@ -82,6 +110,8 @@ public class Grouping implements Listener {
 		}, 10L);
 		
 		event.getPlayer().setOp(r.useop);
+		
+		Bukkit.getPluginManager().callEvent(new PostPlayerProfileGenerateEvent(event));
 	}
 	
 	@EventHandler

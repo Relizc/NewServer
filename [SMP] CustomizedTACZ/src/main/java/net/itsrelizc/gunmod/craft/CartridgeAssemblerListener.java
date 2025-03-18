@@ -18,7 +18,7 @@ import net.itsrelizc.events.TaskDelay;
 import net.itsrelizc.menus.ItemGenerator;
 import net.itsrelizc.nbt.NBT;
 import net.itsrelizc.players.locales.Locale;
-import net.itsrelizc.string.ChatUtils;
+import net.itsrelizc.string.StringUtils;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class CartridgeAssemblerListener implements Listener {
@@ -39,7 +39,7 @@ public class CartridgeAssemblerListener implements Listener {
 				if (im != null) {
 					
 					if (im.getItemMeta().getDisplayName().equalsIgnoreCase("CartridgeAssembler")) {
-						ChatUtils.systemMessage(player, Locale.get(player, "inventory.anvil"), Locale.get(player, "inventory.anvil.fail.badname"));
+						StringUtils.systemMessage(player, Locale.get(player, "inventory.anvil"), Locale.get(player, "inventory.anvil.fail.badname"));
 						event.setCancelled(true);
 					}
 					
@@ -58,10 +58,12 @@ public class CartridgeAssemblerListener implements Listener {
 				ItemStack primer = event.getInventory().getItem(2);
 				ItemStack powder = event.getInventory().getItem(4);
 				
-				event.getInventory().getItem(0).setAmount(bullet.getAmount() - 1);
-				event.getInventory().getItem(1).setAmount(casing.getAmount() - 1);
-				event.getInventory().getItem(2).setAmount(primer.getAmount() - 1);
-				event.getInventory().getItem(4).setAmount(powder.getAmount() - 1);
+				if (event.getCurrentItem() != null && bullet != null && casing != null && primer != null && powder != null) {
+					event.getInventory().getItem(0).setAmount(bullet.getAmount() - 1);
+					event.getInventory().getItem(1).setAmount(casing.getAmount() - 1);
+					event.getInventory().getItem(2).setAmount(primer.getAmount() - 1);
+					event.getInventory().getItem(4).setAmount(powder.getAmount() - 1);
+				}
 			}
 			
 			
@@ -81,7 +83,7 @@ public class CartridgeAssemblerListener implements Listener {
 					event.getInventory().setItem(3, createBullet(player, bullet, casing, primer, powder));
 				}
 				
-			}, 5L);
+			}, 2L);
 			
 		}
 		
@@ -152,7 +154,7 @@ public class CartridgeAssemblerListener implements Listener {
 		return generated;
 	}
 	
-	public static ItemStack generateBullet(Player player, Material mat, String bullet_caliber, String case_texture, String bullet_texture, String primer_texture, int min_j, int max_j, int final_j) {
+	private static ItemStack generateBullet(Player player, Material mat, String bullet_caliber, String case_texture, String bullet_texture, String primer_texture, int min_j, int max_j, int final_j) {
 		
 		String bulletName = Locale.get(player, "bullet." + bullet_texture.toLowerCase());
 		String primerName = Locale.get(player, "primer." + primer_texture.toLowerCase());
@@ -162,7 +164,7 @@ public class CartridgeAssemblerListener implements Listener {
 				"§f" + Locale.get(player, "cartridge.model").formatted(bulletName, caseName, primerName),
 				"§f" + Locale.get(player, "cartridge.energy").formatted((float) final_j),
 				" ",
-				"§f" + Locale.get(player, "bullet.description." + bullet_texture.toLowerCase()),
+				"§f" + Locale.get(player, "bullet.description." + bullet_caliber + "." + bullet_texture.toLowerCase()),
 				" ",
 				"§7§o\"马上就要发射了!!!\"");
 		

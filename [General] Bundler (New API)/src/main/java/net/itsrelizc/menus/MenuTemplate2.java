@@ -6,9 +6,10 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 
+import net.itsrelizc.api.RelizcInteractiveMenuTemplate;
 import net.itsrelizc.players.locales.Locale;
 
-public class MenuTemplate2 {
+public class MenuTemplate2 implements RelizcInteractiveMenuTemplate {
 	
 	public static ItemStack BLACK_GLASS() {
 		return ItemGenerator.generate(Material.BLACK_STAINED_GLASS_PANE, 1, " ");
@@ -23,7 +24,7 @@ public class MenuTemplate2 {
 	} 
 	
 	private String title;
-	private Menu2 menu;
+	protected Menu2 menu;
 	
 	public MenuTemplate2(String title) {
 		this.title = title;

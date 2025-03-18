@@ -15,7 +15,17 @@ public class DiamondPurse {
 	
 	public static void loadPurse(Player player) {
 		
-		if (balance.containsKey(player) || bloodsugar.containsKey(player)) return;
+		for (Player p : balance.keySet()) {
+			if (p.getUniqueId().equals(player.getUniqueId())) {
+				balance.put(player, balance.get(p));
+				balance.remove(p);
+				
+				bloodsugar.put(player, bloodsugar.get(p));
+				bloodsugar.remove(p);
+				
+				return;
+			}
+		}
 		
 		JSONObject content = JSON.loadDataFromDataBase("diamond_purse.json");
 		
@@ -79,7 +89,7 @@ public class DiamondPurse {
 		return (double) (bloodsugar.getOrDefault(p, -1L) / 10.0);
 	}
 
-	public static void addPurse(Player player, int d) {
+	public static void addPurse(Player player, long d) {
 		balance.put(player, balance.get(player) + d);
 		
 	}
@@ -87,6 +97,30 @@ public class DiamondPurse {
 	public static void addSugar(Player player, long sugar) {
 		bloodsugar.put(player, bloodsugar.get(player) + sugar);
 		
+	}
+
+	public static double getMaximumBrew(Player player) {
+		double sugar = getBloodSugar(player);
+		double belly = getPurse(player);
+		
+
+        // 计算钻石能提供的最大钻石酒数量
+        double maxWineFromDiamond = belly / 0.001;
+        // 计算血糖能提供的最大钻石酒数量
+        double maxWineFromBloodSugar = sugar / 0.1;
+
+        // 取两者中的较小值作为最大酿造量
+        double maxWine = Math.min(maxWineFromDiamond, maxWineFromBloodSugar);
+        
+        return maxWine;
+		
+		
+		
+		
+	}
+
+	public static void removePurse(Player player, Double ct) {
+		balance.put(player, (long) (balance.get(player) - (ct * 1000.0)));
 	}
 
 }

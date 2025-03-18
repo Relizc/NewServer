@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Chicken;
 import org.bukkit.entity.Entity;
@@ -19,7 +20,10 @@ import org.bukkit.plugin.Plugin;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
 import net.itsrelizc.commands.RelizcCommand;
-import net.itsrelizc.string.ChatUtils;
+import net.itsrelizc.commands.RelizcCommand.TabCompleteInfo;
+import net.itsrelizc.commands.RelizcCommand.TabCompleteType;
+import net.itsrelizc.players.locales.Locale;
+import net.itsrelizc.string.StringUtils;
 
 public class SitCommand extends RelizcCommand implements Listener {
 	
@@ -101,6 +105,17 @@ public class SitCommand extends RelizcCommand implements Listener {
 	public static void enable(Plugin plugin) {
 		
 		Bukkit.getPluginManager().registerEvents(new SitCommand(), plugin);
+		
+	}
+	
+	@Override
+	public TabCompleteInfo onTabComplete(CommandSender sender, String alias, String[] args, Location location) {
+		if (args.length == 1) {
+			return TabCompleteInfo.presetPlayer((Player) sender, Locale.get((Player) sender, "commands.sit.arg0.description"));
+		} else {
+			return TabCompleteInfo.presetNothing((Player) sender);
+		}
+		
 		
 	}
 	

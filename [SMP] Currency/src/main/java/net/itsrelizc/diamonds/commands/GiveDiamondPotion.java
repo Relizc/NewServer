@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import net.itsrelizc.commands.RelizcCommand;
 import net.itsrelizc.diamonds.DiamondJar;
 import net.itsrelizc.players.locales.Locale;
-import net.itsrelizc.string.ChatUtils;
+import net.itsrelizc.string.StringUtils;
 
 public class GiveDiamondPotion extends RelizcCommand {
 

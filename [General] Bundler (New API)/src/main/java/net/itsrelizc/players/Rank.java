@@ -3,7 +3,8 @@ package net.itsrelizc.players;
 public enum Rank {
 	
 	NONE(1L, 1L, "§7柚子社员工", false),
-	ADMIN(2L, 300L, "§e管理员", true);
+	MOD(2L, 2L, "§a二次元警察", false),
+	ADMIN(3L, 300L, "§e管理员", true);
 	
 	
 	public final Long permission;

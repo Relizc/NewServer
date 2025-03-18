@@ -6,6 +6,7 @@ import net.itsrelizc.commands.CommandRegistery;
 import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.gunmod.blood.Container;
 import net.itsrelizc.gunmod.blood.SwapHands;
+import net.itsrelizc.gunmod.commands.CommandGenerateBullet;
 import net.itsrelizc.gunmod.craft.CartridgeAssemblerListener;
 import net.itsrelizc.gunmod.craft.WeaponWorkstationBan;
 
@@ -21,6 +22,9 @@ public class Main extends JavaPlugin {
 		Container.init();
 		
 		CommandRegistery.register(new GDebugCommand());
+		CommandRegistery.register(new CommandGenerateBullet());
+		
+		
 	}
 
 }

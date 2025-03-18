@@ -17,6 +17,7 @@ import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.gunmod.blood.Container;
 import net.itsrelizc.players.locales.Locale;
 import net.itsrelizc.smp.modsmp.commands.LOLCommand;
+import net.itsrelizc.smp.modsmp.commands.PrestigeCommand;
 import net.itsrelizc.smp.modsmp.commands.ShopCommand;
 import net.itsrelizc.smp.modsmp.commands.SitCommand;
 import net.itsrelizc.smp.modsmp.commands.TPACommand;
@@ -24,7 +25,7 @@ import net.itsrelizc.smp.modsmp.commands.TPAccept;
 import net.itsrelizc.smp.modsmp.commands.TPDeny;
 import net.itsrelizc.smp.modsmp.commands.TestItemGet;
 import net.itsrelizc.smp.modsmp.commands.UpdateBook;
-import net.itsrelizc.smp.modsmp.events.AnvilBan;
+import net.itsrelizc.smp.modsmp.events.EnchantmentBan;
 import net.itsrelizc.smp.modsmp.events.LoginLogoutHandler;
 import net.itsrelizc.smp.modsmp.menus.Contract;
 import net.itsrelizc.smp.modsmp.menus.Shop;
@@ -52,6 +53,7 @@ public class Main extends JavaPlugin {
 		this.getCommand("lol").setExecutor(new LOLCommand());
 		
 		CommandRegistery.register(new SitCommand());
+		CommandRegistery.register(new PrestigeCommand());
 		
 		SitCommand.enable(this);
 		
@@ -68,9 +70,14 @@ public class Main extends JavaPlugin {
 				//Bukkit.broadcastMessage(net.itsrelizc.uptime.TPSUtils.getDelayYieldAsFormattedString());
 				
 				for (Player p : Bukkit.getOnlinePlayers()) {
-					Container c = Container.get(p);
-					TabListUtils.updateFooter(p, String.format(Locale.get(p, "general.tablist.diamondsleft"), (float) DiamondCounter.remaining, DiamondPurse.getPurse(p), DiamondPurse.getBloodSugar(p), c.getHead(), c.getChest(), c.getLegs()) + TPSService.getTablistDisplayInfo(p));
-//					TabListUtils.updateFooter(p, String.format(Locale.get(p, "general.tablist.diamondsleft"), (float) DiamondCounter.remaining, DiamondPurse.getPurse(p), DiamondPurse.getBloodSugar(p), -1f, -1f, -1f) + TPSService.getTablistDisplayInfo(p));
+					
+					try {
+//						Container c = Container.get(p);
+//						TabListUtils.updateFooter(p, String.format(Locale.get(p, "general.tablist.diamondsleft"), (float) DiamondCounter.remaining, DiamondPurse.getPurse(p), DiamondPurse.getBloodSugar(p), c.getHead(), c.getChest(), c.getLegs()) + TPSService.getTablistDisplayInfo(p));
+					} catch (Exception e) {
+						System.out.println("Footer Error " + e);
+					}
+					TabListUtils.updateFooter(p, String.format(Locale.get(p, "general.tablist.diamondsleft"), (float) DiamondCounter.remaining, DiamondPurse.getPurse(p), DiamondPurse.getBloodSugar(p), -1f, -1f, -1f) + TPSService.getTablistDisplayInfo(p));
 
 //					TabListUtils.updateFooter(p, String.format(Locale.get(p, "general.tablist.diamondsleft"), (float) DiamondCounter.remaining, DiamondPurse.getPurse(p)) + "[Server Insights unavaliable]");
 				}
@@ -82,7 +89,7 @@ public class Main extends JavaPlugin {
 		
 		DiamondCounter.enable(this);
 
-		EventRegistery.register(new AnvilBan());
+		EventRegistery.register(new EnchantmentBan());
 //		EventRegistery.register(new We());
 		
 	}

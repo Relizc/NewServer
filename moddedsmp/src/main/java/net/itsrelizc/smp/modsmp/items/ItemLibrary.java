@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import net.itsrelizc.menus.ItemGenerator;
-import net.itsrelizc.string.ChatUtils;
+import net.itsrelizc.string.StringUtils;
 
 public class ItemLibrary {
 	
@@ -23,7 +23,7 @@ public class ItemLibrary {
 		im.addItemFlags(ItemFlag.values());
 		im.setDisplayName("§e物品复制器");
 		
-		im.setLore(ChatUtils.fromArgs("§7贾斯丁有限公司™ 研发出的 FTX-6090 精密物品复制器",
+		im.setLore(StringUtils.fromArgs("§7贾斯丁有限公司™ 研发出的 FTX-6090 精密物品复制器",
 				"",
 				"§8贾斯丁™科技唯一序列号：" + new Random().nextInt(2147483647),
 				"§8严禁盗版使用！"));
@@ -44,7 +44,7 @@ public class ItemLibrary {
 		im.addItemFlags(ItemFlag.values());
 		im.setDisplayName("§7×1 §e物品复制器");
 		
-		im.setLore(ChatUtils.fromArgs("§7贾斯丁有限公司™ 研发出的 FTX-6090 精密物品复制器","","§7§m------------", "§7物品价格: §f×10 §b钻石"));
+		im.setLore(StringUtils.fromArgs("§7贾斯丁有限公司™ 研发出的 FTX-6090 精密物品复制器","","§7§m------------", "§7物品价格: §f×10 §b钻石"));
 		
 		i.setItemMeta(im);
 		

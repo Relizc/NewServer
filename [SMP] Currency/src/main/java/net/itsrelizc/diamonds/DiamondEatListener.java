@@ -1,6 +1,7 @@
 package net.itsrelizc.diamonds;
 
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
@@ -9,7 +10,9 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.meta.tags.ItemTagType;
 
+import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.menus.ItemGenerator;
 
 public class DiamondEatListener implements Listener {
@@ -21,7 +24,7 @@ public class DiamondEatListener implements Listener {
 		
 		if (event.getHand() == EquipmentSlot.OFF_HAND) return;
 		
-		if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+		if (event.getAction() == Action.RIGHT_CLICK_AIR) {
 			if (event.getItem().getType() == Material.DIAMOND) {
 				event.getItem().setAmount(event.getItem().getAmount() - 1);
 				
@@ -37,8 +40,21 @@ public class DiamondEatListener implements Listener {
 	@EventHandler
 	public void food(PlayerItemConsumeEvent event) {
 		
+	
+		
 		Material mat = event.getItem().getType();
 		long sugar = 1;
+		
+		if (mat == Material.POTION) {
+			
+			Long value = event.getItem().getItemMeta().getCustomTagContainer().getCustomTag(new NamespacedKey(EventRegistery.main, "diamondValue"), ItemTagType.LONG);
+			
+			if (value == null) return;
+			
+			DiamondPurse.addPurse(event.getPlayer(), value);
+			return;
+			
+		}
 
 		if (mat == Material.APPLE || mat == Material.GOLDEN_APPLE || mat == Material.MELON_SLICE) {
 		    sugar = 5;

@@ -6,12 +6,12 @@ import net.itsrelizc.commands.RelizcCommand;
 import net.itsrelizc.menus.ClassicMenu;
 import net.itsrelizc.players.locales.Locale;
 import net.itsrelizc.smp.homeplugin.menus.HomeControlMenu;
-import net.itsrelizc.string.ChatUtils;
+import net.itsrelizc.string.StringUtils;
 
 public class HomeCommand extends RelizcCommand {
 
 	public HomeCommand() {
-		super("home", "Bring back home", ChatUtils.fromArgs("house", "h", "家"));
+		super("home", "Bring back home", StringUtils.fromArgs("house", "h", "家"));
 		
 	}
 	

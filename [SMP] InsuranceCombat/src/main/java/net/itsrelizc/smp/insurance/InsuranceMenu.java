@@ -1,6 +1,8 @@
 package net.itsrelizc.smp.insurance;
 
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -10,6 +12,13 @@ import net.itsrelizc.menus.Menu2;
 import net.itsrelizc.menus.MenuTemplate2;
 import net.itsrelizc.menus.Skull;
 import net.itsrelizc.players.locales.Locale;
+import net.itsrelizc.smp.corps.Contract;
+import net.itsrelizc.smp.corps.Contract.Agreement;
+import net.itsrelizc.smp.corps.Contract.Expire;
+import net.itsrelizc.smp.corps.Contract.Party;
+import net.itsrelizc.smp.corps.Contract.Party.PartyType;
+import net.itsrelizc.string.StringUtils;
+import net.itsrelizc.smp.corps.Contract.Expire.ExpireType;
 
 
 public class InsuranceMenu extends MenuTemplate2 {
@@ -56,6 +65,33 @@ public class InsuranceMenu extends MenuTemplate2 {
 		this.setItem(21, plan_b());
 		this.setItem(23, plan_c());
 		this.setItem(25, plan_c());
+		
+	}
+	
+	@Override
+	public void onClick(InventoryClickEvent event) {
+		
+		if (event.getSlot() == 19) {
+			
+			
+			Contract c = Contract.create(2, Insurance.JUSTIN_INSURANCE.asParty(true), new Party[] {
+					Insurance.JUSTIN_INSURANCE.asParty(true)
+			}, new Agreement[] {
+					new Agreement("justin_insurance", "company.justin_insurance.promise_craft")
+			}, new Expire[] {
+					new Expire(ExpireType.TIME, Expire.EXPIRE_NEVER),
+					new Expire(ExpireType.EITHER_BREACH, Expire.EXPIRE_NEVER)
+			});
+			Player p = (Player) event.getWhoClicked();
+			c.generateLore(p);
+			this.menu.close();
+			
+			p.getInventory().addItem(c.getItem());
+			
+			StringUtils.systemMessage(p, Locale.get(p, "contract.name"), Locale.get(p, "insurance.right_click_sign"));
+			
+			
+		}
 		
 	}
 

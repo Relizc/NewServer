@@ -26,7 +26,7 @@ import net.itsrelizc.bundler.JSON;
 import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.players.locales.Locale;
 import net.itsrelizc.players.locales.Locale.Language;
-import net.itsrelizc.string.ChatUtils;
+import net.itsrelizc.string.StringUtils;
 
 public class DiamondCounter {
 	
@@ -97,7 +97,7 @@ public class DiamondCounter {
 	
 	private static class DiamondCounterListeners implements Listener {
 		
-		List<String> ores = ChatUtils.fromArgs(Material.DIAMOND_ORE.toString(), Material.DEEPSLATE_DIAMOND_ORE.toString(), Material.LEGACY_DIAMOND_ORE.toString());
+		List<String> ores = StringUtils.fromArgs(Material.DIAMOND_ORE.toString(), Material.DEEPSLATE_DIAMOND_ORE.toString(), Material.LEGACY_DIAMOND_ORE.toString());
 		
 		
 		
@@ -163,7 +163,7 @@ public class DiamondCounter {
 	    	
 	    	ItemStack i = new ItemStack(Material.DIAMOND, drops);
 	    	ItemMeta im = i.getItemMeta();
-	    	im.setLore(ChatUtils.fromArgs("§8§o谁家钻石是蓝色的？","§7价值: §b0.9 ct"));
+	    	im.setLore(StringUtils.fromArgs("§8§o谁家钻石是蓝色的？","§7价值: §b0.9 ct"));
 	    	i.setItemMeta(im);
 	    	
 	    	
@@ -179,7 +179,7 @@ public class DiamondCounter {
 	        
 	        if (remaining == 0) {
 	        	for (Player player : Bukkit.getOnlinePlayers()) {
-	        		ChatUtils.systemMessage(player, Locale.get(player, "economy.diamonds"), Locale.get(player, "economy.diamonds.allgone"));
+	        		StringUtils.systemMessage(player, Locale.get(player, "economy.diamonds"), Locale.get(player, "economy.diamonds.allgone"));
 	        	}
 	        }
 	    }

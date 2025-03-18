@@ -5,7 +5,7 @@ import org.bukkit.inventory.ItemStack;
 
 import net.itsrelizc.commands.RelizcCommand;
 import net.itsrelizc.nbt.NBT;
-import net.itsrelizc.string.ChatUtils;
+import net.itsrelizc.string.StringUtils;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class GDebugCommand extends RelizcCommand {
@@ -24,10 +24,10 @@ public class GDebugCommand extends RelizcCommand {
 		
 		if (mode.equalsIgnoreCase("g")) {
 			Hit.g = value;
-			ChatUtils.systemMessage(sender, "Ballistics", "Set Hit.g to " + value);
+			StringUtils.systemMessage(sender, "Ballistics", "Set Hit.g to " + value);
 		} else if (mode.equalsIgnoreCase("bs")) {
 			Hit.bulletSpeed = value;
-			ChatUtils.systemMessage(sender, "Ballistics", "Set Hit.bulletSpeed to " + value);
+			StringUtils.systemMessage(sender, "Ballistics", "Set Hit.bulletSpeed to " + value);
 		} else if (mode.equalsIgnoreCase("nbt")) {
 			
 			ItemStack hand = sender.getItemInHand();

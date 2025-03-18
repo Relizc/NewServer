@@ -17,7 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import net.itsrelizc.smp.modsmp.items.ItemLibrary;
-import net.itsrelizc.string.ChatUtils;
+import net.itsrelizc.string.StringUtils;
 import net.minecraft.world.item.Items;
 
 public class Shop implements Listener {
@@ -105,7 +105,7 @@ public class Shop implements Listener {
 	
 	public static boolean checkEmpty(Player player) {
 		if (!isEmpty(player)) {
-			ChatUtils.systemMessage(player, "§6§lSHOP", "§cYou need some empty space in your inventory!");
+			StringUtils.systemMessage(player, "§6§lSHOP", "§cYou need some empty space in your inventory!");
 			player.getWorld().playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 2f);
 			return false;
 		}
@@ -119,7 +119,7 @@ public class Shop implements Listener {
 			if (event.getCurrentItem() != null) {
 				if (event.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("§cClose")) {
 					player.getWorld().playSound(player.getLocation(), Sound.ENTITY_VILLAGER_YES, 1f, 2f);
-					ChatUtils.systemMessage(player, "§6§lSHOP", "§eSee you next time customer!");
+					StringUtils.systemMessage(player, "§6§lSHOP", "§eSee you next time customer!");
 					player.closeInventory();
 					event.setCancelled(true);
 					return;
@@ -136,10 +136,10 @@ public class Shop implements Listener {
 					if (countMats(player, Material.DIAMOND) >= 10) {
 						player.getInventory().addItem(ItemLibrary.item_itemduper());
 						subMat(player, Material.NETHERITE_INGOT, 3);
-						ChatUtils.systemMessage(player, "§6§lSHOP", "§eYou purchased §71× §aItem Duper!§e!");
+						StringUtils.systemMessage(player, "§6§lSHOP", "§eYou purchased §71× §aItem Duper!§e!");
 						player.getWorld().playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
 					} else {
-						ChatUtils.systemMessage(player, "§6§lSHOP", "§cYou can't afford the cost to purchase this item!");
+						StringUtils.systemMessage(player, "§6§lSHOP", "§cYou can't afford the cost to purchase this item!");
 						player.getWorld().playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 2f);
 					}
 				}

@@ -8,7 +8,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.tags.ItemTagType;
 
 import net.itsrelizc.events.EventRegistery;
-import net.itsrelizc.string.ChatUtils;
+import net.itsrelizc.string.StringUtils;
 
 public class DiamondUtils {
 	
@@ -28,7 +28,7 @@ public class DiamondUtils {
 			
 			
 		} else {
-			im.setLore(ChatUtils.fromArgs("§8§o谁家钻石是蓝色的？"));
+			im.setLore(StringUtils.fromArgs("§8§o谁家钻石是蓝色的？"));
 		}
 		
 		List<String> lore = im.getLore();
