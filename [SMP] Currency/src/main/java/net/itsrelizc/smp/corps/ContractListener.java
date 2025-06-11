@@ -24,8 +24,8 @@ import net.itsrelizc.smp.corps.Contract.Agreement;
 import net.itsrelizc.smp.corps.Contract.Party;
 import net.itsrelizc.smp.corps.menus.MenuContractSign;
 import net.itsrelizc.string.StringUtils;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 
 public class ContractListener implements Listener {
 	
@@ -45,7 +45,7 @@ public class ContractListener implements Listener {
 			
 			if (event.getPlayer().getItemInHand() != null) {
 				
-				NBTTagCompound tag = NBT.getNBT(event.getPlayer().getItemInHand());
+				CompoundTag tag = NBT.getNBT(event.getPlayer().getItemInHand());
 				
 				if (tag == null) return;
 				
@@ -53,7 +53,7 @@ public class ContractListener implements Listener {
 				if (NBT.getInteger(tag, "partyAmount") != 0) {
 					
 					
-					NBTTagList parties = NBT.getNBTArray(tag, "party", NBTTagType.TAG_Compound);
+					ListTag parties = NBT.getNBTArray(tag, "party", NBTTagType.TAG_Compound);
 					for (int i = 0; i < parties.size(); i ++) {
 						String content = NBT.getString(NBT.getCompound(parties, i), "party");
 						
@@ -76,7 +76,7 @@ public class ContractListener implements Listener {
 	}
 	
 	public static void generate(ItemStack item, Player player) {
-		NBTTagCompound tag = NBT.getNBT(item);
+		CompoundTag tag = NBT.getNBT(item);
 		if (tag == null) return;
 		
 		if (NBT.getInteger(tag, "partyAmount") == null) return;
@@ -94,7 +94,7 @@ public class ContractListener implements Listener {
 		List<String> lore = StringUtils.fromNewList();
 		int p = NBT.getInteger(tag, "partyAmount");
 		
-		NBTTagList party = NBT.getNBTArray(tag, "party", NBTTagType.TAG_Compound);
+		ListTag party = NBT.getNBTArray(tag, "party", NBTTagType.TAG_Compound);
 		lore.add(Locale.get(player, "contract.parties").formatted(party.size(), p));	
 		
 		lore.add(" ");
@@ -107,7 +107,7 @@ public class ContractListener implements Listener {
 		
 		for (int i = 1; i <= party.size(); i ++) {
 			
-			NBTTagCompound party2 = (NBTTagCompound) party.get(i - 1);
+			CompoundTag party2 = (CompoundTag) party.get(i - 1);
 			int type = NBT.getInteger(party2, "type");
 			boolean sealed = NBT.getBoolean(party2, "sealed");
 			
@@ -136,10 +136,10 @@ public class ContractListener implements Listener {
 		lore.add(" ");
 		lore.add("§b" + Locale.get(player, "contract.expires"));
 		
-		NBTTagList expire = NBT.getNBTArray(tag, "expire", NBTTagType.TAG_Compound);
+		ListTag expire = NBT.getNBTArray(tag, "expire", NBTTagType.TAG_Compound);
 		
 		for (int i = 0; i < expire.size(); i ++) {
-			NBTTagCompound party1 = (NBTTagCompound) expire.get(i);
+			CompoundTag party1 = (CompoundTag) expire.get(i);
 			int type = NBT.getInteger(party1, "type");
 			String value = NBT.getString(party1, "value");
 			
@@ -154,9 +154,9 @@ public class ContractListener implements Listener {
 		
 		lore.add(" ");
 		lore.add("§b" + Locale.get(player, "contract.agreement"));
-		NBTTagList agreements = NBT.getNBTArray(tag, "agreement", NBTTagType.TAG_Compound);
+		ListTag agreements = NBT.getNBTArray(tag, "agreement", NBTTagType.TAG_Compound);
 		for (int i = 0; i < agreements.size(); i ++) {
-			NBTTagCompound agree = (NBTTagCompound) agreements.get(i);
+			CompoundTag agree = (CompoundTag) agreements.get(i);
 			
 			String who = NBT.getString(agree, "party");
 			String content = NBT.getString(agree, "value");

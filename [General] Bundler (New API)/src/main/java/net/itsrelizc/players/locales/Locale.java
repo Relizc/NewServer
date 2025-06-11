@@ -9,24 +9,57 @@ import org.json.simple.JSONObject;
 import net.itsrelizc.bundler.JSON;
 import net.itsrelizc.nbt.NBT;
 import net.itsrelizc.players.Profile;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 
+/**
+ * General locale support for multilingual players.
+ */
 public class Locale {
 	
+	/**
+	 * Enum language for all available languages.
+	 */
 	public static enum Language {
-		EN_US,
-		ZH_CN,
-		ZH_TW, JA_JP, KO_KR, ES_ES
+		EN_US(45),
+		ZH_CN, ZH_CN_MOJANG,
+		ZH_TW, JA_JP, KO_KR, ES_ES;
+
+		private int wrapLength;
+
+		Language(int i) {
+			wrapLength = i;
+		}
+
+		Language() {
+			wrapLength = 15;
+		}
+		
+		/**
+		 * Mainly for Minecraft chat, scoreboards, or item lore usages. Since
+		 * differnt languages have different character length, some languages 
+		 * takes more space even with the same amount of characters. This gets the 
+		 * default wrap length for a language. For instance, English supports 45 characters
+		 * per line, while Chinese and Asian Hierloglyphics only supports 15. 
+		 * @return The recommended character amount per line.
+		 */
+		public int getStandardItemWrapLength() {
+			return wrapLength;
+			
+		}
 		
 	}
 	
 	public static HashMap<String, HashMap<String, String>> locales = new HashMap<String, HashMap<String, String>>();
 	
+	/**
+	 * loads all locales
+	 */
 	public static void load_all() {
 		
 		for (Language l : Language.values()) {
 			JSONObject a1 = JSON.loadDataFromDataBase("lang\\" + l.toString().toLowerCase() + ".json");
+
 			HashMap<String, String> eng = new HashMap<String, String>();
 			int lang = 0;
 			for (Object key : a1.keySet()) {
@@ -44,14 +77,45 @@ public class Locale {
 		
 	}
 	
+	/**
+	 * Gets the declared language entries in this language's JSON file. Mainly used for calculating language
+	 * completion rate and debugging.
+	 * @param code The language
+	 * @return the amount of entries this language have.
+	 */
 	public static int getLinesAmount(Language code) {
 		return locales.get(code.toString()).size();
 	}
 	
+	/**
+	 * Gets the locale of this player based on their language.
+	 * @param player The audience player
+	 * @param namespace The translation key, such as {@code commands.jerkoff.deny}
+	 * @return The translated string, or the translation key itself if the entry is not present in the language JSON file.
+	 */
 	public static String get(Player player, String namespace) {
 
 		return locales.get(Profile.findByOwner(player).lang.toString()).getOrDefault(namespace, namespace);
 
+	}
+	
+	/**
+	 * Similar to {@link #get(Player, String)}, but instead it gets from the official Mojang language mappings.
+	 * Mainly used to get the names of minecraft items. 
+	 * In other words, this just gets from the file with {@code "_MOJANG"} attached:
+	 * <blockquote>
+	 * {@code get(Language.ZH_CN_MOJANG, namespace)}
+	 * </blockquote>
+	 * @param player The target player audience
+	 * @param namespace The Mojang language translation key, such as {@code death.fell.accident.water}
+	 * @return The translated string, or the translation key itself if the entry is not present in the language JSON file.
+	 */
+	public static String getMojang(Player player, String namespace) {
+		return locales.get(Profile.findByOwner(player).lang.toString() + "_MOJANG").getOrDefault(namespace, namespace);
+	}
+	
+	public static String get(Player player, String namespace, String... formats) {
+		return get(player, namespace).formatted(formats);
 	}
 	
 	public static Language getLanguage(Player player) {
@@ -60,13 +124,13 @@ public class Locale {
 	
 	public static ItemStack insertSmartLocale(ItemStack it, String localizedName, String... localizedLore) {
 		
-		NBTTagCompound tag = NBT.getNBT(it);
-		if (tag == null) tag = new NBTTagCompound();
+		CompoundTag tag = NBT.getNBT(it);
+		if (tag == null) tag = new CompoundTag();
 		
-		NBTTagCompound languages = new NBTTagCompound();
+		CompoundTag languages = new CompoundTag();
 		NBT.setString(languages, "name", localizedName);
 		
-		NBTTagList list = new NBTTagList();
+		ListTag list = new ListTag();
 		for (String s : localizedLore) {
 			NBT.addItem(list, s);
 		}

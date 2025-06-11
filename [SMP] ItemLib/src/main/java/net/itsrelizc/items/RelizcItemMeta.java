@@ -1,0 +1,29 @@
+package net.itsrelizc.items;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import net.itsrelizc.nbt.NBT.NBTTagType;
+
+
+
+@Repeatable(value = RelizcItemMetas.class)
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.TYPE })
+public @interface RelizcItemMeta {
+
+	String key();
+
+	NBTTagType type();
+
+	int init();
+}
+
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.TYPE })
+@interface RelizcItemMetas {
+	RelizcItemMeta[] value();
+}

@@ -30,68 +30,7 @@ import net.itsrelizc.string.StringUtils;
 
 public class CommandSpit extends RelizcCommand {
 	
-	private static class MenuSpit extends MenuTemplate2 {
-		
-		private ItemStack title() {
-			
-			List<String> sep = StringUtils.wrap(Locale.get(getPlayer(), "menu.spit.jar.lore"), 16);
-			List<String> alt = StringUtils.fromNewList();
-			for (String s : sep) {
-				alt.add("§7" + s);
-			}
-			
-			return ItemGenerator.generateByList(DiamondJar.createFor(getPlayer(), 0), 1, 
-					Locale.get(getPlayer(), "menu.spit.jar.title"),
-					alt);
-			
-		}
-		
-		private ItemStack selectValue() {
-			
-
-			
-			return ItemGenerator.interactiveMenuItem(Material.OAK_SIGN, "§e" + Locale.get(getPlayer(), "menu.spit.select.name"), 	
-					StringUtils.fromArgs("§7" + Locale.get(getPlayer(), "menu.spit.select.lore")), "§b" + Locale.get(getPlayer(), "menu.click").formatted(Locale.get(getPlayer(), "menu.spit.select.click")));
-		}
-		
-		private ItemStack parseMax(ItemStack original) {
-			
-			List<String> lore = original.getItemMeta().getLore();
-			lore.add("");
-			lore.add("§7" + Locale.get(getPlayer(), "menu.spit.maximum").formatted(DiamondPurse.getMaximumBrew(getPlayer())));
-			
-			original.getItemMeta().setLore(lore);
-			
-			return original;
-			
-		}
-
-		public MenuSpit(String title) {
-			super(title);
-			// TODO Auto-generated constructor stub
-		}
-		
-		
-		@Override
-		public void apply() {
-			this.defaultPreset();
-			
-			this.setItem(4, title());
-			this.setItem(22, parseMax(selectValue()));
-		}
-		
-		@Override
-		public void onClick(InventoryClickEvent event) {
-			
-			if (event.getSlot() == 19) {
-
-				
-				
-			}
-			
-		}
-		
-	}
+	
 	
 	public CommandSpit() {
 		super("spit", "spits diamond to diamondbottle");
@@ -105,8 +44,8 @@ public class CommandSpit extends RelizcCommand {
 		
 		if (args.length >= 1) {
 
-			Double ct = null;
-			double bal = DiamondPurse.getPurse(player);
+			long ct = 0;
+			long bal = DiamondPurse.getPurse(player);
 			
 			if (args[0].equalsIgnoreCase("max")) {
 				
@@ -128,7 +67,7 @@ public class CommandSpit extends RelizcCommand {
 					return true;
 				}
 				ratio /= 100.0;
-				ct = bal * ratio;
+				ct = (long) (bal * ratio);
 				
 			} else if (args[0].equalsIgnoreCase("half")) {
 				
@@ -148,7 +87,7 @@ public class CommandSpit extends RelizcCommand {
 				
 				ct = MathEvaluator.evaluate(formula);
 				
-				if (ct == null) {
+				if (ct == -1) {
 					player.playSound(player.getLocation(), Sound.ENTITY_SHULKER_AMBIENT, 1f, 0f);
 					StringUtils.systemMessage(player, Locale.get(player, "commands.spit"), Locale.get(player, "commands.spit.fail.format"));
 					return true;
@@ -156,8 +95,6 @@ public class CommandSpit extends RelizcCommand {
 				
 				
 			}
-			
-			ct = (Math.round(ct * 1000.0)) / 1000.0;
 			
 			if (bal - ct < 0) {
 				player.playSound(player.getLocation(), Sound.ENTITY_SHULKER_AMBIENT, 1f, 0f);
@@ -170,9 +107,6 @@ public class CommandSpit extends RelizcCommand {
 			player.playSound(player.getLocation(), Sound.ENTITY_SHULKER_AMBIENT, 1f, 2f);
 			StringUtils.systemMessage(player, Locale.get(player, "commands.spit"), Locale.get(player, "commands.spit.sucess").formatted(ct));
 			
-		} else {
-			Menu2 menu = new Menu2(player, 6, new MenuSpit(Locale.get(player, "menu.spit.title")));
-			menu.open();
 		}
 		
 		return true;
@@ -196,8 +130,8 @@ public class CommandSpit extends RelizcCommand {
 			Player player = (Player) sender;
 			
 			String desc;
-			Double ct;
-			double bal = DiamondPurse.getPurse(player);
+			long ct;
+			long bal = DiamondPurse.getPurse(player);
 			
 			if (args[0].equalsIgnoreCase("max")) {
 				
@@ -221,7 +155,7 @@ public class CommandSpit extends RelizcCommand {
 				}
 				ratio /= 100.0;
 				desc = "(?) " + Locale.get(player, "commands.spit.ofbalance").formatted(kf)  + " = %,.3f ct (" + Locale.get(player, "commands.spit.percentifasdecimal").formatted(ratio, "(" + kf + ")") +")";
-				ct = bal * ratio;
+				ct = (long) (bal * ratio);
 				
 			} else if (args[0].equalsIgnoreCase("half")) {
 				
@@ -244,7 +178,7 @@ public class CommandSpit extends RelizcCommand {
 				
 				ct = MathEvaluator.evaluate(formula);
 				
-				if (ct == null) {
+				if (ct == -1) {
 					return new TabCompleteInfo(true, new TabCompleteType[] {TabCompleteType.NUMBER},(Player) sender, Locale.get((Player)sender, "commands.spit.arg0.description"), StringUtils.fromArgs(
 							"(?) " + Locale.get((Player) sender, "commands.spit.advanced").formatted(bal),
 							"(X) " + Locale.get(player, "commands.spit.invalid")));
@@ -265,8 +199,6 @@ public class CommandSpit extends RelizcCommand {
 						(int) (bal * 10.0) / 100.0 + "k",
 						"20+(40%/3^2)/(e+purse)"));
 			}
-			
-			ct = ((int) (ct * 1000)) / 1000.0;
 			
 			String s = Locale.get(player, "commands.spit.balance").formatted(bal, bal - ct);
 			

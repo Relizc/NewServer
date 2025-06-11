@@ -25,8 +25,8 @@ import net.itsrelizc.nbt.NBT;
 import net.itsrelizc.nbt.NBT.NBTTagType;
 import net.itsrelizc.players.locales.Locale;
 import net.itsrelizc.string.StringUtils;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.CompoundTag;
 
 public class SwapHands implements Listener {
 	
@@ -40,7 +40,7 @@ public class SwapHands implements Listener {
 	private static Map<Player, Integer> check_id = new HashMap<Player, Integer>();
 	
 	
-	private static Map<Player, Map<Integer, NBTTagList>> data = new HashMap<Player, Map<Integer, NBTTagList>>();
+	private static Map<Player, Map<Integer, ListTag>> data = new HashMap<Player, Map<Integer, ListTag>>();
 	private static Map<Player, ItemStack> weapon = new HashMap<Player, ItemStack>();
 	private static Map<Player, Integer> weapon_slot = new HashMap<Player, Integer>();
 	
@@ -48,7 +48,7 @@ public class SwapHands implements Listener {
 	
 	public static ItemStack getAmmo(Player player, String id) {
 		ItemStack item = ItemGenerator.generate(TACZ_AMMO, 60, Locale.get(player, "bullet.dummyammo"), Locale.get(player, "bullet.dummyammo.lore"));
-		NBTTagCompound tag = NBT.getNBT(item);
+		CompoundTag tag = NBT.getNBT(item);
 		NBT.setString(tag, "AmmoId", id);
 		
 		return NBT.setCompound(item, tag);
@@ -69,7 +69,7 @@ public class SwapHands implements Listener {
 		
 		if (current != null && current.getType() == TACZ_MODERN_KINETIC_GUN) {
 			
-			NBTTagCompound nbt = NBT.getNBT(current);
+			CompoundTag nbt = NBT.getNBT(current);
 			String gunId = NBT.getString(nbt, "GunId");
 				
 			replaceAndPutMap(event.getPlayer(), gunId);
@@ -79,7 +79,7 @@ public class SwapHands implements Listener {
 		
 //		if (current != null && current.getType() == RELIZC_MAGAZINE_55645STANAG_30) {
 //			
-//			NBTTagCompound shitfuck = NBT.getNBT(current);
+//			CompoundTag shitfuck = NBT.getNBT(current);
 //			
 //		}
 	    
@@ -136,7 +136,7 @@ public class SwapHands implements Listener {
 		};
 		
 		ItemStack i = player.getItemInHand();
-		NBTTagCompound data = NBT.getNBT(i);
+		CompoundTag data = NBT.getNBT(i);
 		if (NBT.getNBTArray(data, "AmmoContent", NBTTagType.TAG_Compound).size() == 0) {
 			NBT.setBoolean(data, "HasBulletInBarrel", false);
 		} else {
@@ -256,12 +256,12 @@ public class SwapHands implements Listener {
 	private static void giveBackAmmo(Player player) {
 		
 		ItemStack i = player.getItemInHand();
-		NBTTagCompound tag = NBT.getNBT(i);
-		NBTTagList list = NBT.getNBTArray(tag, "AmmoContent", NBTTagType.TAG_Compound);
+		CompoundTag tag = NBT.getNBT(i);
+		ListTag list = NBT.getNBTArray(tag, "AmmoContent", NBTTagType.TAG_Compound);
 		
 		int ammoindex = NBT.getInteger(tag, "AmmoIndex");
 		
-		NBTTagList mag_final = new NBTTagList();
+		ListTag mag_final = new ListTag();
 		
 		
 		if (list.size() == 0) {
@@ -273,7 +273,7 @@ public class SwapHands implements Listener {
 				NBT.addItem(mag_final, NBT.getCompound(list, bullet));
 			}
 			
-			NBTTagCompound bar = NBT.getCompound(list, list.size() - 1);
+			CompoundTag bar = NBT.getCompound(list, list.size() - 1);
 			NBT.setInteger(bar, "Count", ammoindex);
 			
 			NBT.addItem(mag_final, bar);
@@ -282,8 +282,8 @@ public class SwapHands implements Listener {
 		
 		ItemStack mag = new ItemStack(RELIZC_MAGAZINE_55645STANAG_30, 1);
 		
-		NBTTagCompound item = new NBTTagCompound();
-		NBTTagCompound final_tag = new NBTTagCompound();
+		CompoundTag item = new CompoundTag();
+		CompoundTag final_tag = new CompoundTag();
 		
 		NBT.setCompound(final_tag, "Items", mag_final);
 		NBT.setCompound(item, "Inventory", final_tag);
@@ -297,19 +297,19 @@ public class SwapHands implements Listener {
 //			Bukkit.broadcastMessage(item.getItemStack().getType().toString());
 			
 			
-			NBTTagCompound a1 = NBT.getCompound(im);
-			NBTTagCompound a2 = NBT.getCompound(a1, "Item");
-			NBTTagCompound a3 = NBT.getCompound(a2, "tag");
-			NBTTagCompound a4 = NBT.getCompound(a3, "Inventory");
-			NBTTagList a5 = NBT.getNBTArray(a4, "Items", NBTTagType.TAG_Compound);
+			CompoundTag a1 = NBT.getCompound(im);
+			CompoundTag a2 = NBT.getCompound(a1, "Item");
+			CompoundTag a3 = NBT.getCompound(a2, "tag");
+			CompoundTag a4 = NBT.getCompound(a3, "Inventory");
+			ListTag a5 = NBT.getNBTArray(a4, "Items", NBTTagType.TAG_Compound);
 			
 //			Bukkit.broadcastMessage("Before:" + a1.toString());
 
 			// Set Forge -> Item.ForgeCaps.Parent.Items
-			NBTTagCompound b1 = new NBTTagCompound();
+			CompoundTag b1 = new CompoundTag();
 			NBT.setCompound(b1, "Items", a5);
 			
-			NBTTagCompound b2 = new NBTTagCompound();
+			CompoundTag b2 = new CompoundTag();
 			NBT.setCompound(b2, "Parent", b1);
 
 			NBT.setCompound(a2, "ForgeCaps", b2);
@@ -331,7 +331,7 @@ public class SwapHands implements Listener {
 		// Get Vanilla -> Item.tag.Inventory.Items
 		
 		
-//		NBTTagCompound final_tag = new NBTTagCompound();
+//		CompoundTag final_tag = new CompoundTag();
 		
 //		NBT.setInteger(final_tag, "Size", 33);
 		
@@ -351,12 +351,12 @@ public class SwapHands implements Listener {
 	private static void modifyGun(Player player, ItemStack loadedAmmo) {
 		
 		ItemStack i = player.getItemInHand();
-		NBTTagCompound tag = NBT.getNBT(i);
-		NBTTagCompound ammo = NBT.getNBT(loadedAmmo);
-		NBTTagCompound ammo2 = NBT.getCompound(ammo, "Inventory");
-		NBTTagList ammo3 = NBT.getNBTArray(ammo2, "Items", NBTTagType.TAG_Compound);
+		CompoundTag tag = NBT.getNBT(i);
+		CompoundTag ammo = NBT.getNBT(loadedAmmo);
+		CompoundTag ammo2 = NBT.getCompound(ammo, "Inventory");
+		ListTag ammo3 = NBT.getNBTArray(ammo2, "Items", NBTTagType.TAG_Compound);
 		
-		NBTTagCompound ammodata = NBT.getCompound(ammo3, ammo3.size() - 1);
+		CompoundTag ammodata = NBT.getCompound(ammo3, ammo3.size() - 1);
 		
 		NBT.setCompound(tag, "AmmoContent", ammo3);
 		NBT.setInteger(tag, "AmmoIndex", NBT.getInteger(ammodata, "Count"));
@@ -382,10 +382,10 @@ public class SwapHands implements Listener {
 	public static String nextFire(Player player) {
 		ItemStack gun = player.getItemInHand();
 		
-		NBTTagCompound nbt = NBT.getNBT(gun);
+		CompoundTag nbt = NBT.getNBT(gun);
 		System.out.println(nbt);
 		int index = NBT.getInteger(nbt, "AmmoIndex");
-		NBTTagCompound next = NBT.getCompound(NBT.getNBTArray(nbt, "AmmoContent", NBTTagType.TAG_Compound), index);
+		CompoundTag next = NBT.getCompound(NBT.getNBTArray(nbt, "AmmoContent", NBTTagType.TAG_Compound), index);
 		NBT.setInteger(nbt, "AmmoIndex", index - 1);
 //		NBT.setInteger(nbt, "GunCurrentAmmoCount", Math.max(index, 0));
 //		NBT.setInteger(nbt, "HasBulletInBarrel", 0);

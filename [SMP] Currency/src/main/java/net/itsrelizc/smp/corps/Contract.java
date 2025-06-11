@@ -15,15 +15,14 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import net.itsrelizc.bundler.JSON;
-import net.itsrelizc.menus.ClassicMenu;
 import net.itsrelizc.menus.ItemGenerator;
 import net.itsrelizc.menus.Menu2;
 import net.itsrelizc.nbt.NBT;
 import net.itsrelizc.players.locales.Locale;
 import net.itsrelizc.smp.corps.api.Business;
 import net.itsrelizc.smp.corps.menus.MenuContractSign;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 
 public class Contract {
 	
@@ -41,7 +40,7 @@ public class Contract {
 	
 	public interface ContractContent {
 		
-		public NBTTagCompound convertToNBT();
+		public CompoundTag convertToNBT();
 		public JSONObject convertToJSON();
 		
 	}
@@ -55,10 +54,11 @@ public class Contract {
 			this.content = content;
 		}
 		
-		public NBTTagCompound convertToNBT() {
-			NBTTagCompound tag = new NBTTagCompound();
-			NBT.setString(tag, "party", this.party);
+		public CompoundTag convertToNBT() {
+			CompoundTag tag = new CompoundTag();
+			
 			NBT.setString(tag, "value", this.content);
+			NBT.setString(tag, "party", this.party);
 			
 			return tag;
 		}
@@ -132,8 +132,8 @@ public class Contract {
 			this.value = value;
 		}
 		
-		public NBTTagCompound convertToNBT() {
-			NBTTagCompound tag = new NBTTagCompound();
+		public CompoundTag convertToNBT() {
+			CompoundTag tag = new CompoundTag();
 			NBT.setInteger(tag, "type", this.type.type);
 			NBT.setString(tag, "value", this.value);
 			
@@ -185,8 +185,8 @@ public class Contract {
 			this.sealed = sealed;
 		}
 		
-		public NBTTagCompound convertToNBT() {
-			NBTTagCompound tag = new NBTTagCompound();
+		public CompoundTag convertToNBT() {
+			CompoundTag tag = new CompoundTag();
 			NBT.setInteger(tag, "type", this.type.type);
 			NBT.setString(tag, "party", this.business.getRegistrationName());
 			NBT.setBoolean(tag, "sealed", this.sealed);
@@ -275,8 +275,8 @@ public class Contract {
 		
 		this.issued = System.currentTimeMillis();
 		
-		NBTTagCompound tag = NBT.getNBT(contract);
-		if (tag == null) tag = new NBTTagCompound();
+		CompoundTag tag = NBT.getNBT(contract);
+		if (tag == null) tag = new CompoundTag();
 		
 		NBT.setLong(tag, "issued", issued);
 		NBT.setString(tag, "uuid", this.id.toString());
@@ -286,14 +286,14 @@ public class Contract {
 		
 		NBT.setString(tag, "creator", mainIssuer.getBusiness().getRegistrationName());
 		
-		NBTTagList list = new NBTTagList();
+		ListTag list = new ListTag();
 		for (Expire e : expires2) {
 			NBT.addItem(list, e.convertToNBT());
 		}
 		
 		NBT.setCompound(tag, "expire", list);
 		
-		NBTTagList p = new NBTTagList();
+		ListTag p = new ListTag();
 		for (Agreement e : agreements2) {
 			NBT.addItem(p, e.convertToNBT());
 		}
@@ -302,7 +302,7 @@ public class Contract {
 		
 		NBT.setInteger(tag, "partyAmount", partyAmount);
 		
-		NBTTagList party = new NBTTagList();
+		ListTag party = new ListTag();
 		for (Party e : parties2) {
 			NBT.addItem(party, e.convertToNBT());
 		}
@@ -368,7 +368,7 @@ public class Contract {
 		if (this.getItem() == null) item = player.getItemInHand();
 		else item = this.getItem();
 		
-		NBTTagCompound tag = NBT.getNBT(item);
+		CompoundTag tag = NBT.getNBT(item);
 		
 		
 	}

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -73,10 +74,12 @@ public class Grouping implements Listener {
 			String n = r.permission + name;
 			
 			Team team = board.registerNewTeam(n.substring(0, Math.min(n.length(), 15)));
+
 			rankedTeam.put(r, team);
 		}
 		
 		Bukkit.getPluginManager().registerEvents(new Grouping(), plugin);
+		
 	}
 	
 	@EventHandler
@@ -86,7 +89,7 @@ public class Grouping implements Listener {
 		
 	}
 	
-	
+	public static Map<Player, Team> playersoleTeams = new HashMap<Player, Team>();
 	
 	@EventHandler(priority=EventPriority.LOWEST)
 	public void _aO(PlayerLoginEvent event) {
@@ -109,13 +112,35 @@ public class Grouping implements Listener {
 			
 		}, 10L);
 		
+		String n = event.getPlayer().getUniqueId().toString();
+		Team t = board.registerNewTeam(n.substring(0, Math.min(n.length(), 15)));
+		
+	
+		
+		ChatColor c = ChatColor.getByChar(r.displayName.substring(1, 2));
+		t.setPrefix(r.rankColor());
+		
+		t.setColor(c);
+		playersoleTeams.put(event.getPlayer(), t);
+		t.addEntry(event.getPlayer().getName());
+		
 		event.getPlayer().setOp(r.useop);
 		
 		Bukkit.getPluginManager().callEvent(new PostPlayerProfileGenerateEvent(event));
 	}
 	
+	public static void setSuffix(Player player, String str) {
+		playersoleTeams.get(player).setSuffix(str);
+	}
+	
+	public static String getSuffix(Player player) {
+		return playersoleTeams.get(player).getSuffix();
+	}
+	
 	@EventHandler
 	public void _b(PlayerQuitEvent event) {
+		Team t = playersoleTeams.remove(event.getPlayer());
+		t.unregister();
 		Profile.removeProfile(Profile.findByOwner(event.getPlayer()));
 	}
 	

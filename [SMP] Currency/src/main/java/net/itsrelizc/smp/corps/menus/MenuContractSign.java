@@ -17,8 +17,8 @@ import net.itsrelizc.players.locales.Locale;
 import net.itsrelizc.smp.corps.Contract;
 import net.itsrelizc.smp.corps.Contract.Party;
 import net.itsrelizc.smp.corps.ContractListener;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 
 
 public class MenuContractSign extends MenuTemplate2 {
@@ -79,9 +79,9 @@ public class MenuContractSign extends MenuTemplate2 {
 		
 		if (event.getRawSlot() == 20) {
 			
-			NBTTagCompound tag = NBT.getNBT(contract);
+			CompoundTag tag = NBT.getNBT(contract);
 			
-			NBTTagList parties = NBT.getNBTArray(tag, "party", NBTTagType.TAG_Compound);
+			ListTag parties = NBT.getNBTArray(tag, "party", NBTTagType.TAG_Compound);
 			NBT.addItem(parties, Party.getIndividual(this.menu.getPlayer(), false).convertToNBT());
 			
 			NBT.setCompound(tag, "party", parties);
@@ -94,9 +94,9 @@ public class MenuContractSign extends MenuTemplate2 {
 			this.menu.close();
 			
 		} else if (event.getRawSlot() == 22) {
-			NBTTagCompound tag = NBT.getNBT(contract);
+			CompoundTag tag = NBT.getNBT(contract);
 			
-			NBTTagList parties = NBT.getNBTArray(tag, "party", NBTTagType.TAG_Compound);
+			ListTag parties = NBT.getNBTArray(tag, "party", NBTTagType.TAG_Compound);
 			NBT.addItem(parties, Party.getIndividual(this.menu.getPlayer(), true).convertToNBT());
 			
 			NBT.setCompound(tag, "party", parties);

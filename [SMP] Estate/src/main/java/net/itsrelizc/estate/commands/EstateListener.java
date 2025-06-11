@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -48,7 +49,7 @@ public class EstateListener implements Listener {
 		if (ChunkMetadata.get(current, "chunkPermissionDig", PersistentDataType.INTEGER) != null && (int) ChunkMetadata.get(current, "chunkPermissionDig", PersistentDataType.INTEGER) == 0 && !ChunkMetadata.get(current, "relizcPurchasedOwner", PersistentDataType.STRING).equals(event.getPlayer().getUniqueId().toString())) {
 			event.setCancelled(true);
 			event.getPlayer().sendMessage("§c" + Locale.get(event.getPlayer(), "globalestate.dig.deny"));
-			event.getPlayer().playSound(event.getPlayer(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
+			event.getPlayer().playSound(event.getPlayer(), Sound.BLOCK_FIRE_EXTINGUISH, 2f, 1f);
 			return;
 		}
 		
@@ -73,6 +74,8 @@ public class EstateListener implements Listener {
 		
 		if (event.getPlayer().getInventory().getItemInOffHand() == null) return;
 		
+		if (event.getClickedBlock() == null) return;
+		
 		Chunk current = event.getClickedBlock().getLocation().getChunk();
 		
 		if (ChunkMetadata.get(current, "relizcPurchasedOwner", PersistentDataType.STRING) != null && ChunkMetadata.get(current, "chunkPermissionDig", PersistentDataType.INTEGER) == null) { //backwards compatibility
@@ -91,7 +94,32 @@ public class EstateListener implements Listener {
 		if (ChunkMetadata.get(current, "chunkPermission", PersistentDataType.INTEGER) != null && (int) ChunkMetadata.get(current, "chunkPermission", PersistentDataType.INTEGER) == 0 && !ChunkMetadata.get(current, "relizcPurchasedOwner", PersistentDataType.STRING).equals(event.getPlayer().getUniqueId().toString())) {
 			event.setCancelled(true);
 			event.getPlayer().sendMessage("§c" + Locale.get(event.getPlayer(), "globalestate.interact.deny"));
-			event.getPlayer().playSound(event.getPlayer(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
+			event.getPlayer().playSound(event.getPlayer(), Sound.BLOCK_FIRE_EXTINGUISH, 2f, 1f);
+		}
+		
+	}
+	
+	@EventHandler
+	public void place(BlockPlaceEvent event) {
+		
+		Chunk current = event.getBlockPlaced().getLocation().getChunk();
+		if (ChunkMetadata.get(current, "relizcPurchasedOwner", PersistentDataType.STRING) != null && ChunkMetadata.get(current, "chunkPermissionDig", PersistentDataType.INTEGER) == null) { //backwards compatibility
+			ChunkMetadata.set(current, "chunkPermissionList", PersistentDataType.STRING, "");
+			ChunkMetadata.set(current, "chunkPermissionDigList", PersistentDataType.STRING, "");
+			ChunkMetadata.set(current, "chunkPermission", PersistentDataType.INTEGER, 0);
+			ChunkMetadata.set(current, "chunkPermissionDig", PersistentDataType.INTEGER, 0);
+			
+		}
+		
+		if (ChunkMetadata.get(current, "relizcPurchasedOwner", PersistentDataType.STRING) == null) {
+			ChunkMetadata.remove(current, "chunkPermission");
+			ChunkMetadata.remove(current, "chunkPermissionDig");
+		}
+		
+		if (ChunkMetadata.get(current, "chunkPermission", PersistentDataType.INTEGER) != null && (int) ChunkMetadata.get(current, "chunkPermission", PersistentDataType.INTEGER) == 0 && !ChunkMetadata.get(current, "relizcPurchasedOwner", PersistentDataType.STRING).equals(event.getPlayer().getUniqueId().toString())) {
+			event.setCancelled(true);
+			event.getPlayer().sendMessage("§c" + Locale.get(event.getPlayer(), "pvp.blockdisabled"));
+			event.getPlayer().playSound(event.getPlayer(), Sound.BLOCK_FIRE_EXTINGUISH, 2f, 1f);
 		}
 		
 	}

@@ -9,6 +9,8 @@ public class CommandRegistery {
 	
 	public static void register(RelizcCommand command) {
 		
+		Bukkit.getLogger().info("Registering command " + command.getName());
+		
 		try {
 			   final Field bukkitCommandMap = Bukkit.getServer().getClass().getDeclaredField("commandMap");
 

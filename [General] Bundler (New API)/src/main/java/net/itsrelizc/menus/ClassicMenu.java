@@ -2,6 +2,7 @@ package net.itsrelizc.menus;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -12,12 +13,17 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
+import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.menus.MenuTemplate;
+import net.itsrelizc.nbt.NBT;
+import net.minecraft.nbt.CompoundTag;
 
 public class ClassicMenu implements Listener {
 	
-	public Inventory menu;
+	private Inventory menu;
 	private int row;
 	public Player holder;
 	private MenuTemplate template;
@@ -33,8 +39,12 @@ public class ClassicMenu implements Listener {
 		this(holder, row, name);
 		this.template = template;
 	}
-	
+		
 	public void setItem(int slot, ItemStack item) {
+		
+		PersistentDataContainer cont = item.getItemMeta().getPersistentDataContainer();
+		cont.set(new NamespacedKey(EventRegistery.main, "menu"), PersistentDataType.BOOLEAN, true);
+		
 		this.menu.setItem(slot, item);
 	}
 	
@@ -104,6 +114,8 @@ public class ClassicMenu implements Listener {
 	
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void click(InventoryClickEvent event) {
+		
+		event.setCancelled(true);
 		
 		if (event.getClick() == ClickType.DOUBLE_CLICK) {
 			return;

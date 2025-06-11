@@ -1,12 +1,15 @@
 package net.itsrelizc.diamonds;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 
 import net.itsrelizc.bundler.JSON;
+import net.itsrelizc.players.locales.Locale;
+import net.itsrelizc.smp.modsmp.SMPScoreboard;
 
 public class DiamondPurse {
 	
@@ -81,8 +84,8 @@ public class DiamondPurse {
 		JSON.saveDataFromDataBase("diamond_sugar.json", content);
 	}
 	
-	public static float getPurse(Player player) {
-		return (float) (balance.getOrDefault(player, -1L) / 1000.0);
+	public static long getPurse(Player player) {
+		return balance.getOrDefault(player, -1L);
 	}
 
 	public static double getBloodSugar(Player p) {
@@ -92,6 +95,13 @@ public class DiamondPurse {
 	public static void addPurse(Player player, long d) {
 		balance.put(player, balance.get(player) + d);
 		
+		List<String> l = SMPScoreboard.boards.get(player).getLines();
+		for (int i = 0; i < l.size(); i ++) {
+			if (l.get(i).startsWith(SMPScoreboard.SECRET_DIAMOND_PURSE)) {
+				SMPScoreboard.boards.get(player).editLine(i, SMPScoreboard.SECRET_DIAMOND_PURSE + Locale.get(player, "general.tablist.purse").formatted(DiamondPurse.getPurse(player)));
+			}
+		}
+		
 	}
 
 	public static void addSugar(Player player, long sugar) {
@@ -99,28 +109,9 @@ public class DiamondPurse {
 		
 	}
 
-	public static double getMaximumBrew(Player player) {
-		double sugar = getBloodSugar(player);
-		double belly = getPurse(player);
-		
 
-        // 计算钻石能提供的最大钻石酒数量
-        double maxWineFromDiamond = belly / 0.001;
-        // 计算血糖能提供的最大钻石酒数量
-        double maxWineFromBloodSugar = sugar / 0.1;
-
-        // 取两者中的较小值作为最大酿造量
-        double maxWine = Math.min(maxWineFromDiamond, maxWineFromBloodSugar);
-        
-        return maxWine;
-		
-		
-		
-		
-	}
-
-	public static void removePurse(Player player, Double ct) {
-		balance.put(player, (long) (balance.get(player) - (ct * 1000.0)));
+	public static void removePurse(Player player, long ct) {
+		balance.put(player, balance.get(player) - ct);
 	}
 
 }

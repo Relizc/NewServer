@@ -4,17 +4,17 @@ import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 
 public class MathEvaluator {
-    public static Double evaluate(String expression) {
+    public static long evaluate(String expression) {
         if (expression == null || expression.trim().isEmpty()) {
-            return null;
+            return -1;
         }
 
         try {
             expression = preprocess(expression);
             Expression exp = new ExpressionBuilder(expression).build();
-            return exp.evaluate();
+            return (long) exp.evaluate();
         } catch (Exception e) {
-            return null;
+            return -1;
         }
     }
 

@@ -10,6 +10,10 @@ import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+
 /*
  * net.minecraft.nbt.CompoundTag -> qr:
     com.mojang.serialization.Codec CODEC -> a
@@ -274,9 +278,6 @@ net.minecraft.nbt.ListTag -> qx:
  * 
  * */
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
 
 public class NBT {
 	
@@ -315,140 +316,148 @@ public class NBT {
 	    }
 	}
 	
-	public static NBTTagCompound createNew() {
+	public static CompoundTag createNew() {
 		
-		return new NBTTagCompound();
+		return new CompoundTag();
 		
 	}
 	
-	public static NBTTagCompound getNBT(ItemStack item) {
+	public static CompoundTag getNBT(ItemStack item) {
 		net.minecraft.world.item.ItemStack im = CraftItemStack.asNMSCopy(item);
 		
-		if (!im.u()) return null; //516:516:boolean hasTag() -> u
+		if (!im.hasTag()) return null; //516:516:boolean hasTag() -> u
 		
-		NBTTagCompound tag = im.v(); // 521:521:net.minecraft.nbt.CompoundTag getTag() -> v
+		CompoundTag tag = im.getTag(); // 521:521:net.minecraft.nbt.CompoundTag getTag() -> v
 		
 		return tag;
 	}
 	
-	public static NBTTagCompound getCompound(ItemStack item, String key) {
+	public static CompoundTag getCompound(ItemStack item, String key) {
 		net.minecraft.world.item.ItemStack im = CraftItemStack.asNMSCopy(item);
 		
-		if (!im.u()) return null; //516:516:boolean hasTag() -> u
+		if (!im.hasTag()) return null; //516:516:boolean hasTag() -> u
 		
-		NBTTagCompound tag = im.v(); // 521:521:net.minecraft.nbt.CompoundTag getTag() -> v
+		CompoundTag tag = im.getTag(); // 521:521:net.minecraft.nbt.CompoundTag getTag() -> v
 		
-		return tag.p(key); // 407:413:net.minecraft.nbt.CompoundTag getCompound(java.lang.String) -> p
+		return tag.getCompound(key); // 407:413:net.minecraft.nbt.CompoundTag getCompound(java.lang.String) -> p
 		
 	}
 	
-	public static NBTTagCompound getCompound(NBTTagCompound nbt, String key) {
+	public static CompoundTag getCompound(CompoundTag nbt, String key) {
 		
-		return nbt.p(key);
+		return nbt.getCompound(key);
 	}
 
 	public static String getString(ItemStack item, String string) {
 		
-		NBTTagCompound tag = getNBT(item);
-		return tag.l(string);
+		CompoundTag tag = getNBT(item);
+		if (tag == null) return null;
+		return tag.getString(string);
 		
 
 	}
 	
-	public static NBTTagList getNBTArray(NBTTagCompound n, String key, NBTTagType type) {
-		return n.c(key, type.id);
+	public static ListTag getNBTArray(CompoundTag n, String key, NBTTagType type) {
+		return n.getList(key, type.id);
 	}
 
-	public static void setString(NBTTagCompound n, String string, String string2) {
-		n.a(string, string2);
+	public static void setString(CompoundTag n, String string, String string2) {
+		n.putString(string, string2);
 	}
 
-	public static ItemStack setCompound(ItemStack item, NBTTagCompound n) {
+	public static ItemStack setCompound(ItemStack item, CompoundTag n) {
 		
 		net.minecraft.world.item.ItemStack im = CraftItemStack.asNMSCopy(item);
 		
-		im.c(n);
+		im.setTag(n);
 		
 		return CraftItemStack.asBukkitCopy(im);
 		
 	}
 
-	public static NBTTagCompound getCompound(NBTTagList list, int i) {
-		return list.a(i);
+	public static CompoundTag getCompound(ListTag list, int i) {
+		return list.getCompound(i);
 	}
 
-	public static byte getByte(NBTTagCompound tag, String string) {
-		return tag.f(string);
+	public static byte getByte(CompoundTag tag, String string) {
+		return tag.getByte(string);
 	}
 
-	public static String getString(NBTTagCompound tag, String string) {
-		return tag.l(string);
+	public static String getString(CompoundTag tag, String string) {
+		return tag.getString(string);
 	}
 
-	public static void setInteger(NBTTagCompound tag2, String string, int c) {
+	public static void setInteger(CompoundTag tag2, String string, int c) {
 		
-		tag2.a(string, c);
+		tag2.putInt(string, c);
 		
 	}
 
-	public static Set<String> getKeys(NBTTagCompound tag2) {
-		return tag2.e();
+	public static Set<String> getKeys(CompoundTag tag2) {
+		return tag2.getAllKeys();
 	}
 
-	public static Integer getInteger(NBTTagCompound a, String string) {
-		return a.h(string);
+	public static Integer getInteger(CompoundTag a, String string) {
+		return a.getInt(string);
 	}
 	
-	public static void addItem(NBTTagList list, NBTTagCompound compound) {
+	public static void addItem(ListTag list, CompoundTag compound) {
 		list.add(compound);
 	}
 	
-	public static void addItem(NBTTagList list, String string) {
-		list.add(NBTTagString.a(string));
+	public static void addItem(ListTag list, String string) {
+		list.add(StringTag.valueOf(string));
 	}
 
-	public static void setCompound(NBTTagCompound tag2, String string, NBTTagCompound tag) {
-		tag2.a(string, tag);
+	public static void setCompound(CompoundTag tag2, String string, CompoundTag tag) {
+		tag2.put(string, tag);
 		
 	}
 
-	public static void setCompound(NBTTagCompound tag2, String string, NBTTagList list) {
-		tag2.a(string, list);
+	public static void setCompound(CompoundTag tag2, String string, ListTag list) {
+		tag2.put(string, list);
 		
 	}
 	
-	public static boolean getBoolean(NBTTagCompound tag, String key) {
-		return tag.q(key);
+	public static boolean getBoolean(CompoundTag tag, String key) {
+		return tag.getBoolean(key);
 	}
 	
-	public static void setBoolean(NBTTagCompound tag, String key, boolean value) {
-		tag.a(key, value);
+	public static void setBoolean(CompoundTag tag, String key, boolean value) {
+		tag.putBoolean(key, value);
 	}
 
-	public static NBTTagCompound getCompound(Entity entity) {
+	public static CompoundTag getCompound(Entity entity) {
 		net.minecraft.world.entity.Entity nmsEntity = ((CraftEntity) entity).getHandle();
 		
-		NBTTagCompound cur = new NBTTagCompound();
-		nmsEntity.f(cur);
+		CompoundTag cur = new CompoundTag();
+		nmsEntity.save(cur);
 		
 		return cur;
 	}
 	
-	public static void setCompound(Entity entity, NBTTagCompound compound) {
+	public static void setCompound(Entity entity, CompoundTag compound) {
 		
 		net.minecraft.world.entity.Entity nmsEntity = ((CraftEntity) entity).getHandle();
-		nmsEntity.g(compound);
+		nmsEntity.load(compound);
 		
 		
 		
 	}
 
-	public static void setLong(NBTTagCompound tag, String string, long currentTimeMillis) {
-		tag.a(string, currentTimeMillis);
+	public static void setLong(CompoundTag tag, String string, long currentTimeMillis) {
+		tag.putLong(string, currentTimeMillis);
 	}
 
-	public static long getLong(NBTTagCompound tag, String string) {
-		return tag.i(string);
+	public static long getLong(CompoundTag tag, String string) {
+		return tag.getLong(string);
+	}
+
+	public static void set(CompoundTag tag, String key, NBTTagType type, Object init) {
+		if (type == NBTTagType.TAG_Int) {
+			tag.putInt(key, (int) init);
+		}
+		
 	}
 
 

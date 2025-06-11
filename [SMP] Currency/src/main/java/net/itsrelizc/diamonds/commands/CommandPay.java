@@ -50,8 +50,8 @@ public class CommandPay extends RelizcCommand {
 			
 			String[] args = {ntargs[1], ntargs[0]};
 
-			Double ct = null;
-			double bal = DiamondPurse.getPurse(player);
+			Long ct = null;
+			long bal = DiamondPurse.getPurse(player);
 			
 			if (args[0].equalsIgnoreCase("max")) {
 				
@@ -73,7 +73,7 @@ public class CommandPay extends RelizcCommand {
 					return true;
 				}
 				ratio /= 100.0;
-				ct = bal * ratio;
+				ct = (long) (bal * ratio);
 				
 			} else if (args[0].equalsIgnoreCase("half")) {
 				
@@ -101,8 +101,6 @@ public class CommandPay extends RelizcCommand {
 				
 				
 			}	
-			
-			ct = (Math.round(ct * 1000.0)) / 1000.0;
 			
 			if (bal - ct < 0) {
 				player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 2f);
@@ -152,8 +150,8 @@ public class CommandPay extends RelizcCommand {
 			Player player = (Player) sender;
 			
 			String desc;
-			Double ct;
-			double bal = DiamondPurse.getPurse(player);
+			long ct;
+			long bal = DiamondPurse.getPurse(player);
 			
 			if (args[0].equalsIgnoreCase("max")) {
 				
@@ -177,7 +175,7 @@ public class CommandPay extends RelizcCommand {
 				}
 				ratio /= 100.0;
 				desc = "(?) " + Locale.get(player, "commands.pay.ofbalance").formatted(kf)  + " = %,.3f ct (" + Locale.get(player, "commands.pay.percentifasdecimal").formatted(ratio, "(" + kf + ")") +")";
-				ct = bal * ratio;
+				ct = (long) (bal * ratio);
 				
 			} else if (args[0].equalsIgnoreCase("half")) {
 				
@@ -200,7 +198,7 @@ public class CommandPay extends RelizcCommand {
 				
 				ct = MathEvaluator.evaluate(formula);
 				
-				if (ct == null) {
+				if (ct == -1) {
 					return new TabCompleteInfo(true, new TabCompleteType[] {TabCompleteType.NUMBER},(Player) sender, Locale.get((Player)sender, "commands.pay.arg0.description"), StringUtils.fromArgs(
 							"(?) " + Locale.get((Player) sender, "commands.pay.advanced").formatted(bal),
 							"(X) " + Locale.get(player, "commands.pay.invalid")));
@@ -221,8 +219,6 @@ public class CommandPay extends RelizcCommand {
 						(int) (bal * 10.0) / 100.0 + "k",
 						"20+(40%/3^2)/(e+purse)"));
 			}
-			
-			ct = ((int) (ct * 1000)) / 1000.0;
 			
 			String s = Locale.get(player, "commands.pay.balance").formatted(bal, bal - ct);
 			
