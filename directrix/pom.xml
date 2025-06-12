@@ -1,19 +1,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>net.itsrelizc.mcserver.bungee</groupId>
+  <groupId>net.itsrelizc</groupId>
   <artifactId>directrix</artifactId>
   <version>2.0.1</version>
   <name>Directrix</name>
-  <description>A BungeeCord Dynamic Servering plugin</description>
+  <description>Directrix, the bungeecord dynamic proxy plugin</description>
   
   <repositories>
         <repository>
             <id>bungeecord-repo</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </repository>
-        <repository>
-	        <id>relizc-repo</id>
-	        <url>https://smp.itsrelizc.net/</url>
         </repository>
     </repositories>
 
@@ -31,6 +27,11 @@
             <version>1.19-R0.1-SNAPSHOT</version>
             <type>javadoc</type>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+        	<groupId>net.md-5</groupId>
+        	<artifactId>bungeecord-proxy</artifactId>
+        	<version>1.21-R0.3-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

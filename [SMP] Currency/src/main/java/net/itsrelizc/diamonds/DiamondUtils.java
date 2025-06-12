@@ -12,7 +12,7 @@ import net.itsrelizc.string.StringUtils;
 
 public class DiamondUtils {
 	
-	public static double scanValueThenCreate(ItemStack i) {
+	public static Long scanValueThenCreate(ItemStack i) {
 		
 		ItemMeta im = i.getItemMeta();
 		
@@ -21,7 +21,7 @@ public class DiamondUtils {
 			boolean f = false;
 			for (String s : im.getLore()) {
 				if (s.startsWith("§7价值: §b")) {
-					return Double.valueOf(s.substring("§7价值: §b".length(), s.length() - 4));
+					return Long.valueOf(s.substring("§7价值: §b".length(), s.length() - 4));
 					
 				}
 			}
@@ -32,15 +32,15 @@ public class DiamondUtils {
 		}
 		
 		List<String> lore = im.getLore();
-		lore.add("§7价值: §b0.1 ct");
+		lore.add("§7价值: §b1 ct");
 		im.setLore(lore);
 		
 		NamespacedKey key = new NamespacedKey(EventRegistery.main, "diamondValue");
-		im.getCustomTagContainer().setCustomTag(key, ItemTagType.LONG, 100l);
+		im.getCustomTagContainer().setCustomTag(key, ItemTagType.LONG, 1l);
 		
 		i.setItemMeta(im);
 		
-		return -1;
+		return -1l;
 		
 		
 		

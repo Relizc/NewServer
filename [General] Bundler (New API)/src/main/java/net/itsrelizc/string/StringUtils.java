@@ -1,11 +1,14 @@
 package net.itsrelizc.string;
 
-import java.sql.Timestamp;
 import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -88,7 +91,7 @@ public class StringUtils {
 		else return "";
 	}
 	
-	/*
+	/**
 	 * Sorts an array by padding it with Minecraft color codes (§0-9a-f)
 	 * Used to sort tab complete commands
 	 * 
@@ -128,6 +131,10 @@ public class StringUtils {
 		}
 	}
 	
+	public static void attachCommand(Player player, TextComponent component, String command) {
+		attachCommand(component, command, Locale.get(player, "general.text.runcommand") + command);
+	}
+	
 	public static void attachHover(TextComponent component, String hover) {
 		if (hover == null) {
 			component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§eTheres nothing to see here!").create()));
@@ -137,8 +144,13 @@ public class StringUtils {
 	}
 	
 	public static void attachOpenURL(TextComponent component, String url) {
-		component.setText(component.getText() + " ↗");
+		component.setText(component.getText() + " ↗§r");
 		component.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url));
+	}
+	
+	public static void attachCopy(TextComponent component, String toCopy) {
+		component.setText(component.getText() + " ⎘");
+		component.setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, toCopy));
 	}
 
 	
@@ -196,62 +208,124 @@ public class StringUtils {
 		
 	}
 	
-	public static List<String> wrap(String text, int wrapLength) {
-//		
-//		text.replace("！", "! "); // wrapbug: replace asian characters
-//		text.replace("？", "? ");
-//		text.replace("“", "\"");
-//		text.replace("”", "\"");
-//		text.replace("。", ". ");
-		
-        List<String> lines = new ArrayList<>();
-        if (text == null || wrapLength <= 0) {
-            return lines;
-        }
-        
-        // Define punctuation marks (including full-width versions for Asian languages)
-        String punctuation = ".,!?;:()";
-        StringBuilder currentLine = new StringBuilder();
-        
-        // Process each character, no spaces splitting (to handle Asian characters properly)
-        for (int i = 0; i < text.length(); i++) {
-            char ch = text.charAt(i);
-            String currentChar = String.valueOf(ch);
-            
-            // If adding this character exceeds the wrap length
-            if (currentLine.length() + currentChar.length() > wrapLength) {
-                // Check if current line ends with punctuation (either half-width or full-width)
-                if (currentLine.length() > 0 && punctuation.contains(currentLine.charAt(currentLine.length() - 1) + "")) {
-                    lines.add(currentLine.toString().trim());
-                    currentLine = new StringBuilder(currentChar); // Start a new line with the character
+	private static final Set<Character> INVALID_LINE_START = Set.of(
+	        ',', '.', '!', '?', ':', ';', ')', ']', '}', '\'', '"'
+    );
+	
+	/**
+	 * This function wraps a string text by adding newlines. <strong>Take note that user entered new line characters "\n" does not reset the counter</strong>
+	 * @param text The Text to wrap
+	 * @param maxWidth The maximum width that a line can have
+	 * @return
+	 */
+    public static String wrapText(String text, int maxWidth) {
+        if (text == null || maxWidth < 1) return "";
+
+        String[] words = text.split("\\s+");
+        StringBuilder wrapped = new StringBuilder();
+        StringBuilder line = new StringBuilder();
+
+        for (int i = 0; i < words.length; i++) {
+            String word = words[i];
+
+            // Check if this word would start a line with a bad punctuation
+            while (!line.isEmpty() && word.length() + line.length() + 1 > maxWidth) {
+                // If the next word is just punctuation and would start a new line, attach it to the current line
+                if (word.length() == 1 && INVALID_LINE_START.contains(word.charAt(0))) {
+                    line.append(word);  // glue punctuation
+                    i++;  // move to next word
+                    if (i < words.length) word = words[i]; else break;
                 } else {
-                    lines.add(currentLine.toString().trim());
-                    currentLine = new StringBuilder(currentChar); // Start a new line with the character
+                    break;
                 }
-            } else {
-                currentLine.append(currentChar);
             }
+
+            if (line.length() + word.length() + 1 > maxWidth) {
+                // Check if the word would start with bad punctuation
+                if (!line.isEmpty()) {
+                    wrapped.append(line.toString().stripTrailing()).append("\n");
+                    line = new StringBuilder();
+                }
+            }
+
+            if (line.length() > 0) {
+                line.append(" ");
+            }
+            line.append(word);
         }
-        
-        // Add the last line if any characters remain
-        if (currentLine.length() > 0) {
-            lines.add(currentLine.toString().trim());
+
+        if (!line.isEmpty()) {
+            wrapped.append(line.toString().stripTrailing());
         }
-        
-        String checker = "：；，。？！";
-        
-        for (int i = 1; i < lines.size(); i ++) {
-        	String line = lines.get(i);
-        	
-        	for (int ch = 0; ch < checker.length(); ch ++) {
-        		if (line.startsWith(String.valueOf(checker.charAt(ch)))) {
-        			lines.set(i - 1, lines.get(i - 1) + checker.charAt(ch));
-        			lines.set(i, line.substring(1));
-        		}
-        	}
+
+        return wrapped.toString();
+    }
+    
+    private static final Pattern COLOR_CODE_PATTERN = Pattern.compile("§[0-9a-fk-or]");
+    
+    /**
+     * This is similar to the wrapText function, but instead it also contain styling information, such as color and italics. This will account implicit newline characters.
+     * @param text The text to wrap
+     * @param maxWidth Maximum characters in a line.
+     * @return
+     */
+    public static String wrapTextColor(String text, int maxWidth) {
+        if (text == null || maxWidth < 1) return "";
+
+        // Split the text by actual newlines to preserve user-entered line breaks
+        String[] lines = text.split("\n");
+        StringBuilder wrapped = new StringBuilder();
+        String activeColor = "§r";  // Default reset color
+
+        for (String line : lines) {
+            StringBuilder wrappedLine = new StringBuilder(activeColor);  // Start with current active color for each line
+            StringBuilder currentLine = new StringBuilder(activeColor);
+            String[] words = line.split(" ");
+            
+            for (int i = 0; i < words.length; i++) {
+                String word = words[i];
+                String cleanWord = stripColorCodes(word);
+
+                // Track new color codes in the word
+                Matcher matcher = COLOR_CODE_PATTERN.matcher(word);
+                while (matcher.find()) {
+                    activeColor = matcher.group();  // last match is the current color
+                }
+
+                // Check if the word fits in the current line or if it needs to wrap
+                int currentLineLength = stripColorCodes(currentLine.toString()).length();
+                boolean wordTooLong = currentLineLength + cleanWord.length() + 1 > maxWidth;
+
+                if (wordTooLong) {
+                    // Append the wrapped line and start a new one with the current color
+                    wrapped.append(currentLine.toString().stripTrailing()).append("\n");
+                    currentLine = new StringBuilder(activeColor);
+                } else if (currentLine.length() > 0) {
+                    currentLine.append(" ");
+                }
+
+                currentLine.append(word);
+            }
+
+            // Append the last wrapped line for the current user-entered line
+            wrapped.append(currentLine.toString().stripTrailing()).append("\n");
         }
-        
-        return lines;
+
+        // Remove the last newline character (if it was added)
+        if (wrapped.length() > 0 && wrapped.charAt(wrapped.length() - 1) == '\n') {
+            wrapped.deleteCharAt(wrapped.length() - 1);
+        }
+
+        return wrapped.toString();
+    }
+
+    // Helper to remove color codes for accurate length calculation
+    private static String stripColorCodes(String input) {
+        return COLOR_CODE_PATTERN.matcher(input).replaceAll("");
+    }
+    
+    public static List<String> wrap(String text, int maxWidth) {
+        return StringUtils.fromArgs(wrapText(text, maxWidth).split("\n"));
     }
 	
 	public static long[] convertMillisToTime(long milliseconds) {

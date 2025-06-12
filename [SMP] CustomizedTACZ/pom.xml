@@ -13,6 +13,41 @@
                   <target>1.8</target>
               </configuration>
           </plugin>
+          
+           <plugin>
+		    <groupId>net.md-5</groupId>
+		    <artifactId>specialsource-maven-plugin</artifactId>
+		    <version>1.2.3</version>
+		    <executions>
+		        <execution>
+		            <phase>package</phase>
+		            <goals>
+		                <goal>remap</goal>
+		            </goals>
+		            <id>remap-obf</id>
+		            <configuration>
+		                <srgIn>org.spigotmc:minecraft-server:1.20.1-R0.1-SNAPSHOT:txt:maps-mojang</srgIn>
+		                <reverse>true</reverse>
+		                <remappedDependencies>org.spigotmc:spigot:1.20.1-R0.1-SNAPSHOT:jar:remapped-mojang</remappedDependencies>
+		                <remappedArtifactAttached>true</remappedArtifactAttached>
+		                <remappedClassifierName>remapped-obf</remappedClassifierName>
+		            </configuration>
+		        </execution>
+		        <execution>
+		            <phase>package</phase>
+		            <goals>
+		                <goal>remap</goal>
+		            </goals>
+		            <id>remap-spigot</id>
+		            <configuration>
+		                <finalName>${project.artifactId}-${project.version}</finalName>
+		                <inputFile>${project.build.directory}/${project.artifactId}-${project.version}-remapped-obf.jar</inputFile>
+		                <srgIn>org.spigotmc:minecraft-server:1.20.1-R0.1-SNAPSHOT:csrg:maps-spigot</srgIn>
+		                <remappedDependencies>org.spigotmc:spigot:1.20.1-R0.1-SNAPSHOT:jar:remapped-obf</remappedDependencies>
+		            </configuration>
+		        </execution>
+		    </executions>
+		</plugin>
       </plugins>
    </build>
 	<repositories>
@@ -32,7 +67,14 @@
 	            <id>mohistmc</id>
 	            <url>https://maven.mohistmc.com/</url>
 	        </repository>
-
+				 <repository>
+		        <id>alvinb-repo</id>
+		        <url>http://repo.bringholm.com/</url>
+		    </repository>
+		    <repository>
+		        <id>elmakers</id>
+		        <url>https://maven.elmakers.com/repository/</url>
+		    </repository>
    	</repositories>
    <dependencies>
 		<dependency>
@@ -41,6 +83,7 @@
            <version>1.20.1-R0.1-SNAPSHOT</version><!--change this value depending on the version or use LATEST-->
            <type>jar</type>
            <scope>provided</scope>
+           <classifier>remapped-mojang</classifier>
        	</dependency>
 		<dependency>
     		<groupId>com.comphenix.protocol</groupId>
@@ -67,6 +110,11 @@
 			<groupId>net.itsrelizc</groupId>
 			<artifactId>newbundler</artifactId>
 			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>net.itsrelizc.smp</groupId>
+			<artifactId>modsmp</artifactId>
+			<version>1.5.0</version>
 		</dependency>
    </dependencies>
 

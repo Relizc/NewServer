@@ -1,0 +1,7 @@
+
+name: RelizcItemLib
+main: net.itsrelizc.itemlib.Main
+version: 1.0.0
+author: Relizc
+api-version: 1.13
+depend: [RelizcBundlerNewAPI]

@@ -43,8 +43,8 @@ import net.itsrelizc.nbt.NBT.NBTTagType;
 import net.itsrelizc.players.locales.Locale;
 import net.itsrelizc.string.StringUtils;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.world.entity.Entity;
 
 public class Hit implements Listener {
@@ -70,7 +70,7 @@ public class Hit implements Listener {
 	}
 	
 	private static Map<MohistModsEntity, BallisticInformation> content = new HashMap<MohistModsEntity, BallisticInformation>();
-	private static Map<MohistModsEntity, NBTTagCompound> bullet_info = new HashMap<MohistModsEntity, NBTTagCompound>();
+	private static Map<MohistModsEntity, CompoundTag> bullet_info = new HashMap<MohistModsEntity, CompoundTag>();
 	
 	@EventHandler(priority=EventPriority.HIGH)
 	public void damage(EntityDamageByEntityEvent event) {
@@ -147,7 +147,7 @@ public class Hit implements Listener {
 				
 //				Bukkit.broadcastMessage(String.valueOf(result));
 				
-				NBTTagCompound tag = bullet_info.get(mod);
+				CompoundTag tag = bullet_info.get(mod);
 //				Bukkit.broadcastMessage(tag.toString());
 				
 //				Bukkit.broadcastMessage("bs: " + content.get(mod).speed);
@@ -203,7 +203,7 @@ public class Hit implements Listener {
 	}
 
 
-	private double processDamage(Player player, org.bukkit.entity.LivingEntity victim, int result, NBTTagCompound tag) {
+	private double processDamage(Player player, org.bukkit.entity.LivingEntity victim, int result, CompoundTag tag) {
 		
 		ItemStack protector;
 		if (result == 0) {
@@ -332,88 +332,88 @@ public class Hit implements Listener {
 	public void onEntitySpawn(EntitySpawnEvent event) {
 
 			
-		if (event.getEntity().getType() == BULLET) {
-			
-			MohistModsEntity mod = (MohistModsEntity) event.getEntity();
-			
-			CraftEntity entity = (CraftEntity) mod;
-			Entity nmsEntity = entity.getHandle();
-			
-			NBTTagCompound nbt = new NBTTagCompound();
-			nmsEntity.f(nbt); // 1775:1847:net.minecraft.nbt.CompoundTag saveWithoutId(net.minecraft.nbt.CompoundTag) -> f
-
-			String uuid0 = Integer.toHexString(nbt.n("Owner")[0]);
-			String uuid1 = Integer.toHexString(nbt.n("Owner")[1]);
-			String uuid2 = Integer.toHexString(nbt.n("Owner")[2]); 
-			String uuid3 = Integer.toHexString(nbt.n("Owner")[3]);
-			
-			String hypen = java.util.UUID.fromString(
-					(uuid0 + uuid1 + uuid2 + uuid3)
-				    .replaceFirst( 
-				        "(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)", "$1-$2-$3-$4-$5" 
-				    )
-				).toString();
-			
-			Player player = Bukkit.getPlayer(UUID.fromString(hypen));
-			
-			
-			ItemStack i = player.getItemInHand();
-			NBTTagCompound data = NBT.getNBT(i);
-			NBTTagList ammo = NBT.getNBTArray(data, "AmmoContent", NBTTagType.TAG_Compound);
-			
-			NBT.setInteger(data, "GunCurrentAmmoCount", 0);
-			
-			int index = NBT.getInteger(data, "AmmoIndex");
-			if (ammo.size() != 0) {
-				
-				if (index == 1) {
-					NBT.setBoolean(data, "HasBulletInBarrel", false);
-					
-					NBTTagList emptyMag = new NBTTagList();
-					NBT.setCompound(data, "AmmoContent", emptyMag);
-					
-				} else {
-					NBT.setBoolean(data, "HasBulletInBarrel", true);
-				}
-				
-				NBTTagCompound current = NBT.getCompound(ammo, index - 1);
-				
-
-				bullet_info.put(mod, current);
-				
-//				Bukkit.broadcastMessage(entityNBT.toString());
-				
-				NBT.setInteger(data, "AmmoIndex", index - 1);
-				
-				
-				
-				
-			} else {
-//				event.setCancelled(true);
-			}
-			
-			
-			i = NBT.setCompound(i, data);
-			player.setItemInHand(i);
-
-			
-			Vector vec = mod.getVelocity();
-			double speed = vec.length() * 20;
-			
-			content.put(mod, new BallisticInformation(speed, player));
-			TaskDelay.delayTask(new Runnable() {
-
-				@Override
-				public void run() {
-					content.remove(mod);
-					bullet_info.remove(mod);
-				}
-				
-			}, 20L);
-			
-			
-			
-		}
+//		if (event.getEntity().getType() == BULLET) {
+//			
+//			MohistModsEntity mod = (MohistModsEntity) event.getEntity();
+//			
+//			CraftEntity entity = (CraftEntity) mod;
+//			Entity nmsEntity = entity.getHandle();
+//			
+//			CompoundTag nbt = new CompoundTag();
+//			nmsEntity.f(nbt); // 1775:1847:net.minecraft.nbt.CompoundTag saveWithoutId(net.minecraft.nbt.CompoundTag) -> f
+//
+//			String uuid0 = Integer.toHexString(nbt.n("Owner")[0]);
+//			String uuid1 = Integer.toHexString(nbt.n("Owner")[1]);
+//			String uuid2 = Integer.toHexString(nbt.n("Owner")[2]); 
+//			String uuid3 = Integer.toHexString(nbt.n("Owner")[3]);
+//			
+//			String hypen = java.util.UUID.fromString(
+//					(uuid0 + uuid1 + uuid2 + uuid3)
+//				    .replaceFirst( 
+//				        "(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)", "$1-$2-$3-$4-$5" 
+//				    )
+//				).toString();
+//			
+//			Player player = Bukkit.getPlayer(UUID.fromString(hypen));
+//			
+//			
+//			ItemStack i = player.getItemInHand();
+//			CompoundTag data = NBT.getNBT(i);
+//			ListTag ammo = NBT.getNBTArray(data, "AmmoContent", NBTTagType.TAG_Compound);
+//			
+//			NBT.setInteger(data, "GunCurrentAmmoCount", 0);
+//			
+//			int index = NBT.getInteger(data, "AmmoIndex");
+//			if (ammo.size() != 0) {
+//				
+//				if (index == 1) {
+//					NBT.setBoolean(data, "HasBulletInBarrel", false);
+//					
+//					ListTag emptyMag = new ListTag();
+//					NBT.setCompound(data, "AmmoContent", emptyMag);
+//					
+//				} else {
+//					NBT.setBoolean(data, "HasBulletInBarrel", true);
+//				}
+//				
+//				CompoundTag current = NBT.getCompound(ammo, index - 1);
+//				
+//
+//				bullet_info.put(mod, current);
+//				
+////				Bukkit.broadcastMessage(entityNBT.toString());
+//				
+//				NBT.setInteger(data, "AmmoIndex", index - 1);
+//				
+//				
+//				
+//				
+//			} else {
+////				event.setCancelled(true);
+//			}
+//			
+//			
+//			i = NBT.setCompound(i, data);
+//			player.setItemInHand(i);
+//
+//			
+//			Vector vec = mod.getVelocity();
+//			double speed = vec.length() * 20;
+//			
+//			content.put(mod, new BallisticInformation(speed, player));
+//			TaskDelay.delayTask(new Runnable() {
+//
+//				@Override
+//				public void run() {
+//					content.remove(mod);
+//					bullet_info.remove(mod);
+//				}
+//				
+//			}, 20L);
+//			
+//			
+//			
+//		}
 
 	}
 

@@ -2,6 +2,9 @@ package net.itsrelizc.smp.modsmp;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.comphenix.protocol.PacketType;
@@ -77,7 +80,7 @@ public class Main extends JavaPlugin {
 					} catch (Exception e) {
 						System.out.println("Footer Error " + e);
 					}
-					TabListUtils.updateFooter(p, String.format(Locale.get(p, "general.tablist.diamondsleft"), (float) DiamondCounter.remaining, DiamondPurse.getPurse(p), DiamondPurse.getBloodSugar(p), -1f, -1f, -1f) + TPSService.getTablistDisplayInfo(p));
+					TabListUtils.updateFooter(p, String.format(Locale.get(p, "general.tablist.diamondsleft"), (float) DiamondCounter.remaining, DiamondPurse.getPurse(p), DiamondPurse.getBloodSugar(p)) + TPSService.getTablistDisplayInfo(p));
 
 //					TabListUtils.updateFooter(p, String.format(Locale.get(p, "general.tablist.diamondsleft"), (float) DiamondCounter.remaining, DiamondPurse.getPurse(p)) + "[Server Insights unavaliable]");
 				}
@@ -90,9 +93,14 @@ public class Main extends JavaPlugin {
 		DiamondCounter.enable(this);
 
 		EventRegistery.register(new EnchantmentBan());
+		EventRegistery.register(new NiceUtilities());
+		EventRegistery.register(new SMPScoreboardListener());	
+		NiceUtilities.startSendingTips();
 //		EventRegistery.register(new We());
 		
 	}
+	
+	
 	
 	@Override
 	public void onDisable() {

@@ -17,6 +17,13 @@ import net.itsrelizc.bundler.JSON;
 import net.itsrelizc.players.locales.Locale;
 import net.itsrelizc.players.locales.Locale.Language;
 
+/**
+ * A class representing stored JSON information of a Relizc Server Player. However, this should be used with caution when referenced in PlayerLoginEvent or PlayerJoinEvent,
+ * as the server may be attempting to sync the real UUID from the BungeeCord proxy. At the same time, it is also advised to not set PlayerLoginEvent or especially
+ * PlayerPreLoginEvent as lowest priority.
+ * 
+ * If the server is not using online mode, you can disregard this.
+ */
 public class Profile {
 	
 	public Player owner;
@@ -42,6 +49,10 @@ public class Profile {
 	
 	private static List<Profile> profiles = new ArrayList<Profile>();
 	
+	/**
+	 * Crates a profile instance for the player, and adds it to the profile list.
+	 * @param player The player to create a profile
+	 */
 	public Profile(Player player) {
 		this.owner = player;
 		
@@ -69,11 +80,21 @@ public class Profile {
 		addProfile(this);
 	}
 	
+	/**
+	 * Gets the player's display name with their rank color.
+	 * @param player The player to get their rank color.
+	 * @return The player's display name with rank at the start.
+	 */
 	public static String coloredName(Player player) {
 		Profile p = findByOwner(player);
 		return Rank.findByPermission(p.permission).displayName.substring(0, 2) + player.getDisplayName();
 	}
 	
+	/**
+	 * Finds the profile that the player owns
+	 * @param player
+	 * @return Profile
+	 */
 	public static Profile findByOwner(Player player) {
 		for (Profile p : profiles) {
 			if (p.owner.getName().equalsIgnoreCase(player.getName())) {
@@ -84,6 +105,13 @@ public class Profile {
 		return null;
 	}
 	
+	/**
+	 * Equivalent to {@link #findByOwner(Player)} but accepts the player's name as a string. Intended for backwards compatibility.
+	 * @param player
+	 * @return Profile
+	 * 
+	 * @deprecated
+	 */
 	public static Profile findByOwner(String player) {
 		for (Profile p : profiles) {
 			if (p.owner.getName().equalsIgnoreCase(player)) {
@@ -94,14 +122,27 @@ public class Profile {
 		return null;
 	}
 	
+	/**
+	 * Adds a profile to the profile list. Not for public use
+	 * @param profile
+	 */
 	public static void addProfile(Profile profile) {
 		profiles.add(profile);
 	}
 	
+	/**
+	 * Removes a profile from the profile list. Not for public use
+	 * @param profile
+	 */
 	public static void removeProfile(Profile profile) {
 		profiles.remove(profile);
 	}
 	
+	/**
+	 * Check if a user's JSON entry exists
+	 * @param player
+	 * @return
+	 */
 	public static boolean checkAccountExists(Player player) {
 		
 		JSONObject j = JSON.loadDataFromDataBase("players.json");
@@ -121,7 +162,7 @@ public class Profile {
 			profiledata = new JSONObject();
 			profiledata.put("rank", 1L);
 			profiledata.put("lang", "ZH_CN");
-			profiledata.put("subscription", -1);
+			profiledata.put("subscription", -1L);
 			
 			c.put(this.realUUID.toString(), profiledata);
 			JSON.saveDataFromDataBase("players.json", c);

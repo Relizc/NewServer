@@ -49,7 +49,6 @@
 			<groupId>net.itsrelizc.smp</groupId>
 			<artifactId>homeplugin</artifactId>
 			<version>1.0.0</version>
-			<scope>provided</scope>
 		</dependency>
 		
 		<dependency>
@@ -68,6 +67,11 @@
 			<groupId>net.itsrelizc.smp</groupId>
 			<artifactId>gunmod</artifactId>
 			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>net.itsrelizc.smp</groupId>
+			<artifactId>insurance</artifactId>
+			<version>1.1.0</version>
 		</dependency>
    </dependencies>
 

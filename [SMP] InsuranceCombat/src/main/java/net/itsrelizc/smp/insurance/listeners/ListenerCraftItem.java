@@ -19,7 +19,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import net.itsrelizc.nbt.NBT;
 import net.itsrelizc.players.locales.Locale;
 import net.itsrelizc.string.StringUtils;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 
 public class ListenerCraftItem implements Listener {
 	
@@ -44,7 +44,7 @@ public class ListenerCraftItem implements Listener {
 		im.setLore(lore);
 		item.setItemMeta(im);
 		
-		NBTTagCompound tag = NBT.getNBT(item);
+		CompoundTag tag = NBT.getNBT(item);
 		NBT.setBoolean(tag, "crafted", true);
 		ItemStack newitem = NBT.setCompound(item, tag);
 		

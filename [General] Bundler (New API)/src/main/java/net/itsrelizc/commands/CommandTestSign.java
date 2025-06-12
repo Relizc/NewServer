@@ -2,8 +2,8 @@ package net.itsrelizc.commands;
 
 import org.bukkit.entity.Player;
 
-import net.itsrelizc.players.SignInput;
 import net.itsrelizc.players.locales.Locale;
+import net.itsrelizc.string.SignInput;
 
 public class CommandTestSign extends RelizcCommand {
 

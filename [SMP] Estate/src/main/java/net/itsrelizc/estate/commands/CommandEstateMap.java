@@ -66,6 +66,8 @@ public class CommandEstateMap extends RelizcCommand {
 		@Override
 		public void onClick(InventoryClickEvent event) {
 			
+			
+			
 			ItemStack item = event.getCurrentItem();
 			
 			if (page == 0) {
@@ -75,7 +77,7 @@ public class CommandEstateMap extends RelizcCommand {
 					
 				}
 				
-				if (item != null && item.getItemMeta().getDisplayName().startsWith("§7(")) {
+				if (item != null && (item.getItemMeta().getDisplayName().startsWith("§7(") || item.getItemMeta().getDisplayName().startsWith("§b"))) {
 					
 					String[] pos = item.getItemMeta().getDisplayName().split(", ");
 					
@@ -87,15 +89,16 @@ public class CommandEstateMap extends RelizcCommand {
 					if (getPlayer().isOp()) {
 						if (event.getClick() == ClickType.SWAP_OFFHAND) {
 							
-							JSONObject obj = JSON.loadDataFromDataBase("chunk_claims/" + ChunkMetadata.get(selected, "relizcPurchasedOwner", PersistentDataType.STRING) + ".json");
-							obj.remove(selected.getWorld().getName() + "," + selected.getX() + "," + selected.getZ());
-							JSON.saveDataFromDataBase("chunk_claims/" + ChunkMetadata.get(selected, "relizcPurchasedOwner", PersistentDataType.STRING) + ".json", obj);
+							//JSONObject obj = JSON.loadDataFromDataBase("chunk_claims/" + ChunkMetadata.get(selected, "relizcPurchasedOwner", PersistentDataType.STRING) + ".json");
+							//obj.remove(selected.getWorld().getName() + "," + selected.getX() + "," + selected.getZ());
+							//JSON.saveDataFromDataBase("chunk_claims/" + ChunkMetadata.get(selected, "relizcPurchasedOwner", PersistentDataType.STRING) + ".json", obj);
 							
 							ChunkMetadata.remove(selected, "relizcPurchasedOwner");
 							ChunkMetadata.remove(selected, "chunkPermissionList");
 							ChunkMetadata.remove(selected, "chunkPermissionDigList");
 							ChunkMetadata.remove(selected, "chunkPermission");
 							ChunkMetadata.remove(selected, "chunkPermissionDig");
+							ChunkMetadata.remove(selected, "relizcPurchasedPlotName");
 							
 							
 							this.menu.getTemplate().apply();
@@ -104,50 +107,59 @@ public class CommandEstateMap extends RelizcCommand {
 					}
 					
 					if (ChunkMetadata.get(selected, "relizcPurchasedOwner", PersistentDataType.STRING)!=null && ChunkMetadata.get(selected, "relizcPurchasedOwner", PersistentDataType.STRING).equals(getPlayer().getUniqueId().toString())) {
+						//Bukkit.broadcastMessage("1");
 						if (event.getClick() == ClickType.SHIFT_LEFT || event.getClick() == ClickType.SHIFT_RIGHT) {
 							getPlayer().playSound(getPlayer(), Sound.ENTITY_WOLF_WHINE, 1f, 1f);
 							getPlayer().sendMessage("§e" + Locale.get(getPlayer(), "globalestate.purchase.disown"));
+							
 							ChunkMetadata.remove(selected, "relizcPurchasedOwner");
 							ChunkMetadata.remove(selected, "chunkPermissionList");
 							ChunkMetadata.remove(selected, "chunkPermissionDigList");
 							ChunkMetadata.remove(selected, "chunkPermission");
 							ChunkMetadata.remove(selected, "chunkPermissionDig");
+							ChunkMetadata.remove(selected, "relizcPurchasedPlotName");
 							EstateListener.chunkmaps.get(getPlayer()).remove(selected.getWorld().getName() + "," + selected.getX() + "," + selected.getZ());
 							
 							this.menu.getTemplate().apply();
 						} else {
-							playModSound();
-							
-							page = 1;
-							setting = selected;
-							this.menu.getTemplate().apply();
+							getPlayer().playSound(getPlayer(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 0f);
+							getPlayer().sendMessage("§c" + Locale.get(getPlayer(), "globalestate.setting.fail.moved"));
+//							playModSound();
+//							
+//							page = 1;
+//							setting = selected;
+//							this.menu.getTemplate().apply();
 							
 							return;
 						}
 						
 						return;
 					} else if (ChunkMetadata.get(selected, "relizcPurchasedOwner", PersistentDataType.STRING) != null) {
+						//Bukkit.broadcastMessage("2");
 						getPlayer().playSound(getPlayer(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 0f);
 						getPlayer().sendMessage("§c" + Locale.get(getPlayer(), "globalestate.purchase.fail.alreadyowned"));
 						return;
 					} else {
-						ChunkMetadata.set(selected, "relizcPurchasedOwner", PersistentDataType.STRING, event.getWhoClicked().getUniqueId().toString());
-						ChunkMetadata.set(selected, "chunkPermissionList", PersistentDataType.STRING, "");
-						ChunkMetadata.set(selected, "chunkPermissionDigList", PersistentDataType.STRING, "");
-						ChunkMetadata.set(selected, "chunkPermission", PersistentDataType.INTEGER, 0);
-						ChunkMetadata.set(selected, "chunkPermissionDig", PersistentDataType.INTEGER, 0);
-						
-						JSONObject add = new JSONObject();
-						add.put("chunkPermissionList", new JSONArray());
-						add.put("chunkPermissionDigList", new JSONArray());
-						add.put("chunkPermission", 0);
-						add.put("chunkPermissionDig", 0);
-						EstateListener.chunkmaps.get(getPlayer()).put(selected.getWorld().getName() + "," + selected.getX() + "," + selected.getZ(), add);
-						
-						getPlayer().playSound(getPlayer(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 2f);
-						getPlayer().sendMessage("§a" + Locale.get(getPlayer(), "globalestate.purchase.sucess"));
-						
-						this.menu.getTemplate().apply();
+						//Bukkit.broadcastMessage("3");
+						getPlayer().playSound(getPlayer(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 0f);
+						getPlayer().sendMessage("§c" + Locale.get(getPlayer(), "globalestate.purchase.fail.moved"));
+//						ChunkMetadata.set(selected, "relizcPurchasedOwner", PersistentDataType.STRING, event.getWhoClicked().getUniqueId().toString());
+//						ChunkMetadata.set(selected, "chunkPermissionList", PersistentDataType.STRING, "");
+//						ChunkMetadata.set(selected, "chunkPermissionDigList", PersistentDataType.STRING, "");
+//						ChunkMetadata.set(selected, "chunkPermission", PersistentDataType.INTEGER, 0);
+//						ChunkMetadata.set(selected, "chunkPermissionDig", PersistentDataType.INTEGER, 0);
+//						
+//						JSONObject add = new JSONObject();
+//						add.put("chunkPermissionList", new JSONArray());
+//						add.put("chunkPermissionDigList", new JSONArray());
+//						add.put("chunkPermission", 0);
+//						add.put("chunkPermissionDig", 0);
+//						EstateListener.chunkmaps.get(getPlayer()).put(selected.getWorld().getName() + "," + selected.getX() + "," + selected.getZ(), add);
+//						
+//						getPlayer().playSound(getPlayer(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 2f);
+//						getPlayer().sendMessage("§a" + Locale.get(getPlayer(), "globalestate.purchase.sucess"));
+//						
+//						this.menu.getTemplate().apply();
 						
 						return;
 					}
@@ -156,6 +168,8 @@ public class CommandEstateMap extends RelizcCommand {
 					
 				}
 			} else if (page == 1) {
+				
+				//Bukkit.broadcastMessage("4");
 				
 				if (event.getSlot() == 36) {
 					
@@ -227,6 +241,7 @@ public class CommandEstateMap extends RelizcCommand {
 					Chunk next = this.getPlayer().getLocation().getWorld().getChunkAt(newcx, newcz);
 					
 					String occupier = next.getPersistentDataContainer().getOrDefault(new NamespacedKey(EventRegistery.main, "relizcPurchasedOwner"), PersistentDataType.STRING, null);
+					String name = next.getPersistentDataContainer().getOrDefault(new NamespacedKey(EventRegistery.main, "relizcPurchasedPlotName"), PersistentDataType.STRING, null);
 					
 					boolean abc = false;
 					
@@ -254,6 +269,12 @@ public class CommandEstateMap extends RelizcCommand {
 								);
 					}
 					
+//					if (name != null) {
+//						ItemMeta im = place.getItemMeta();
+//						im.setDisplayName("§b" + name);
+//						place.setItemMeta(im);
+//					}
+//					
 					
 					ItemMeta im = place.getItemMeta();
 					List<String> lore = im.getLore();

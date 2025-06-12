@@ -165,6 +165,7 @@ public class RelizcCommand extends BukkitCommand {
 		this.setPermission("main.player");
 		
 	}
+
 	
 	public void setRelizcPermission(long value) {
 		this.relizcpermission = value;
@@ -172,6 +173,7 @@ public class RelizcCommand extends BukkitCommand {
 	
 	public void setRelizcOp(boolean mustOpRun) {
 		this.relizcop = mustOpRun;
+		this.setPermission("main.admin");
 	}
 	
 	public RelizcCommand(String name, String description, String usage, String permission, List<String> alias) {
@@ -243,6 +245,7 @@ public class RelizcCommand extends BukkitCommand {
 	}
 	
 	public TabCompleteInfo onTabComplete(CommandSender sender, String alias, String[] args, Location location) {
+		//return new TabCompleteInfo(new TabCompleteType[] {}, (Player) sender, "commands.general.tabcomplete.test");
 		return new TabCompleteInfo(new TabCompleteType[] {}, (Player) sender, "commands.general.tabcomplete.test");
 		
 	}
@@ -295,6 +298,8 @@ public class RelizcCommand extends BukkitCommand {
 		
 	}
 	
-	
-
+	@Override
+	public String toString() {
+		return "RelizcCommand{name=%s,relizcOp=%s,relizcPermission=%s}".formatted(this.getName(),this.relizcop,this.relizcpermission);
+	}
 }

@@ -34,7 +34,7 @@ import net.itsrelizc.nbt.BlockMetadata;
 import net.itsrelizc.nbt.NBT;
 import net.itsrelizc.players.locales.Locale;
 import net.itsrelizc.string.StringUtils;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 
 public class Main extends JavaPlugin implements Listener {
 	

@@ -13,6 +13,7 @@
                   <target>1.8</target>
               </configuration>
           </plugin>
+
       </plugins>
    </build>
 	<repositories>
@@ -58,17 +59,18 @@
 		    <scope>provided</scope>
 		</dependency>
 
-
 		<dependency>
 			<groupId>net.itsrelizc</groupId>
 			<artifactId>newbundler</artifactId>
 			<version>1.0.0</version>
+			<scope>provided</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>net.itsrelizc.smp</groupId>
 			<artifactId>currencysmp</artifactId>
 			<version>1.5.0</version>
+			<scope>provided</scope>
 		</dependency>
    </dependencies>
 

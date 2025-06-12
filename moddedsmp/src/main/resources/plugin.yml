@@ -2,7 +2,7 @@ name: RelizcSMP
 main: net.itsrelizc.smp.modsmp.Main
 version: 1.0.0
 author: Relizc
-api-version: 1.20
+api-version: 1.13
 depend: [RelizcBundlerNewAPI, RelizcSMPCurrencyPlugin]
 commands:
    ban:

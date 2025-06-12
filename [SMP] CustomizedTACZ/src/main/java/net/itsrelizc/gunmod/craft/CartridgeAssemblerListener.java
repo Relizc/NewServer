@@ -19,7 +19,7 @@ import net.itsrelizc.menus.ItemGenerator;
 import net.itsrelizc.nbt.NBT;
 import net.itsrelizc.players.locales.Locale;
 import net.itsrelizc.string.StringUtils;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 
 public class CartridgeAssemblerListener implements Listener {
 	
@@ -168,7 +168,7 @@ public class CartridgeAssemblerListener implements Listener {
 				" ",
 				"§7§o\"马上就要发射了!!!\"");
 		
-		NBTTagCompound nbt = NBT.getNBT(it);
+		CompoundTag nbt = NBT.getNBT(it);
 		NBT.setInteger(nbt, "energy", final_j);
 		
 		

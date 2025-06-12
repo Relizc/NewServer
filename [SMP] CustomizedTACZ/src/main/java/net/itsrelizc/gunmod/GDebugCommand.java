@@ -6,7 +6,7 @@ import org.bukkit.inventory.ItemStack;
 import net.itsrelizc.commands.RelizcCommand;
 import net.itsrelizc.nbt.NBT;
 import net.itsrelizc.string.StringUtils;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 
 public class GDebugCommand extends RelizcCommand {
 
@@ -31,9 +31,9 @@ public class GDebugCommand extends RelizcCommand {
 		} else if (mode.equalsIgnoreCase("nbt")) {
 			
 			ItemStack hand = sender.getItemInHand();
-			NBTTagCompound nbt = NBT.getNBT(hand);
+			CompoundTag nbt = NBT.getNBT(hand);
 			
-			NBTTagCompound shitfuck = NBT.getCompound(nbt, "ShitFuck");
+			CompoundTag shitfuck = NBT.getCompound(nbt, "ShitFuck");
 			NBT.setCompound(nbt, "Inventory", shitfuck);
 			
 			NBT.setInteger(nbt, "ShitFuck", 0);
@@ -45,7 +45,7 @@ public class GDebugCommand extends RelizcCommand {
 		} else if (mode.equalsIgnoreCase("nbt2")) {
 			
 			ItemStack hand = sender.getItemInHand();
-			NBTTagCompound nbt = NBT.getNBT(hand);
+			CompoundTag nbt = NBT.getNBT(hand);
 
 			NBT.setInteger(nbt, "Inventory", 0);
 
