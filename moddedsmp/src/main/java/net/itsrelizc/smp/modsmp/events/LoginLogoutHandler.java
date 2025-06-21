@@ -1,33 +1,27 @@
 package net.itsrelizc.smp.modsmp.events;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import net.itsrelizc.diamonds.DiamondPurse;
+import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.menus.ItemGenerator;
-import net.itsrelizc.menus.Menu2;
 import net.itsrelizc.menus.MenuTemplate2;
+import net.itsrelizc.players.Profile.NewPlayerJoinedEvent;
 import net.itsrelizc.players.locales.Locale;
 import net.itsrelizc.players.locales.Locale.Language;
+import net.itsrelizc.quests.QuestNewArrival;
+import net.itsrelizc.quests.QuestUtils;
 import net.itsrelizc.string.StringUtils;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.minecraft.world.item.ItemStack;
 
 public class LoginLogoutHandler implements Listener {
 	
@@ -79,6 +73,28 @@ public class LoginLogoutHandler implements Listener {
 			
 		}
 		
+	}
+	
+	@EventHandler(priority=EventPriority.HIGHEST)
+	public void newguy(NewPlayerJoinedEvent event) {
+		Locale.sendLanguageInfo(event.getPlayer());
+		
+		
+	}
+	
+	@EventHandler
+	public void join(NewPlayerJoinedEvent event) {
+		event.getProfile().setMetadata("activeQuest", null);
+		
+		new BukkitRunnable() {
+
+			@Override
+			public void run() {
+				QuestUtils.startQuest(event.getPlayer(), QuestNewArrival.INSTANCE);
+				QuestUtils.setActiveQuest(event.getPlayer(), QuestNewArrival.INSTANCE);
+			}
+			
+		}.runTaskLater(EventRegistery.main, 40L);
 	}
 		
 	@EventHandler

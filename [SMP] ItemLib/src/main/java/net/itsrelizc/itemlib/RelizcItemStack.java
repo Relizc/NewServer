@@ -58,6 +58,26 @@ public class RelizcItemStack {
 	}
 	
 	/**
+	 * Gets the namespace ID of this item. This is declared in the annotation of the Item class with
+	 * the annotation key "id"
+	 * 
+	 * @return The namespace ID of this item.
+	 */
+	public String getID() {
+		return this.getTagString("id");
+	}
+	
+	/**
+	 * Gets the quality of this item.
+	 * @return The quality of this item
+	 */
+	public Quality getQuality() {
+		// TODO Auto-generated method stub
+		RelizcItem annotation = this.getClass().getAnnotation(RelizcItem.class);
+		return annotation.quality();
+	}
+	
+	/**
 	 * Updates the reference slot in a player's inventory for this item. Only used to take care of
 	 * NBT changes by instance changes. This will not work on stackable items or items that cannot
 	 * hold metadata.<br><br>
@@ -116,6 +136,18 @@ public class RelizcItemStack {
 	}
 	
 	/**
+	 * 
+	 * Used when the item annotation has customItemstack set to true. This function is used to generate
+	 * a itemstack for this specific item.
+	 * 
+	 * @return itemStack.
+	 */
+	@Deprecated
+	public ItemStack getGeneratedItemStack() {
+		return null;
+	}
+	
+	/**
 	 * Gets the player that is currently holding/using this item. This is intended for multilingual purposes
 	 * @return The player
 	 */
@@ -147,6 +179,10 @@ public class RelizcItemStack {
 	 */
 	protected Integer getTagInteger(String string) {
 		return CraftItemStack.asNMSCopy(bukkit).getTag().getInt(string);
+	}
+	
+	protected CompoundTag getTag() {
+		return CraftItemStack.asNMSCopy(bukkit).getTag();
 	}
 	
 	private ItemStack _nGetHelper(int slot) {
@@ -183,9 +219,30 @@ public class RelizcItemStack {
 		tag.putInt(string, value);
 		is.setTag(tag);
 		ItemStack finished = CraftItemStack.asBukkitCopy(is);
-		Bukkit.broadcastMessage(" " + this.referenceSlot);
+		//Bukkit.broadcastMessage(" " + this.referenceSlot);
 		owner.getInventory().setItem(referenceSlot, finished);
 		bukkit = finished;
+	}
+	
+	protected void setTagString(String string, String value) {
+		checkIfBukkitItemIsReferenced();
+		
+		net.minecraft.world.item.ItemStack is = CraftItemStack.asNMSCopy(bukkit);
+		CompoundTag tag = is.getTag();
+		tag.putString(string, value);
+		is.setTag(tag);
+		ItemStack finished = CraftItemStack.asBukkitCopy(is);
+		//Bukkit.broadcastMessage(" " + this.referenceSlot);
+		owner.getInventory().setItem(referenceSlot, finished);
+		bukkit = finished;
+	}
+	
+	protected Long getTagLong(String string) {
+		return CraftItemStack.asNMSCopy(bukkit).getTag().getLong(string);
+	}
+	
+	protected String getTagString(String string) {
+		return CraftItemStack.asNMSCopy(bukkit).getTag().getString(string);
 	}
 	
 	/**
@@ -245,6 +302,17 @@ public class RelizcItemStack {
 		}
 		return the.getUniqueId().equals(getUniqueId());
 		
+	}
+	
+	/**
+	 * Renders the name of this item. Best used if the item's name requires formatting arguments
+	 * or is different from the intended / original item name.
+	 * 
+	 * @return A item name
+	 */
+	protected String renderName() {
+		// TODO Auto-generated method stub
+		return Locale.get(owner, "item." + getID().toLowerCase() + ".name");
 	}
 
 }

@@ -15,7 +15,7 @@ import net.itsrelizc.players.locales.Locale;
 import net.itsrelizc.string.StringUtils;
 
 @RelizcItem(id="TEST_SWORD", material=Material.STONE_SWORD, stackable=false, quality=Quality.CONTRABAND, tradeable=false)
-@RelizcItemMeta(key="LIQUID", type=NBTTagType.TAG_Int, init=50)
+@RelizcItemMeta(key="LIQUID", type=NBTTagType.TAG_Int, int_init=50)
 public class RelizcTestSword extends RelizcItemStack {
 
 	public RelizcTestSword(Player owner, ItemStack it) {

@@ -13,7 +13,8 @@ import net.itsrelizc.itemlib.RelizcNativeMinecraftItem;
 import net.itsrelizc.nbt.NBT.NBTTagType;
 import net.itsrelizc.string.StringUtils;
 
-@RelizcNativeMinecraftItem(material=Material.WOODEN_SWORD)
+@RelizcItem(id="TEST_SWORD", material=Material.STONE_SWORD, stackable=false, quality=Quality.CONTRABAND, tradeable=false)
+@RelizcItemMeta(key="LIQUID", type=NBTTagType.TAG_Int, int_init=50)
 public class RelizcOverridedWoodenSword extends RelizcItemStack{
 
 	public RelizcOverridedWoodenSword(Player owner, ItemStack it) {

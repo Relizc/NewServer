@@ -167,7 +167,7 @@ public class RelizcCommand extends BukkitCommand {
 	}
 
 	
-	public void setRelizcPermission(long value) {
+	public void setRelizcLevel(long value) {
 		this.relizcpermission = value;
 	}
 	
@@ -212,7 +212,7 @@ public class RelizcCommand extends BukkitCommand {
 			
 			Player p = (Player) sender;
 			
-			if (Profile.findByOwner(p).permission < this.relizcpermission) {
+			if (Profile.findByOwner(p).level < this.relizcpermission) {
 				System.out.println("No level");
 				this.onNoPermission(p);
 				return true;

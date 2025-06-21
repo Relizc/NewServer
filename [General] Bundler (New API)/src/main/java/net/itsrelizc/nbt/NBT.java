@@ -325,9 +325,9 @@ public class NBT {
 	public static CompoundTag getNBT(ItemStack item) {
 		net.minecraft.world.item.ItemStack im = CraftItemStack.asNMSCopy(item);
 		
-		if (!im.hasTag()) return null; //516:516:boolean hasTag() -> u
+		//if (!im.hasTag()) return null; //516:516:boolean hasTag() -> u
 		
-		CompoundTag tag = im.getTag(); // 521:521:net.minecraft.nbt.CompoundTag getTag() -> v
+		CompoundTag tag = im.getOrCreateTag(); // 521:521:net.minecraft.nbt.CompoundTag getTag() -> v
 		
 		return tag;
 	}

@@ -98,7 +98,7 @@ public class DiamondPurse {
 		List<String> l = SMPScoreboard.boards.get(player).getLines();
 		for (int i = 0; i < l.size(); i ++) {
 			if (l.get(i).startsWith(SMPScoreboard.SECRET_DIAMOND_PURSE)) {
-				SMPScoreboard.boards.get(player).editLine(i, SMPScoreboard.SECRET_DIAMOND_PURSE + Locale.get(player, "general.tablist.purse").formatted(DiamondPurse.getPurse(player)));
+				SMPScoreboard.boards.get(player).refreshDiamondPage();
 			}
 		}
 		

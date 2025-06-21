@@ -51,7 +51,7 @@ public class Menu2 implements Listener, RelizcInteractiveMenu {
 	
 	public void open() {
 		
-		Bukkit.broadcastMessage(this.player.getOpenInventory().toString());
+		//Bukkit.broadcastMessage(this.player.getOpenInventory().toString());
 		
 		if (this.player.getOpenInventory() != null && !(this.getPlayer().getOpenInventory() instanceof CraftInventoryView)) {
 			this.player.getOpenInventory().close();

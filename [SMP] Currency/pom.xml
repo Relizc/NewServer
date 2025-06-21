@@ -30,6 +30,7 @@
 		                <remappedDependencies>org.spigotmc:spigot:1.20.1-R0.1-SNAPSHOT:jar:remapped-mojang</remappedDependencies>
 		                <remappedArtifactAttached>true</remappedArtifactAttached>
 		                <remappedClassifierName>remapped-obf</remappedClassifierName>
+		                <remappedArtifactInstall>true</remappedArtifactInstall>
 		            </configuration>
 		        </execution>
 		        <execution>
@@ -68,6 +69,22 @@
 	    </repository>
    	</repositories>
    <dependencies>
+	   
+	   
+		<dependency>
+			<groupId>net.itsrelizc</groupId>
+			<artifactId>newbundler</artifactId>
+			<version>1.0.0</version>
+			<classifier>unmapped</classifier>
+			
+		</dependency>
+
+		<dependency>
+			<groupId>net.itsrelizc.smp</groupId>
+			<artifactId>modsmp</artifactId>
+			<version>1.5.0</version>
+		</dependency>
+	   
 		<dependency>
            <groupId>org.spigotmc</groupId>
            <artifactId>spigot-api</artifactId>
@@ -85,11 +102,7 @@
            <classifier>remapped-mojang</classifier>
        	</dependency>
        	
-       	<dependency>
-			<groupId>net.itsrelizc</groupId>
-			<artifactId>newbundler</artifactId>
-			<version>1.0.0</version>
-		</dependency>
+       	
 
 		<dependency>
     		<groupId>com.comphenix.protocol</groupId>
@@ -104,13 +117,7 @@
 		    <version>1.6.2</version>
 		    <scope>provided</scope>
 		</dependency>
-
-
-		<dependency>
-			<groupId>net.itsrelizc.smp</groupId>
-			<artifactId>modsmp</artifactId>
-			<version>1.5.0</version>
-		</dependency>
+		
 		
 		
    </dependencies>

@@ -18,7 +18,7 @@ public class CommandAddSubscription extends RelizcCommand {
 
 	public CommandAddSubscription() {
 		super("subscription", "subscribe");
-		this.setRelizcPermission(2);
+		this.setRelizcLevel(2);
 		// TODO Auto-generated constructor stub
 //		this.setRelizcOp(true);
 	}

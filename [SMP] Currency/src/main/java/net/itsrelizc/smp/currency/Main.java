@@ -11,9 +11,10 @@ import net.itsrelizc.diamonds.commands.CommandPay;
 import net.itsrelizc.diamonds.commands.CommandSpit;
 import net.itsrelizc.diamonds.commands.GiveDiamondPotion;
 import net.itsrelizc.events.EventRegistery;
-import net.itsrelizc.smp.corps.CorporateBusiness;
-import net.itsrelizc.smp.corps.Contract;
-import net.itsrelizc.smp.corps.ContractListener;
+import net.itsrelizc.quests.QuestListener;
+import net.itsrelizc.quests.QuestNewArrival;
+import net.itsrelizc.quests.QuestUtils;
+import net.itsrelizc.quests.levelling.LevelListeners;
 
 public class Main extends JavaPlugin {
 	
@@ -25,20 +26,27 @@ public class Main extends JavaPlugin {
 		CommandRegistery.register(new CommandSpit());
 		CommandRegistery.register(new CommandPay());
 		
+		
+		//Contract.loadContractSigned();
+		
+		//CorporateBusiness.startClearCache();
+		
 		EventRegistery.register(new DiamondJar());
 		EventRegistery.register(new DiamondEatListener());
-		EventRegistery.register(new ContractListener());
+		EventRegistery.register(new QuestListener());
+		EventRegistery.register(new LevelListeners());
 		
-		CorporateBusiness.startClearCache();
+		QuestUtils.registerQuest(QuestNewArrival.INSTANCE);
+		//EventRegistery.register(new ContractListener());
 		
-		Contract.loadContractSigned();
+		
 	}
 	
 	@Override
 	public void onDisable() {
 		DiamondPurse.savePurse();
 		
-		Contract.saveContractSigned();
+		//Contract.saveContractSigned();
 	}
 
 }

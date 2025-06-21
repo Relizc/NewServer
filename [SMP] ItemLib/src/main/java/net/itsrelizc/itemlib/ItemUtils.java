@@ -15,8 +15,10 @@ import org.bukkit.*;
 
 import net.itsrelizc.items.RelizcItemMeta;
 import net.itsrelizc.nbt.NBT;
+import net.itsrelizc.nbt.NBT.NBTTagType;
 import net.itsrelizc.players.Profile;
 import net.itsrelizc.players.locales.Locale;
+import net.itsrelizc.players.locales.Locale.Language;
 import net.itsrelizc.string.StringUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -101,6 +103,10 @@ public class ItemUtils {
 		
 	}
 	
+	public static RelizcItemStack castOrCreateItem(Player player, ItemStack item) {
+		return castOrCreateItem(player, item, Profile.findByOwner(player).lang);
+	}
+	
 	/**
 	 * Casts a regular minecraft item to a RelizcItemStack, and create necessary NBT tags
 	 * if that item does not contain those tags, such as language, item id, and UUID for
@@ -110,16 +116,17 @@ public class ItemUtils {
 	 * @param item
 	 * @return
 	 */
-	public static RelizcItemStack castOrCreateItem(Player player, ItemStack item) {
+	public static RelizcItemStack castOrCreateItem(Player player, ItemStack item, Language lang) {
 		
 		net.minecraft.world.item.ItemStack it = CraftItemStack.asNMSCopy(item);
+	
 		
-		System.out.println(it.getOrCreateTag().getString("id"));
+		//System.out.println(it.getOrCreateTag().getString("id"));
 		if (it.getOrCreateTag().getString("id").length() == 0) {
 			CompoundTag tag = it.getOrCreateTag();
 			tag.putString("id", "MINECRAFT_" + item.getType().toString());
 			
-			tag.putString("lang", Profile.findByOwner(player).lang.toString());
+			tag.putString("lang", lang.toString());
 			
 			if (item.getType().getMaxStackSize() == 1) {
 				tag.putUUID("uid", UUID.randomUUID());
@@ -133,7 +140,7 @@ public class ItemUtils {
 			ItemMeta meta = copy.getItemMeta();
 			
 			meta.addItemFlags(ItemFlag.values());
-			meta.setDisplayName(Quality.valueOf(it.getRarity()).getColor() + Locale.getMojang(player, copy.getTranslationKey()));
+			meta.setDisplayName(Quality.valueOf(it.getRarity()).getColor() + Locale.getMojang(lang, copy.getTranslationKey()));
 			copy.setItemMeta(meta);
 			
 			RelizcItemStack completed = null;
@@ -180,9 +187,22 @@ public class ItemUtils {
 			
 			
 			
+			
 			return completed;
 		} else {
 			return new RelizcItemStack(player, item);
+		}
+		
+	}
+	
+	public static class MetadataPair {
+		
+		public Object value;
+		public String key;
+
+		public MetadataPair(String key, Object value) {
+			this.key = key;
+			this.value = value;
 		}
 		
 	}
@@ -194,14 +214,17 @@ public class ItemUtils {
 	 * @param player The player to create this class for. Mainly for language purpose
 	 * @return A RelizcItemStack instance representing that item.
 	 */
-	public static <T extends RelizcItemStack> T createItem(Class<T> itemClass, Player player) {
+	public static <T extends RelizcItemStack> T createItem(Class<T> itemClass, Player player, MetadataPair... defaultMetadatas) {
 		RelizcItem annotation = itemClass.getAnnotation(RelizcItem.class);
 		RelizcItemMeta[] metas = itemClass.getAnnotationsByType(RelizcItemMeta.class);
 		
 		Quality q = annotation.quality();
 		String id = annotation.id();
+		ItemStack created;
+
+		created = new ItemStack(annotation.material());
+
 		
-		ItemStack created = new ItemStack(annotation.material());
 		
 		net.minecraft.world.item.ItemStack nms = CraftItemStack.asNMSCopy(created);
 
@@ -210,15 +233,49 @@ public class ItemUtils {
 		UUID unique = UUID.randomUUID();
 		tag.putUUID("uid", unique);
 		tag.putString("id", annotation.id());
-		tag.putString("lang", Profile.findByOwner(player).lang.toString());
+		
+		
+		String lang;
+		if (Profile.findByOwner(player) == null) {
+			lang = Language.ZH_CN.toString();
+		} else {
+			lang = Profile.findByOwner(player).lang.toString();
+		}
+		
+		tag.putString("lang", lang);
 		
 		for (RelizcItemMeta meta : metas) {
-			NBT.set(tag, meta.key(), meta.type(), meta.init());
+			boolean found = false;
+//			NBT.set(tag, meta.key(), meta.type(), meta.init());
+			for (MetadataPair def : defaultMetadatas) {
+				if (meta.key().equals(def.key)) {
+					if (meta.type() == NBTTagType.TAG_Int) {
+						tag.putInt(meta.key(), (int) def.value);
+					} else if (meta.type() == NBTTagType.TAG_String) {
+						tag.putString(meta.key(), (String) def.value);
+					} else if (meta.type() == NBTTagType.TAG_Long) {
+						tag.putLong(meta.key(), (long) def.value);
+					}
+					found = true;
+					break;
+				}
+			}
+			
+			if (!found) {
+				if (meta.type() == NBTTagType.TAG_Int) {
+					tag.putInt(meta.key(), meta.int_init());
+				} else if (meta.type() == NBTTagType.TAG_String) {
+					tag.putString(meta.key(), meta.str_init());
+				} else if (meta.type() == NBTTagType.TAG_Long) {
+					tag.putLong(meta.key(), meta.long_init());
+				}
+			}
+			
 		}
 		
 		
 		nms.setTag(tag);
-		nms.setHoverName(Component.literal("§r" + q.getColor() + Locale.get(player, "item." + id + ".name")));
+		//nms.setHoverName(Component.literal("§r" + q.getColor() + Locale.get(player, "item." + id + ".name")));
 		
 		ItemStack copy = CraftItemStack.asBukkitCopy(nms);
 		ItemMeta meta = copy.getItemMeta();
@@ -237,6 +294,7 @@ public class ItemUtils {
 			e.printStackTrace();
 		}
 		ItemMeta meta2 = stack.getBukkitItem().getItemMeta();
+		meta2.setDisplayName(annotation.quality().getColor() + stack.renderName());
 		List<String> l = meta2.getLore();
 		List<String> rendered = stack.renderInternalLore();
 		rendered.forEach(s -> l.add(s));
@@ -252,6 +310,8 @@ public class ItemUtils {
 		
 		
 	}
-	
 
+	public static RelizcItemStack castOrCreateItem(ItemStack content) {
+		return castOrCreateItem(null, content);
+	}
 }

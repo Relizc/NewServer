@@ -17,7 +17,6 @@ import net.itsrelizc.diamonds.DiamondCommand;
 import net.itsrelizc.diamonds.DiamondCounter;
 import net.itsrelizc.diamonds.DiamondPurse;
 import net.itsrelizc.events.EventRegistery;
-import net.itsrelizc.gunmod.blood.Container;
 import net.itsrelizc.players.locales.Locale;
 import net.itsrelizc.smp.modsmp.commands.LOLCommand;
 import net.itsrelizc.smp.modsmp.commands.PrestigeCommand;

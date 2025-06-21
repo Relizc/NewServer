@@ -6,6 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import net.itsrelizc.itemlib.RelizcItemMetas;
 import net.itsrelizc.nbt.NBT.NBTTagType;
 
 
@@ -19,11 +20,13 @@ public @interface RelizcItemMeta {
 
 	NBTTagType type();
 
-	int init();
+	int int_init() default 0;
+	
+	String str_init() default "";
+
+	long long_init() default 0;
 }
 
-@Retention(value = RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.TYPE })
-@interface RelizcItemMetas {
-	RelizcItemMeta[] value();
-}
+
+
+

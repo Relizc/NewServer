@@ -13,7 +13,7 @@ import net.itsrelizc.itemlib.RelizcItemStack;
 import net.itsrelizc.nbt.NBT.NBTTagType;
 
 @RelizcItem(id="MASTER_BAITER", material=Material.STRING, stackable=false, quality=Quality.EPIC, tradeable=true)
-@RelizcItemMeta(key="DAYSTREAK", type=NBTTagType.TAG_Int, init=0)
+@RelizcItemMeta(key="DAYSTREAK", type=NBTTagType.TAG_Int, int_init=0)
 public class RelizcMasterBaiter extends RelizcItemStack {
 
   public RelizcMasterBaiter(Player owner, ItemStack it) {

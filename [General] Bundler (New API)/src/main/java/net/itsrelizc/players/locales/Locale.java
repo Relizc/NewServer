@@ -64,7 +64,7 @@ public class Locale {
 			int lang = 0;
 			for (Object key : a1.keySet()) {
 				String result = (String) a1.get(key);
-				eng.put((String) key, result);
+				eng.put(((String) key).toLowerCase(), result);
 				
 				lang += 1;
 			}
@@ -94,8 +94,16 @@ public class Locale {
 	 * @return The translated string, or the translation key itself if the entry is not present in the language JSON file.
 	 */
 	public static String get(Player player, String namespace) {
+		
+		if (namespace == null) return namespace;
+		Language lang;
+		if (Profile.findByOwner(player) == null) {
+			lang = Language.ZH_CN;
+		} else {
+			lang = Profile.findByOwner(player).lang;
+		}
 
-		return locales.get(Profile.findByOwner(player).lang.toString()).getOrDefault(namespace, namespace);
+		return locales.get(lang.toString()).getOrDefault(namespace.toLowerCase(), namespace);
 
 	}
 	
@@ -114,8 +122,16 @@ public class Locale {
 		return locales.get(Profile.findByOwner(player).lang.toString() + "_MOJANG").getOrDefault(namespace, namespace);
 	}
 	
-	public static String get(Player player, String namespace, String... formats) {
+	public static String getMojang(Language lang, String namespace) {
+		return locales.get(lang.toString() + "_MOJANG").getOrDefault(namespace, namespace);
+	}
+	
+	public static String get(Player player, String namespace, Object... formats) {
 		return get(player, namespace).formatted(formats);
+	}
+	
+	public static String a(Player player, String namespace) {
+		return get(player, namespace);
 	}
 	
 	public static Language getLanguage(Player player) {

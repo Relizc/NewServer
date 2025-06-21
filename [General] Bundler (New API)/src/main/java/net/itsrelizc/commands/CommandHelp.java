@@ -12,6 +12,7 @@ public class CommandHelp extends RelizcCommand {
 
 	public CommandHelp() {
 		super("help", "get help");
+		this.setAliases(StringUtils.fromArgs("?"));
 	}
 	
 	@Override

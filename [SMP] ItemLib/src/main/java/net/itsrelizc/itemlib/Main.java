@@ -27,20 +27,20 @@ public class Main extends JavaPlugin implements Listener {
 	
 	@EventHandler
 	public void join(PlayerJoinEvent event) {
-		event.getPlayer().sendMessage("bitch");
-		
-		RelizcTestSword item = ItemUtils.createItem(RelizcTestSword.class, event.getPlayer());
-		event.getPlayer().getInventory().addItem(item.getBukkitItem());
-		
-		TaskDelay.delayTask(new Runnable() {
-
-			@Override
-			public void run() {
-				item.addCum();
-				Bukkit.broadcastMessage("Cum!");
-			}
-			
-		}, 40L);
+//		event.getPlayer().sendMessage("bitch");
+//		
+//		RelizcTestSword item = ItemUtils.createItem(RelizcTestSword.class, event.getPlayer());
+//		event.getPlayer().getInventory().addItem(item.getBukkitItem());
+//		
+//		TaskDelay.delayTask(new Runnable() {
+//
+//			@Override
+//			public void run() {
+//				item.addCum();
+//				//Bukkit.broadcastMessage("Cum!");
+//			}
+//			
+//		}, 40L);
 		
 		
 		

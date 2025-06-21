@@ -17,25 +17,20 @@
           </plugin>
           
           <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-shade-plugin</artifactId>
-            <version>3.0.0</version>
-            <executions>
-                <execution>
-                    <phase>package</phase>
-                    <goals>
-                        <goal>shade</goal>
-                    </goals>
-                    <configuration>
-                        <artifactSet>
-                            <includes>
-                                <include>com.bringholm.nametagchanger:NameTagChanger</include>
-                            </includes>
-                        </artifactSet>
-                    </configuration>
-                </execution>
-            </executions>
-        </plugin>
+	      <groupId>org.apache.maven.plugins</groupId>
+	      <artifactId>maven-jar-plugin</artifactId>
+	      <version>3.2.0</version>
+	      <executions>
+	        <execution>
+	          <id>attach-original</id>
+	          <phase>package</phase>
+	          <goals><goal>jar</goal></goals>
+	          <configuration>
+	            <classifier>unmapped</classifier>
+	          </configuration>
+	        </execution>
+	      </executions>
+	    </plugin>
           
           <plugin>
 		    <groupId>net.md-5</groupId>

@@ -9,6 +9,8 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -25,6 +27,35 @@ import net.itsrelizc.players.locales.Locale.Language;
  * If the server is not using online mode, you can disregard this.
  */
 public class Profile {
+	
+	public static class NewPlayerJoinedEvent extends Event {
+	    private static final HandlerList HANDLERS = new HandlerList();
+	    private final Player player;
+		private Profile profile;
+
+
+	    public NewPlayerJoinedEvent(Player player, Profile profile) {
+	        this.player = player;
+	        this.profile = profile;
+	    }
+
+	    public Player getPlayer() {
+	        return player;
+	    }
+	    
+	    public Profile getProfile() {
+	    	return this.profile;
+	    }
+
+	    @Override
+	    public HandlerList getHandlers() {
+	        return HANDLERS;
+	    }
+
+	    public static HandlerList getHandlerList() {
+	        return HANDLERS;
+	    }
+	}
 	
 	public Player owner;
 	
@@ -153,9 +184,27 @@ public class Profile {
 	
 	}
 	
+	public Object getMetadata(String key, Object defaultValue) {
+		return profiledata.getOrDefault(key, defaultValue);
+	}
+	
+	public Object getMetadata(String key) {
+		return profiledata.getOrDefault(key, null);
+	}
+	
+	public void setMetadata(String key, Object value) {
+		profiledata.put(key, value);
+		
+		JSONObject c = JSON.loadDataFromDataBase("players.json");
+		c.put(this.realUUID.toString(), profiledata);
+		JSON.saveDataFromDataBase("players.json", c);
+	}
+	
+	JSONObject profiledata;
+	
 	public void reloadProfile() {
 		JSONObject c = JSON.loadDataFromDataBase("players.json");
-		JSONObject profiledata;
+		
 		
 		if (!c.containsKey(this.realUUID.toString())) {
 			
@@ -167,7 +216,8 @@ public class Profile {
 			c.put(this.realUUID.toString(), profiledata);
 			JSON.saveDataFromDataBase("players.json", c);
 			
-			Locale.sendLanguageInfo(this.owner);
+			NewPlayerJoinedEvent event = new NewPlayerJoinedEvent(this.owner, this);
+			Bukkit.getPluginManager().callEvent(event);
 			
 		} else {
 			profiledata = (JSONObject) c.get(this.realUUID.toString());

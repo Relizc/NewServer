@@ -76,6 +76,7 @@ public class ContractListener implements Listener {
 	}
 	
 	public static void generate(ItemStack item, Player player) {
+		
 		CompoundTag tag = NBT.getNBT(item);
 		if (tag == null) return;
 		

@@ -10,6 +10,7 @@ import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
+import net.itsrelizc.bundler.Main;
 import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.players.Grouping;
 import net.itsrelizc.players.Profile;
@@ -119,6 +120,8 @@ public class RelizcScoreboard {
         if (index < 0 || index >= lines.size()) {
             throw new IndexOutOfBoundsException("Invalid line index.");
         }
+        
+        if (lines.get(index).equals(newLine)) return;
 
         int score = lines.size() - index;
 
@@ -135,7 +138,7 @@ public class RelizcScoreboard {
     
     protected void addFootnote() {
 		addLine(" ");
-		addLine("§77.0.1");
+		addLine("§7" + Main.getVersion());
 	}
 
     public void removeLine(int index) {

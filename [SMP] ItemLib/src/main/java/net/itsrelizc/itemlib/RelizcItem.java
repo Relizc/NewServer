@@ -26,6 +26,10 @@ public @interface RelizcItem {
 	Quality quality() default Quality.COMMON;
 
 	boolean tradeable() default true;
+
+	boolean customItemstack() default false;
+
+	boolean placeable() default true;
 	
 }
 

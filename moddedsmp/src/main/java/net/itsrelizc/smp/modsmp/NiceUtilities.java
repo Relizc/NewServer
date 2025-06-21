@@ -25,7 +25,7 @@ public class NiceUtilities implements Listener {
 	private static final String[] motds = {
 			"臭名昭著的贾斯丁已被清算！",
 			"臭狗",
-			"",
+			"我们不支持大贝塔",
 	};
 	
 	public static final Random rand = new Random();
