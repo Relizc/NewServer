@@ -82,7 +82,10 @@ public class QuestUtils {
 		
 		for (QuestObjective obj : objectivesList) {
 			objectives.put(obj.getID(), obj.getValue());
+			objectives.put(obj.getID() + ".active", obj.isActive()); 
 		}
+		
+		objectives.put("_COMPLETED", false);
 		
 		profile.setMetadata("quest." + instance.ID, objectives);
 		

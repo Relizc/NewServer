@@ -27,6 +27,9 @@ import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import net.itsrelizc.players.Profile.NewPlayerJoinedEvent;
+import net.itsrelizc.players.locales.Locale;
+
 public class DeathListeners implements Listener {
 	
 	@EventHandler(priority=EventPriority.LOWEST)
@@ -193,17 +196,24 @@ public class DeathListeners implements Listener {
     }
 	
 	@EventHandler
+	public void newguy(NewPlayerJoinedEvent event) {
+		event.getProfile().setMetadata("freeRevives", 15l);
+	}
+	
+	@EventHandler(priority=EventPriority.HIGHEST)
 	public void target(EntityTargetEvent event) {
 		if (!(event.getTarget() instanceof Player)) return;
 		
 		Player player = (Player) event.getTarget();
+		
+		Bukkit.broadcastMessage(player.getName());
 		
 		if (DeathUtils.isDead(player)) {
 			event.setCancelled(true);
 		}
 	}
 	
-	@EventHandler
+	@EventHandler(priority=EventPriority.HIGHEST)
 	public void join(PlayerJoinEvent event) {
 
 		
@@ -212,6 +222,7 @@ public class DeathListeners implements Listener {
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				player.hidePlayer(event.getPlayer());
 			}
+			
 		} else {
 			event.getPlayer().setAllowFlight(false);
 			for (Player player : Bukkit.getOnlinePlayers()) {
@@ -231,8 +242,10 @@ public class DeathListeners implements Listener {
 					Location bed = player.getBedSpawnLocation();
 					if (bed == null) {
 						bed = Bukkit.getWorld("world").getSpawnLocation();
+						player.sendMessage(Locale.a(player, "death.nobed"));
 					}
 					player.teleport(bed);
+					player.setFallDistance(0);
 					player.removePotionEffect(PotionEffectType.INVISIBILITY);
 					player.removePotionEffect(PotionEffectType.BLINDNESS);
 					player.removePotionEffect(PotionEffectType.NIGHT_VISION);

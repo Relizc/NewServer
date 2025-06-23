@@ -10,8 +10,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import net.itsrelizc.diamonds.DiamondPurse.PlayerPurseChangedEvent;
 import net.itsrelizc.events.EventRegistery;
+import net.itsrelizc.gunmod.deathutils.DeathUtils;
 import net.itsrelizc.gunmod.deathutils.DeathUtils.PlayerGhostEvent;
+import net.itsrelizc.health2.Body;
 import net.itsrelizc.health2.Body.PlayerBodyHealthStatusChangedEvent;
 import net.itsrelizc.players.PlayerAFKEvent;
 import net.itsrelizc.quests.QuestUtils.PlayerQuestStatusChangedEvent;
@@ -26,7 +29,25 @@ public class SMPScoreboardListener implements Listener {
 		SMPScoreboard board = new SMPScoreboard(event.getPlayer());
 
 
-		
+		if (DeathUtils.isDead(event.getPlayer())) {
+			board.setPage(Pages.DEATH);
+		} else {
+			
+			event.getPlayer().setInvulnerable(false);
+			Body body = Body.parts.get(event.getPlayer().getUniqueId().toString());
+			if (body.getHealth() == body.getMaxHealth()) {
+				board.setPage(Pages.MAIN);
+			} else {
+				board.setPage(Pages.HEALTH);
+			}
+			body.refreshHealthDisplay();
+		}
+	}
+	
+	@EventHandler
+	public void aa(PlayerPurseChangedEvent event) {
+		SMPScoreboard board = new SMPScoreboard(event.getPlayer());
+		board.refreshDiamondPage();
 	}
 	
 	static Set<Player> afkers = new HashSet<Player>();
@@ -63,20 +84,26 @@ public class SMPScoreboardListener implements Listener {
 	
 	@EventHandler
 	public void ghost(PlayerGhostEvent event) {
+		SMPScoreboard b = SMPScoreboard.boards.get(event.getPlayer());
+		
 		if (event.isGhost()) {
 			
-			SMPScoreboard b = SMPScoreboard.boards.get(event.getPlayer());
+			
 			b.setPage(Pages.DEATH);
 			
+		} else {
+			b.setPage(Pages.MAIN);
 		}
 	}
 	
 	@EventHandler
 	public void change(PlayerBodyHealthStatusChangedEvent event) {
-
+		
 		
 		SMPScoreboard b = SMPScoreboard.boards.get(event.getPlayer());
 		if (b == null) return;
+		
+		if (b.getPage() == Pages.DEATH) return;
 		
 		if (event.getBody().getHealth() != event.getBody().getMaxHealth()) {
 			b.setPage(Pages.HEALTH);

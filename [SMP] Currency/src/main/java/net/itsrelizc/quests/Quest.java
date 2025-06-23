@@ -19,14 +19,25 @@ public class Quest {
 	public static class QuestObjective {
 		private String id;
 		private Object value;
+		private boolean active;
 
-		public QuestObjective(String id, Object value) {
+		public QuestObjective(String id, Object value, boolean active) {
+			
+			if (id.equals("_COMPLETED")) {
+				System.out.println("[Quests] UNSAFE OBJECTIVE NAME: " + id + ". Please change the objective id.");
+			}
+			
 			this.id = id;
 			this.value = value;
+			this.active = active;
 		}
 		
 		public String getID() {
 			return id;
+		}
+		
+		public boolean isActive() {
+			return active;
 		}
 		
 		public Object getValue() {

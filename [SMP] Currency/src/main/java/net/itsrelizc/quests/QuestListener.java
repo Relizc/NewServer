@@ -49,7 +49,7 @@ public class QuestListener implements Listener {
 		message += "\n §6§l" + Locale.a(event.getPlayer(), "quest.objectives") + "\n ";
 		
 		for (QuestObjective objectives : event.getQuest().OBJECTIVES) {
-			message += "  §e• " + objectives.getDescription(event.getPlayer()) + "\n ";
+			message += " §e• " + objectives.getDescription(event.getPlayer()) + "\n ";
 		}
 		
 		message += "\n";

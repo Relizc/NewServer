@@ -17,9 +17,7 @@ public class InsuranceCommand extends RelizcCommand {
 	
 	@Override
 	public boolean onPlayerExecute(Player player, String[] args) {
-		
-		Menu2 menu = new Menu2(player, 5, new InsuranceMenu(Locale.get(player, "menu.insurance.name")));
-		menu.open();
+	
 		
 		return true;
 		

@@ -1,3 +1,4 @@
+import net.itsrelizc.health2.Body;
 
 public class RayPlaneIntersection {
 
@@ -78,15 +79,9 @@ public class RayPlaneIntersection {
 
     // Example usage
     public static void main(String[] args) {
-        Vector3D rayOrigin = new Vector3D(0, 0, 0);
-        Vector3D rayDir = new Vector3D(1, 1, 1).normalize();
 
-        Vector3D planeOrigin = new Vector3D(5, 5, 5);
-        Vector3D planeU = new Vector3D(1, 0, 0);
-        Vector3D planeV = new Vector3D(0, 1, 0);
-
-        boolean hit = rayIntersectsPlane(rayOrigin, rayDir, planeOrigin, planeU, planeV);
-        System.out.println("Intersects: " + hit);
+    	
+    	
     }
 }
 

@@ -22,6 +22,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.scoreboard.Team.Option;
 
@@ -29,7 +30,9 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.trait.SkinTrait;
+import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.gunmod.npcs.SleepingTrait;
+import net.itsrelizc.health2.Body;
 import net.itsrelizc.itemlib.ItemUtils;
 import net.itsrelizc.itemlib.ItemUtils.MetadataPair;
 import net.itsrelizc.players.Profile;
@@ -44,9 +47,11 @@ public class DeathUtils {
 	    private boolean cancelled;
 		private boolean isGhost;
 		private String cause;
+		private Player killer;
 
-	    public PlayerGhostEvent(Player player, boolean isGhost, String damageCause) {
+	    public PlayerGhostEvent(Player player, Player killer, boolean isGhost, String damageCause) {
 	        this.player = player;
+	        this.killer = killer;
 	        this.cancelled = false;
 	        this.isGhost = isGhost;
 	        this.cause = damageCause;
@@ -58,6 +63,11 @@ public class DeathUtils {
 	    
 	    public boolean isGhost() {
 	    	return isGhost;
+	    }
+	    
+	    public Player getKiller() {
+			return killer;
+	    	
 	    }
 	    
 	    public String getCause() {
@@ -225,14 +235,23 @@ public class DeathUtils {
 		
 		
 		
-		PlayerGhostEvent event = new PlayerGhostEvent(player, true, damageCause);
+		PlayerGhostEvent event = new PlayerGhostEvent(player, killer, true, damageCause);
 		Bukkit.getPluginManager().callEvent(event);
 		
 	}
 	
 	public static void removePlayer(Player player) {
+
 		
 		if (!deadppl.contains(player.getUniqueId().toString())) return;
+		Body body = Body.parts.get(player.getUniqueId().toString());
+		
+		if (body.convert(0).getHealth() <= 0) {
+			body.convert(0).setHealth(1);
+		}
+		if (body.convert(1).getHealth() <= 0) {
+			body.convert(1).setHealth(1);
+		}
 		
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			if (DeathUtils.isDead(p)) {
@@ -261,11 +280,22 @@ public class DeathUtils {
 			}
 		}
 		
-		deadteam.addEntry(player.getName());
+		deadteam.removeEntry(player.getName());
+		
 		
 		player.setCanPickupItems(true);
+		player.getInventory().clear();
 		
-		PlayerGhostEvent event = new PlayerGhostEvent(player, false, null);
+		Location bed = player.getBedSpawnLocation();
+		if (bed == null) {
+			bed = Bukkit.getWorld("world").getSpawnLocation();
+			player.sendMessage(Locale.a(player, "death.nobed"));
+		}
+		player.teleport(bed);
+		player.setFallDistance(0);
+		body.refreshHealthDisplay();
+		
+		PlayerGhostEvent event = new PlayerGhostEvent(player, null, false, null);
 		Bukkit.getPluginManager().callEvent(event);
 	}
 

@@ -20,13 +20,13 @@ import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
-import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.TraitInfo;
 import net.itsrelizc.commands.CommandRegistery;
 import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.gunmod.deathutils.DeathListeners;
 import net.itsrelizc.gunmod.deathutils.DeathSummaryScreen;
 import net.itsrelizc.gunmod.deathutils.DeathUtils;
+import net.itsrelizc.gunmod.deathutils.LegBrokenJumpListeners;
 import net.itsrelizc.gunmod.deathutils.RelizcOverridedPlayerHead;
 import net.itsrelizc.gunmod.deathutils.RightClickBody;
 import net.itsrelizc.gunmod.npcs.SleepingTrait;
@@ -48,6 +48,7 @@ public class Main extends JavaPlugin implements Listener {
 		EventRegistery.register(this);
 		EventRegistery.register(new RightClickBody());
 		EventRegistery.register(new DeathSummaryScreen.DeathSummaryListeners());
+		EventRegistery.register(new LegBrokenJumpListeners());
 		
 		DeathUtils.init();
 		

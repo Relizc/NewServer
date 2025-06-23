@@ -149,6 +149,7 @@ public class Limb {
 	 */
 	public long heal(long amount) {
 		
+		if (this.health <= 0) return amount;
 		if (amount == 0) return 0;
 		
 		long val = -Math.min(this.maxhealth - this.health, amount);
@@ -172,6 +173,9 @@ public class Limb {
 	public long damage(long amount, String damageCause, Limb limb) {
 		
 		if (amount == 0) return 0;
+		if (limb == null) {
+			damage(amount, damageCause);
+		}
 		
 		long actual = this.health;
 		this.health -= amount;
@@ -206,6 +210,10 @@ public class Limb {
 	public void setLatestRecordAsLethal() {
 		DamageRecord rec = logs.getLatest();
 		rec.setLethal(true);
+	}
+
+	public void setHealth(int i) {
+		this.health = i;
 	}
 
 }

@@ -1,17 +1,41 @@
 package net.itsrelizc.diamonds;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map.Entry;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
 import org.json.simple.JSONObject;
 
 import net.itsrelizc.bundler.JSON;
-import net.itsrelizc.players.locales.Locale;
-import net.itsrelizc.smp.modsmp.SMPScoreboard;
+import net.itsrelizc.quests.QuestNewArrival;
 
 public class DiamondPurse {
+	
+	public static class PlayerPurseChangedEvent extends Event {
+	    private static final HandlerList HANDLERS = new HandlerList();
+	    private Player player;
+
+
+	    public PlayerPurseChangedEvent(Player player) {
+	        this.player = player;
+	    }
+
+	    public Player getPlayer() {
+	        return player;
+	    }
+
+	    @Override
+	    public HandlerList getHandlers() {
+	        return HANDLERS;
+	    }
+
+	    public static HandlerList getHandlerList() {
+	        return HANDLERS;
+	    }
+	}
 	
 	private static HashMap<Player, Long> balance = new HashMap<Player, Long>();
 	private static HashMap<Player, Long> bloodsugar = new HashMap<Player, Long>();
@@ -95,13 +119,8 @@ public class DiamondPurse {
 	public static void addPurse(Player player, long d) {
 		balance.put(player, balance.get(player) + d);
 		
-		List<String> l = SMPScoreboard.boards.get(player).getLines();
-		for (int i = 0; i < l.size(); i ++) {
-			if (l.get(i).startsWith(SMPScoreboard.SECRET_DIAMOND_PURSE)) {
-				SMPScoreboard.boards.get(player).refreshDiamondPage();
-			}
-		}
-		
+		PlayerPurseChangedEvent event = new PlayerPurseChangedEvent(player);
+		Bukkit.getPluginManager().callEvent(event);
 	}
 
 	public static void addSugar(Player player, long sugar) {

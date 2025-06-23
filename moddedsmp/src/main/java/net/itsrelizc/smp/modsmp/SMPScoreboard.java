@@ -110,10 +110,12 @@ public class SMPScoreboard extends RelizcScoreboard {
 				addLine(4, " ");
 				addLine(5, " " + Locale.a(player, "quest.tablist").formatted(Locale.a(player, QuestUtils.getActiveQuest(player).DISPLAY_NAME)));
 				
-				int i =6;
+				int i =5;
 				for (QuestObjective obj : QuestUtils.getActiveQuest(player).OBJECTIVES) {
-					addLine(i, " §e• " + obj.toString(player));
 					i ++;
+					if (!obj.isActive()) continue;
+					addLine(i, " §e• " + obj.toString(player));
+					
 				}
 			}
 			
@@ -164,7 +166,9 @@ public class SMPScoreboard extends RelizcScoreboard {
 		boards.put(player, this);
 	}
 	
-	
+	public Pages getPage() {
+		return this.page;
+	}
 
 	@Override
 	public void addGameInfo() {

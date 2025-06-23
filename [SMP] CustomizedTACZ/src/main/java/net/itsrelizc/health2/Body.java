@@ -15,6 +15,7 @@ import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.gunmod.deathutils.DamageLogs;
 import net.itsrelizc.gunmod.deathutils.DeathUtils;
 import net.itsrelizc.health2.Limb.RelizcDamageCause;
+import net.itsrelizc.players.Profile;
 
 public class Body {
 	
@@ -128,6 +129,10 @@ public class Body {
 		return c;
 	}
 	
+	public void damage(int partId, long amount, String damageCause) {
+		damage(partId, amount, damageCause, null);
+	}
+	
 	/**
 	 * For partId, please refer:
 	 * Head - 0
@@ -143,7 +148,9 @@ public class Body {
 	 * @param amount The amount of damage
 	 * @param damageCause 
 	 */
-	public void damage(int partId, long amount, String damageCause) {
+	public void damage(int partId, long amount, String damageCause, Limb from) {
+		
+		
 		
 		if (owner instanceof Player) {
 			if (DeathUtils.isDead((Player) owner)) {
@@ -160,7 +167,7 @@ public class Body {
 //		
 		Limb limb = convert(partId);
 		
-		long remaining = limb.damage(amount, damageCause);
+		long remaining = limb.damage(amount, damageCause, from);
 		
 		if (owner instanceof Player) {
 			PlayerBodyHealthStatusChangedEvent event = new PlayerBodyHealthStatusChangedEvent((Player) owner, partId, convert(partId), this);
@@ -200,7 +207,10 @@ public class Body {
 			}
 		}
 //		
-//		
+		
+		
+		
+		this.updateLegStatus();
 		refreshHealthDisplay();
 		
 		
@@ -221,6 +231,20 @@ public class Body {
 			owner.setHealth(0);
 		}
 
+	}
+	
+	private void updateLegStatus() {
+		if (owner instanceof Player) {
+			int res = 0;
+			if (convert(5).getHealth() <= 0) {
+				res ++;
+			}
+			if (convert(6).getHealth() <= 0) {
+				res ++;
+			}
+			Player player = (Player) owner;
+			player.setWalkSpeed(0.2f - (0.05f * res));
+		}
 	}
 
 
@@ -251,6 +275,12 @@ public class Body {
 				Bukkit.getPluginManager().callEvent(event);
 			}
 		}
+		
+		if (amount >= 0) {
+			
+		}
+		
+		this.updateLegStatus();
 		refreshHealthDisplay();
 		
 	}
@@ -298,5 +328,31 @@ public class Body {
 			convert(i).setPlayer(livingEntity);
 		}
 	}
+	
+	public long calculateCureFee(long currentHealth, long maxHealth) {
+		
+		if (owner instanceof Player) {
+			Profile prof = Profile.findByOwner((Player) owner);
+			
+			if (((Long) prof.getMetadata("freeRevives")) > 0 || ((Long) prof.getMetadata("level")) <= 5) {
+				return -1;
+			}
+		}
+		
+		
+	    if (currentHealth >= maxHealth) return 0L;
+
+	    double missingHealth = maxHealth - currentHealth;
+	    double baseRate = 0.05;
+
+	    // Logarithmic scaling
+	    double scalingFactor = Math.log1p(missingHealth) / Math.log1p(maxHealth);
+	    double costMultiplier = 1.0 + scalingFactor;
+
+	    double totalCost = missingHealth * baseRate * costMultiplier;
+
+	    return (long) Math.ceil(totalCost);
+	}
+
 
 }

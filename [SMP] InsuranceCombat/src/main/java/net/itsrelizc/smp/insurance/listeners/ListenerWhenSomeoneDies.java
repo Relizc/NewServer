@@ -19,7 +19,7 @@ public class ListenerWhenSomeoneDies implements Listener {
 		
 		Player player = event.getPlayer();
 		
-		event.getPlayer().sendTitle("§c§l" + Locale.a(player, "general.yousuck"), "§e" + Locale.a(player, convert(event.getCause())), 0, 20 * 10, 10);
+		event.getPlayer().sendTitle("§c§l" + Locale.a(player, "general.yousuck"), "§e" + Locale.a(player, convert(event.getCause())), 0, 20 * 3, 10);
 		
 	}
 	
