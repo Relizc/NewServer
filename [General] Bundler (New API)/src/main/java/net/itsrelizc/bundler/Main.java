@@ -8,6 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Team;
 
 import net.itsrelizc.commands.CSetTabListName;
+import net.itsrelizc.commands.CommandDebugStats;
 import net.itsrelizc.commands.CommandHelp;
 import net.itsrelizc.commands.CommandRegistery;
 import net.itsrelizc.commands.CommandTestSign;
@@ -57,6 +58,7 @@ public class Main extends JavaPlugin {
 		CommandRegistery.register(new CommandGetNBTOnHand());
 		CommandRegistery.register(new CommandVersion());
 		CommandRegistery.register(new CommandPath());
+		CommandRegistery.register(new CommandDebugStats());
 		
 		
 
@@ -91,7 +93,7 @@ public class Main extends JavaPlugin {
 	}
 
 	public static String getVersion() {
-		return "8.1";
+		return "8.1.52";
 	}
 
 }
