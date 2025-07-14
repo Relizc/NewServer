@@ -145,7 +145,7 @@ public class Main extends JavaPlugin implements Listener {
 	public void damage(EntityDamageEvent event) {
 		if (!(event.getEntity() instanceof Player)) return;
 		
-		long actual = (long) (event.getDamage() * 10);
+		long actual = (long) (event.getFinalDamage() * 10);
 		
 		event.setDamage(0);
 		
