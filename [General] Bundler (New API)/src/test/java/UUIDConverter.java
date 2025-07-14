@@ -1,6 +1,10 @@
 
 import java.util.UUID;
 
+import net.itsrelizc.players.locales.Locale;
+import net.itsrelizc.players.locales.Locale.Language;
+import net.itsrelizc.string.StringUtils;
+
 public class UUIDConverter {
 
 	public static UUID forceUUIDv4(UUID original) {
@@ -13,12 +17,13 @@ public class UUIDConverter {
 
         return new UUID(msb, lsb);
     }
+	
+	
 
     public static void main(String[] args) {
-        UUID original = UUID.fromString("56b89759-c07a-1a8e-a42d-376be0077451");
-        UUID modified = forceUUIDv4(original);
-
-        System.out.println("Original : " + original + " (v" + original.version() + ")");
-        System.out.println("Modified : " + modified + " (v" + modified.version() + ")");
+    	//Locale.load_all();
+    	String ans = StringUtils.wrapWithColor("§f微型航天工程的奇迹，适用于射弹作战。最初的灵感源自飞机上的全尺寸飞行控制单元 (FCU)，这个小型动力装置可以计算实时轨迹修正、风向调整以及飞行过程中的目标跟踪。", Language.ZH_CN);
+    	
+    	System.out.println(ans);
     }
 }

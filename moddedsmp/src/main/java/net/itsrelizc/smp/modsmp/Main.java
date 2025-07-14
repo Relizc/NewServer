@@ -68,8 +68,8 @@ public class Main extends JavaPlugin {
 
 			@Override
 			public void run() {
-				//Bukkit.broadcastMessage(net.itsrelizc.uptime.TPSUtils.getDelayAsFormattedString());
-				//Bukkit.broadcastMessage(net.itsrelizc.uptime.TPSUtils.getDelayYieldAsFormattedString());
+				////(net.itsrelizc.uptime.TPSUtils.getDelayAsFormattedString());
+				////(net.itsrelizc.uptime.TPSUtils.getDelayYieldAsFormattedString());
 				
 				for (Player p : Bukkit.getOnlinePlayers()) {
 					

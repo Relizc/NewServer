@@ -36,5 +36,18 @@ public enum Quality {
 		else if (rarity == Rarity.RARE) return RARE;
 		return COMMON;
 	}
+
+	static Quality fromNMSRarity(Rarity rarity) {
+		if (rarity == Rarity.COMMON) {
+			return COMMON;
+		} else if (rarity == Rarity.UNCOMMON) {
+			return UNCOMMON;
+		} else if (rarity == Rarity.EPIC) {
+			return EPIC;
+		} else if (rarity == Rarity.RARE) {
+			return RARE;
+		}
+		return COMMON;
+	}
 	
 }

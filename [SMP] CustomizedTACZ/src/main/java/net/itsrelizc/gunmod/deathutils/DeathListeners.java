@@ -27,6 +27,7 @@ import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import net.itsrelizc.players.CustomPlayerTeleportEvent;
 import net.itsrelizc.players.Profile.NewPlayerJoinedEvent;
 import net.itsrelizc.players.locales.Locale;
 
@@ -129,7 +130,7 @@ public class DeathListeners implements Listener {
 		
 		Player player = event.getPlayer();
 		
-		//Bukkit.broadcastMessage("clearing");
+		////("clearing");
 		
 		if (DeathUtils.isDead(player)) {
 			event.setCancelled(true);
@@ -195,7 +196,7 @@ public class DeathListeners implements Listener {
 		}
     }
 	
-	@EventHandler
+	@EventHandler(priority=EventPriority.LOWEST)
 	public void newguy(NewPlayerJoinedEvent event) {
 		event.getProfile().setMetadata("freeRevives", 15l);
 	}
@@ -206,10 +207,12 @@ public class DeathListeners implements Listener {
 		
 		Player player = (Player) event.getTarget();
 		
-		Bukkit.broadcastMessage(player.getName());
+		////(player.getName());
 		
 		if (DeathUtils.isDead(player)) {
 			event.setCancelled(true);
+			
+			event.setTarget(null);
 		}
 	}
 	
@@ -244,7 +247,8 @@ public class DeathListeners implements Listener {
 						bed = Bukkit.getWorld("world").getSpawnLocation();
 						player.sendMessage(Locale.a(player, "death.nobed"));
 					}
-					player.teleport(bed);
+//					player.teleport(bed);
+					CustomPlayerTeleportEvent.teleport(player, bed);
 					player.setFallDistance(0);
 					player.removePotionEffect(PotionEffectType.INVISIBILITY);
 					player.removePotionEffect(PotionEffectType.BLINDNESS);

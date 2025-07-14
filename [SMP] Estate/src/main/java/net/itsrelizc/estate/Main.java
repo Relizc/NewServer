@@ -8,6 +8,7 @@ import net.itsrelizc.estate.commands.CommandEstateMap;
 import net.itsrelizc.estate.commands.EstateListener;
 import net.itsrelizc.estate.marker.BorderMarker;
 import net.itsrelizc.events.EventRegistery;
+import net.itsrelizc.maps.MapImageViewer;
 
 public class Main extends JavaPlugin {
 	
@@ -22,6 +23,13 @@ public class Main extends JavaPlugin {
 		
 		new ChestShop().enable();
 		
+		
+		MapImageViewer.enable();
+	}
+	
+	@Override
+	public void onDisable() {
+		MapImageViewer.disable();
 	}
 
 }

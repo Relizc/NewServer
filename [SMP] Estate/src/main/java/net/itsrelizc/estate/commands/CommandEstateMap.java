@@ -26,6 +26,7 @@ import net.itsrelizc.bundler.JSON;
 import net.itsrelizc.commands.RelizcCommand;
 import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.events.TaskDelay;
+import net.itsrelizc.maps.MapImageViewer;
 import net.itsrelizc.menus.ItemGenerator;
 import net.itsrelizc.menus.Menu2;
 import net.itsrelizc.menus.MenuTemplate2;
@@ -107,7 +108,7 @@ public class CommandEstateMap extends RelizcCommand {
 					}
 					
 					if (ChunkMetadata.get(selected, "relizcPurchasedOwner", PersistentDataType.STRING)!=null && ChunkMetadata.get(selected, "relizcPurchasedOwner", PersistentDataType.STRING).equals(getPlayer().getUniqueId().toString())) {
-						//Bukkit.broadcastMessage("1");
+						////("1");
 						if (event.getClick() == ClickType.SHIFT_LEFT || event.getClick() == ClickType.SHIFT_RIGHT) {
 							getPlayer().playSound(getPlayer(), Sound.ENTITY_WOLF_WHINE, 1f, 1f);
 							getPlayer().sendMessage("§e" + Locale.get(getPlayer(), "globalestate.purchase.disown"));
@@ -135,12 +136,12 @@ public class CommandEstateMap extends RelizcCommand {
 						
 						return;
 					} else if (ChunkMetadata.get(selected, "relizcPurchasedOwner", PersistentDataType.STRING) != null) {
-						//Bukkit.broadcastMessage("2");
+						////("2");
 						getPlayer().playSound(getPlayer(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 0f);
 						getPlayer().sendMessage("§c" + Locale.get(getPlayer(), "globalestate.purchase.fail.alreadyowned"));
 						return;
 					} else {
-						//Bukkit.broadcastMessage("3");
+						////("3");
 						getPlayer().playSound(getPlayer(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 0f);
 						getPlayer().sendMessage("§c" + Locale.get(getPlayer(), "globalestate.purchase.fail.moved"));
 //						ChunkMetadata.set(selected, "relizcPurchasedOwner", PersistentDataType.STRING, event.getWhoClicked().getUniqueId().toString());
@@ -169,7 +170,7 @@ public class CommandEstateMap extends RelizcCommand {
 				}
 			} else if (page == 1) {
 				
-				//Bukkit.broadcastMessage("4");
+				////("4");
 				
 				if (event.getSlot() == 36) {
 					
@@ -387,9 +388,11 @@ public class CommandEstateMap extends RelizcCommand {
 	@Override
 	public boolean onPlayerExecute(Player player, String[] args) {
 		
-		Menu2 menu = new Menu2(player, 5, new MenuTemplateGlobalEstate(Locale.get(player, "globalestate.webstore.title")));
-		menu.open();
+//		Menu2 menu = new Menu2(player, 5, new MenuTemplateGlobalEstate(Locale.get(player, "globalestate.webstore.title")));
+//		menu.open();
 		
+		
+		MapImageViewer.spawnMapFrameWithView(player);
 		
 		return true;
 		

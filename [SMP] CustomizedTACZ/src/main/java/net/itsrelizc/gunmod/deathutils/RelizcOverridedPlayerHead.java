@@ -64,7 +64,7 @@ public class RelizcOverridedPlayerHead extends RelizcItemStack {
 		ass.add(Locale.get(getOwner(), "item.RELIZC_PLAYER_HEAD.weaponkilled").formatted(Locale.a(getOwner(), this.getTagString("WEAPON_DISPLAY"))));
 		ass.add(Locale.get(getOwner(), "item.RELIZC_PLAYER_HEAD.deathtime").formatted(convertEpochToReadable(this.getTagLong("DEATH_TIME"))));
 		
-		//Bukkit.broadcastMessage(cringe);
+		////(cringe);
 		
 		return ass;
 		

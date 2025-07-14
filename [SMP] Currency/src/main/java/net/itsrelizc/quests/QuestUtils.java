@@ -1,6 +1,8 @@
 package net.itsrelizc.quests;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
@@ -82,7 +84,7 @@ public class QuestUtils {
 		
 		for (QuestObjective obj : objectivesList) {
 			objectives.put(obj.getID(), obj.getValue());
-			objectives.put(obj.getID() + ".active", obj.isActive()); 
+			objectives.put(obj.getID() + ".active", obj.isDefaultActive()); 
 		}
 		
 		objectives.put("_COMPLETED", false);
@@ -105,6 +107,25 @@ public class QuestUtils {
 		
 		return HANDLERS.get(active);
 	}
+	
+	public static List<QuestObjective> getActiveObjectives(Player player) {
+		
+		List<QuestObjective> arr = new ArrayList<QuestObjective>();
+		
+		Quest active = getActiveQuest(player);
+		Profile profile = Profile.findByOwner(player);
+		
+		JSONObject obj = (JSONObject) profile.getMetadata("quest." + active.ID);
+		
+		for (QuestObjective nex : active.OBJECTIVES) {
+			if ((boolean) obj.get(nex.getID() + ".active")) {
+				arr.add(nex);
+			}
+		}
+		
+		return arr;
+		
+	}
 
 	public static void setActiveQuest(Player player, Quest instance) {
 
@@ -117,6 +138,46 @@ public class QuestUtils {
 		PlayerQuestStatusChangedEvent event2 = new PlayerQuestStatusChangedEvent(player);
 		Bukkit.getPluginManager().callEvent(event2);
 
+	}
+
+	public static void setActiveQuestObjectiveMetadata(Player player, QuestObjective obj, Object result) {
+		Profile profile = Profile.findByOwner(player);
+		Quest active = getActiveQuest(player);
+		
+		JSONObject completed = (JSONObject) profile.getMetadata("quest." + active.ID);
+		completed.put(obj.getID(), result);
+		profile.setMetadata("quest." + active.ID, completed);
+		
+		PlayerQuestStatusChangedEvent event2 = new PlayerQuestStatusChangedEvent(player);
+		Bukkit.getPluginManager().callEvent(event2);
+	}
+
+	public static void setActiveQuestObjective(Player player, QuestObjective objective) {
+		setActiveQuestObjective(player, objective, true);
+	}
+
+	public static void setActiveQuestObjective(Player player, QuestObjective objective, boolean callEvent) {
+		Profile profile = Profile.findByOwner(player);
+		Quest active = getActiveQuest(player);
+		JSONObject completed = (JSONObject) profile.getMetadata("quest." + active.ID);
+		
+		for (QuestObjective obj : getActiveObjectives(player)) {
+			completed.put(obj.getID() + ".active", false);
+		}
+		
+		
+		completed.put(objective.getID() + ".active", true);
+		profile.setMetadata("quest." + active.ID, completed);
+		
+		if (callEvent) {
+			PlayerQuestStatusChangedEvent event2 = new PlayerQuestStatusChangedEvent(player);
+			Bukkit.getPluginManager().callEvent(event2);
+		}
+	}
+
+	public static void questStatusChanged(Player player) {
+		PlayerQuestStatusChangedEvent event2 = new PlayerQuestStatusChangedEvent(player);
+		Bukkit.getPluginManager().callEvent(event2);
 	}
 
 }

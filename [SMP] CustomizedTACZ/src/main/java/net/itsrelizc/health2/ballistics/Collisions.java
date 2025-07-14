@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
@@ -16,6 +17,8 @@ public class Collisions {
 	// Determine hit part based on local vector
     public static int determineHitPart(Vector vec) {
         double y = vec.getY();
+        
+        ////(y + "");
 
         // Height zones (approximate for standing player)
         if (y > 1.6) {
@@ -64,7 +67,7 @@ public class Collisions {
     }
 
 
-    public static HitDirection getHitSide(Location rayOrigin, Player player) {
+    public static HitDirection getHitSide(Location rayOrigin, LivingEntity player) {
         Vector toRay = rayOrigin.toVector().subtract(player.getLocation().toVector());
 
         // Ignore vertical component
@@ -108,10 +111,13 @@ public class Collisions {
     }
     
     public static enum BodyPart {
-        HEAD, CHEST, STOMACH, FEET, NONE
+        HEAD, CHEST, STOMACH, FEET, NONE, LEGS
     }
     
-    public static BodyPart getHitBodyPart(Player player, Location a, Location b) {
+    public static BodyPart getHitBodyPart(LivingEntity player, Location a, Location b) {
+    	
+    	////(a + " " + b);
+    	
         Location base = player.getLocation();
         Vector origin = a.toVector();
         Vector end = b.toVector();
@@ -138,10 +144,11 @@ public class Collisions {
         }
 
         Hitbox[] parts = new Hitbox[] {
-            new Hitbox(1.6, 1.8, BodyPart.HEAD),
-            new Hitbox(1.2, 1.6, BodyPart.CHEST),
-            new Hitbox(1.0, 1.2, BodyPart.STOMACH),
-            new Hitbox(0.0, 1.0, BodyPart.FEET),
+            new Hitbox(-0.2, 0.4, BodyPart.FEET),
+            new Hitbox(0.4, 1.0, BodyPart.LEGS),
+            new Hitbox(1.0, 1.1, BodyPart.STOMACH),
+            new Hitbox(1.1, 1.6, BodyPart.CHEST),
+            new Hitbox(1.6, 2.0, BodyPart.HEAD),
         };
 
         double closestT = Double.POSITIVE_INFINITY;
@@ -204,7 +211,7 @@ public class Collisions {
 			double denom = planeNormal.dot(rayDir);
 			
 			if (Math.abs(denom) < 1e-8) {
-			//Bukkit.broadcastMessage("parallel");
+			////("parallel");
 			return false;
 			}
 			
@@ -212,7 +219,7 @@ public class Collisions {
 			double t = originToPlane.dot(planeNormal) / denom;
 			
 			if (t < 0) {
-			//Bukkit.broadcastMessage("behind");
+			////("behind");
 			return false;
 			}
 			
@@ -222,10 +229,10 @@ public class Collisions {
 			double u = local.dot(planeU) / planeU.lengthSquared();
 			double v = local.dot(planeV) / planeV.lengthSquared();
 			
-			//Bukkit.broadcastMessage("u=" + u + " v=" + v);
+			////("u=" + u + " v=" + v);
 			
 			boolean inside = (0 <= u && u <= 1) && (0 <= v && v <= 1);
-			//if (!inside) Bukkit.broadcastMessage("not in rect");
+			//if (!inside) //("not in rect");
 			
 			return inside;
 			}

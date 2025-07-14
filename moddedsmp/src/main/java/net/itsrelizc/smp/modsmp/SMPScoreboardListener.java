@@ -124,7 +124,7 @@ public class SMPScoreboardListener implements Listener {
 			
 		}
 		
-		//Bukkit.broadcastMessage(event.getBody().getHealth() + " ");
+		////(event.getBody().getHealth() + " ");
 		b.changed(event.getLimbId());
 		
 	}

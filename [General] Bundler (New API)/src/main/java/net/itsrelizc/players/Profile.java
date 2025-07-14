@@ -127,6 +127,9 @@ public class Profile {
 	 * @return Profile
 	 */
 	public static Profile findByOwner(Player player) {
+		
+		if (player == null) return null;
+		
 		for (Profile p : profiles) {
 			if (p.owner.getName().equalsIgnoreCase(player.getName())) {
 				return p;
@@ -260,7 +263,7 @@ public class Profile {
 		n.put(uuid.toString(), c);
 		JSON.saveDataFromDataBase("players.json", n);
 		
-		Bukkit.broadcastMessage(String.valueOf(bundle.millis));
+		//(String.valueOf(bundle.millis));
 	}
 	
 	public static void addSubscription(UUID uuid, long bundle) {
@@ -284,7 +287,7 @@ public class Profile {
 		n.put(uuid.toString(), c);
 		JSON.saveDataFromDataBase("players.json", n);
 		
-		Bukkit.broadcastMessage(String.valueOf(subscriptionType.millis));
+		//(String.valueOf(subscriptionType.millis));
 	}
 	
 	public static void setSubscription(UUID uuid, long mils) {

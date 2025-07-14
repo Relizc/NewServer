@@ -2,7 +2,10 @@ package net.itsrelizc.gunmod;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
@@ -14,12 +17,14 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.entity.FireworkExplodeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.trait.TraitInfo;
 import net.itsrelizc.commands.CommandRegistery;
 import net.itsrelizc.events.EventRegistery;
@@ -29,12 +34,19 @@ import net.itsrelizc.gunmod.deathutils.DeathUtils;
 import net.itsrelizc.gunmod.deathutils.LegBrokenJumpListeners;
 import net.itsrelizc.gunmod.deathutils.RelizcOverridedPlayerHead;
 import net.itsrelizc.gunmod.deathutils.RightClickBody;
+import net.itsrelizc.gunmod.items.RelizcItemMFCU;
+import net.itsrelizc.gunmod.items.RelizcItemSatellitePhone;
 import net.itsrelizc.gunmod.npcs.SleepingTrait;
 import net.itsrelizc.health2.Body;
 import net.itsrelizc.health2.ballistics.Collisions;
 import net.itsrelizc.health2.ballistics.FragUtils;
+import net.itsrelizc.health2.fletching.ArrowUtils;
+import net.itsrelizc.health2.fletching.RelizcNeoArrow;
+import net.itsrelizc.health2.fletching.RelizcOverridenBow;
+import net.itsrelizc.health2.fletching.RelizcOverridenCrossbow;
+import net.itsrelizc.health2.penetration.ArrowHitListeners;
 import net.itsrelizc.itemlib.ItemUtils;
-import net.itsrelizc.nbt.UUIDConverter;
+import net.itsrelizc.players.Grouping;
 
 public class Main extends JavaPlugin implements Listener {
 	
@@ -49,12 +61,24 @@ public class Main extends JavaPlugin implements Listener {
 		EventRegistery.register(new RightClickBody());
 		EventRegistery.register(new DeathSummaryScreen.DeathSummaryListeners());
 		EventRegistery.register(new LegBrokenJumpListeners());
+		EventRegistery.register(new ArrowHitListeners());
 		
 		DeathUtils.init();
 		
 		ItemUtils.register(RelizcOverridedPlayerHead.class);
+		ItemUtils.register(RelizcNeoArrow.class);
+		ItemUtils.register(RelizcOverridenBow.class);
+		ItemUtils.register(RelizcOverridenCrossbow.class);
+		ItemUtils.register(RelizcItemMFCU.class);
+		ItemUtils.register(RelizcItemSatellitePhone.class);
+		
+		ArrowUtils.loadAllArrowPoints();
+		ArrowUtils.loadAllArrowFletchings();
+		ArrowUtils.loadAllArrowShafts();
 		
 		CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(SleepingTrait.class).withName("sleepingtrait"));
+		
+		ArrowHitListeners.startDetectingArrows();
 		
 	}
 	
@@ -63,56 +87,65 @@ public class Main extends JavaPlugin implements Listener {
 		
 		Bukkit.getScoreboardManager().getMainScoreboard().getTeam("nocollision").unregister();
 		
+		Grouping.removeAllTeams();
 	}
 	
-	@EventHandler(ignoreCancelled=true)
-    public void onArrowHit(EntityDamageByEntityEvent event) {
-		// DamageCause.PROJECTILE
-		
-		
+	
+	
+	@EventHandler
+    public void onPlayerDamagesPlayer(EntityDamageByEntityEvent event) {
+        // Check if the entity being damaged is a player
         if (!(event.getEntity() instanceof Player)) return;
-        if (!(event.getDamager() instanceof Arrow )) return;
-        
-        
-        
-        Player player = (Player) event.getEntity();
-        
-        if (DeathUtils.isDead(player)) {
-        	event.setCancelled(true);
-        	return;
-        }
-        
-        Arrow arrow = (Arrow) event.getDamager();
 
-        Location playerLoc = player.getLocation();
-        Location arrowLoc = arrow.getLocation();
+        // Check if the damager is a player (can also be a projectile, etc.)
+        if (!(event.getDamager() instanceof Player)) return;
 
-        // Player body yaw (0 is south, increases clockwise)
-        float bodyYaw = playerLoc.getYaw();
+        Player damager = (Player) event.getDamager();
+        Player damaged = (Player) event.getEntity();
 
-        // Calculate vector from player feet location to arrow hit location
-        Vector relativeHitVec = arrowLoc.toVector().subtract(playerLoc.toVector());
-
-        // Rotate relativeHitVec by -bodyYaw degrees to get it in player's local coordinate system
-        Vector localVec = rotateVectorAroundY(relativeHitVec, -bodyYaw);
-
-        // Now localVec.x < 0 means left side, > 0 means right side
-        // localVec.y = height difference (vertical)
-        // localVec.z = forward/backward (we can ignore or use for depth)
-
-        int hitPart = Collisions.determineHitPart(localVec);
-
-        if (hitPart != -1) {
-        	Bukkit.broadcastMessage(player.getUniqueId().toString());
-        	Body body = Body.parts.get(player.getUniqueId().toString());
-        	body.damage(hitPart, (long) (event.getFinalDamage() * 10), "damage." + event.getCause().toString().toLowerCase());
-        	
-        }
+        // Call your custom logic here
+        damager.sendMessage("You hit " + damaged.getName());
+        damaged.sendMessage("You were hit by " + damager.getName());
     }
+	
+	@EventHandler
+	public void onFireworkExplode(FireworkExplodeEvent event) {
+	    Firework firework = event.getEntity();
+	    
+	    // You can get the shooter (if set earlier)
+//	    if (firework.getShooter() instanceof Player) {
+//	        Player shooter = (Player) firework.getShooter();
+//	        //shooter.sendMessage("Your firework has exploded!");
+//	    }
+	    FragUtils.spawnFragmentsRandomly(event.getEntity().getLocation(), 10, 8);
+	    TNTPrimed tnt = event.getEntity().getLocation().getWorld().spawn(event.getEntity().getLocation(), TNTPrimed.class);
+	    tnt.setFuseTicks(0); // Explode immediately
+
+	    // Debug
+	    //System.out.println("Firework exploded at " + firework.getLocation());
+	}
+	
+	@EventHandler
+	public void onShoot(EntityShootBowEvent event) {
+	    // Check if the shooter is a player or something else
+	    if (!(event.getEntity() instanceof Player)) return;
+
+	    // Check if the bow is a crossbow
+	    ItemStack weapon = event.getBow();
+	    if (weapon == null || weapon.getType() != Material.CROSSBOW) return;
+
+	    // Check if the projectile is a firework
+	    if (event.getProjectile() instanceof Firework) {
+	        Firework firework = (Firework) event.getProjectile();
+	        firework.setShooter(event.getEntity()); // Usually a Player or Mob
+	    }
+	}
 	
 	@EventHandler(priority=EventPriority.HIGHEST, ignoreCancelled=true)
 	public void damage(EntityDamageEvent event) {
 		if (!(event.getEntity() instanceof Player)) return;
+		
+		long actual = (long) (event.getDamage() * 10);
 		
 		event.setDamage(0);
 		
@@ -122,7 +155,9 @@ public class Main extends JavaPlugin implements Listener {
 		Player player = (Player) event.getEntity();
 		
 		
+		Body body = Body.parts.get(player.getUniqueId().toString());
 		
+		body.damageAverage(actual, "damage." + event.getCause().toString());
 		
 	}
 	
@@ -130,18 +165,18 @@ public class Main extends JavaPlugin implements Listener {
 	
 	
 	
-	@EventHandler
-	public void onTNTExplode(EntityExplodeEvent event) {
-	    if (!(event.getEntity() instanceof TNTPrimed)) return;
-
-	    Location center = event.getLocation();
-
-	    
-	    
-	    
-	    FragUtils.spawnStandardFragmentation(center, (int) (25 * Math.random() + 15), 8);
-	    
-	}
+//	@EventHandler
+//	public void onTNTExplode(EntityExplodeEvent event) {
+//	    if (!(event.getEntity() instanceof TNTPrimed)) return;
+//
+//	    Location center = event.getLocation();
+//
+//	    
+//	    
+//	    
+//	    FragUtils.spawnStandardFragmentation(center, (int) (25 * Math.random() + 15), 8);
+//	    
+//	}
 	
 	
 
@@ -175,16 +210,7 @@ public class Main extends JavaPlugin implements Listener {
 	
 	
     // Helper: rotate vector around Y axis by degrees
-    private Vector rotateVectorAroundY(Vector vec, double degrees) {
-        double radians = Math.toRadians(degrees);
-        double cos = Math.cos(radians);
-        double sin = Math.sin(radians);
-
-        double x = vec.getX() * cos - vec.getZ() * sin;
-        double z = vec.getX() * sin + vec.getZ() * cos;
-
-        return new Vector(x, vec.getY(), z);
-    }
+    
 
     
 
@@ -203,25 +229,25 @@ public class Main extends JavaPlugin implements Listener {
     }
     
     // for realistic npcs
-    @EventHandler
-    public void join(NPCSpawnEvent event) {
-    	
-    	//Bukkit.broadcastMessage((event.getNPC().getEntity() instanceof LivingEntity) + " " + event.getNPC().getUniqueId().toString());
-    	if (!(event.getNPC().getEntity() instanceof LivingEntity)) return;
-
-    	event.getNPC().data().set("uuidv2", UUIDConverter.forceUUIDv2(event.getNPC().getUniqueId()));
-    	
-    	if (!Body.parts.containsKey(event.getNPC().data().get("uuidv2"))) {
-    		Body.parts.put(event.getNPC().data().get("uuidv2").toString(), new Body((LivingEntity) event.getNPC().getEntity()));
-    	} else {
-    		
-    		Body body = Body.parts.get(event.getNPC().data().get("uuidv2").toString());
-    		
-    		body.setPlayer((LivingEntity)event.getNPC().getEntity());
-    	}
-    	
-    	
-    }
+//    @EventHandler
+//    public void join(NPCSpawnEvent event) {
+//    	
+//    	////((event.getNPC().getEntity() instanceof LivingEntity) + " " + event.getNPC().getUniqueId().toString());
+//    	if (!(event.getNPC().getEntity() instanceof LivingEntity)) return;
+//
+//    	event.getNPC().data().set("uuidv2", UUIDConverter.forceUUIDv2(event.getNPC().getUniqueId()));
+//    	
+//    	if (!Body.parts.containsKey(event.getNPC().data().get("uuidv2"))) {
+//    		Body.parts.put(event.getNPC().data().get("uuidv2").toString(), new Body((LivingEntity) event.getNPC().getEntity()));
+//    	} else {
+//    		
+//    		Body body = Body.parts.get(event.getNPC().data().get("uuidv2").toString());
+//    		
+//    		body.setPlayer((LivingEntity)event.getNPC().getEntity());
+//    	}
+//    	
+//    	
+//    }
     
     @EventHandler
     public void regen(EntityRegainHealthEvent event) {

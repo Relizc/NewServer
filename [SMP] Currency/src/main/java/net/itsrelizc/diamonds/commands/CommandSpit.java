@@ -206,7 +206,7 @@ public class CommandSpit extends RelizcCommand {
 				s += " " + Locale.get(player, "commands.spit.balance.notenough");
 			}
 			
-//			Bukkit.broadcastMessage(desc);
+//			//(desc);
 			
 			return new TabCompleteInfo(true, new TabCompleteType[] {TabCompleteType.NUMBER},(Player) sender, Locale.get((Player)sender, "commands.spit.arg0.description"), StringUtils.fromArgs(
 					desc.formatted(ct),

@@ -168,7 +168,7 @@ public class DiamondJar implements Listener {
         
        
         
-//        Bukkit.broadcastMessage(cause.toString() + " " + e.getEntity().isDead() + " " +  e.getEntity().getLastDamageCause());
+//        //(cause.toString() + " " + e.getEntity().isDead() + " " +  e.getEntity().getLastDamageCause());
         
         if ( e.getEntity().getLastDamageCause() != null) return;
 

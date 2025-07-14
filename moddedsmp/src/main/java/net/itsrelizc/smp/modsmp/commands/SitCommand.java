@@ -22,6 +22,7 @@ import org.spigotmc.event.entity.EntityDismountEvent;
 import net.itsrelizc.commands.RelizcCommand;
 import net.itsrelizc.commands.RelizcCommand.TabCompleteInfo;
 import net.itsrelizc.commands.RelizcCommand.TabCompleteType;
+import net.itsrelizc.players.CustomPlayerTeleportEvent;
 import net.itsrelizc.players.locales.Locale;
 import net.itsrelizc.string.StringUtils;
 
@@ -134,7 +135,8 @@ public class SitCommand extends RelizcCommand implements Listener {
 					
 					map.remove(player);
 					Location loc = map2.get(player);
-					player.teleport(loc);
+					//player.teleport(loc);
+					CustomPlayerTeleportEvent.teleport(player, loc);
 					map2.remove(player);
 				}
 				

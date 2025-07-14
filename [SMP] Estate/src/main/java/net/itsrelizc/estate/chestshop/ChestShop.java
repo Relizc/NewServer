@@ -1,18 +1,33 @@
 package net.itsrelizc.estate.chestshop;
 
-import com.comphenix.protocol.PacketType;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Sound;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Chest;
+import org.bukkit.block.Sign;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.WallSign;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.plugin.Plugin;
+
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.ListenerPriority;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.wrappers.BlockPosition;
-import com.comphenix.protocol.wrappers.WrappedChatComponent;
-import com.comphenix.protocol.wrappers.nbt.NbtBase;
-import com.google.gson.JsonParser;
 
-import de.blablubbabc.insigns.SignSendEvent;
 import net.itsrelizc.commands.CommandRegistery;
 import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.events.TaskDelay;
@@ -20,44 +35,6 @@ import net.itsrelizc.players.locales.Locale;
 import net.itsrelizc.smp.currency.SafeTransactions;
 import net.itsrelizc.string.StringUtils;
 import net.md_5.bungee.api.chat.TextComponent;
-
-import java.util.List;
-import java.util.Map;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Sound;
-import org.bukkit.block.*;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.block.data.type.WallSign;
-import org.bukkit.block.sign.Side;
-import org.bukkit.block.sign.SignSide;
-import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.world.ChunkLoadEvent;
-import org.bukkit.event.block.SignChangeEvent;
-import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.permissions.PermissionAttachment;
-import org.bukkit.permissions.PermissionAttachmentInfo;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 public class ChestShop implements Listener {
     private ProtocolManager protocolManager;
@@ -223,7 +200,7 @@ public class ChestShop implements Listener {
         PersistentDataContainer data = sign.getPersistentDataContainer();
         String shopData = data.get(shopDataKey, PersistentDataType.STRING);
         
-//        Bukkit.broadcastMessage("bruh");
+//        //("bruh");
         
         if (shopData == null) return;
         
@@ -236,7 +213,7 @@ public class ChestShop implements Listener {
         int item2Amount = Integer.parseInt(parts[3]);
         Material item2Type = Material.matchMaterial(parts[4]);
         
-//        Bukkit.broadcastMessage(item1Type + " " + item2Type);
+//        //(item1Type + " " + item2Type);
        
         if (item1Type == null || item2Type == null) return;
         
@@ -269,7 +246,7 @@ public class ChestShop implements Listener {
         
         if (isBuy) {
         	
-        	//Bukkit.broadcastMessage(item1Type + " " + item2Type);
+        	////(item1Type + " " + item2Type);
         	
         	if (!(countEmptySlots(chestInventory) * item1Type.getMaxStackSize() >= item1Amount)) {
         		player.playSound(player, Sound.ENTITY_VILLAGER_NO, 2f, 1f);
@@ -339,7 +316,7 @@ public class ChestShop implements Listener {
         			
         			Chunk chunk = event.getPlayer().getWorld().getChunkAt(dx + event.getTo().getChunk().getX(), dz + event.getTo().getChunk().getZ());
         			
-        			//Bukkit.broadcastMessage(chunk.toString());
+        			////(chunk.toString());
         			
         			for (BlockState state : chunk.getTileEntities()) {
             			if (state instanceof Sign) {
@@ -349,7 +326,7 @@ public class ChestShop implements Listener {
             				PersistentDataContainer data = sign.getPersistentDataContainer();
             		        String shopData = data.get(shopDataKey, PersistentDataType.STRING);
             		        
-//            		        Bukkit.broadcastMessage("bruh");
+//            		        //("bruh");
             		        
             		        if (shopData == null) return;
             		        

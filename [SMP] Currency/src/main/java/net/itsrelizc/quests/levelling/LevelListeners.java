@@ -15,8 +15,8 @@ public class LevelListeners implements Listener {
 	
 	@EventHandler(priority=EventPriority.LOWEST)
 	public void join(NewPlayerJoinedEvent event) {
-		event.getProfile().setMetadata("level", 0);
-		event.getProfile().setMetadata("exp", 0);
+		event.getProfile().setMetadata("level", -1l);
+		event.getProfile().setMetadata("exp", 0l);
 	}
 	
 	@EventHandler
@@ -32,17 +32,21 @@ public class LevelListeners implements Listener {
 		
 		
 		Profile prof = Profile.findByOwner(player);
+		
+		long level = (long) prof.getMetadata("level");
+		
+		if (level < 0) return;
 
 		long currentXP = (long) prof.getMetadata("exp");
 	    currentXP += amount;
 	    
-	    long level = (long) prof.getMetadata("level");
+	    
 	    long level2 = level;
 
 	    while (currentXP >= 1600) {
 	        currentXP -= 1600;
 	        
-	        level ++;
+	        level ++; 
 	        
 	        //player.sendMessage("§aYou leveled up! New level: " + level);
 	    }

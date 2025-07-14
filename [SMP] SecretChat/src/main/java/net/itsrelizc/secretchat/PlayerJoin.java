@@ -4,27 +4,35 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Silverfish;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.scoreboard.NameTagVisibility;
-import org.bukkit.scoreboard.Team;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.spigotmc.event.entity.EntityDismountEvent;
 
 import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.events.TaskDelay;
-import net.itsrelizc.players.Grouping;
+import net.itsrelizc.players.CustomPlayerTeleportEvent;
+import net.itsrelizc.players.Profile;
+import net.itsrelizc.players.Rank;
 
 public class PlayerJoin implements Listener {
+	
+	
 	
 	private static Map<Player, ArmorStand> tracker = new HashMap<Player, ArmorStand>();
 	
@@ -40,18 +48,37 @@ public class PlayerJoin implements Listener {
 	private static Map<ArmorStand, Integer> displayedmsgamount = new HashMap<ArmorStand, Integer>();
 	
 	@EventHandler
-	public void join(PlayerJoinEvent event) {
+	public void customTeleport(CustomPlayerTeleportEvent event) {
+		Player player = event.getPlayer();
 		
-		ArmorStand a = (ArmorStand) event.getPlayer().getWorld().spawnEntity(event.getPlayer().getLocation(), EntityType.ARMOR_STAND);
+		Entity prim = player.getPassenger();
+		if (prim != null) player.removePassenger(prim);
+		
+		
+		player.teleport(event.getTo());
+		if (prim != null) player.setPassenger(prim);
+		else {
+			spawnArmorStand(player);
+		}
+	}
+	
+	public void spawnArmorStand(Player player) {
+		ArmorStand a = (ArmorStand) player.getWorld().spawnEntity(player.getLocation(), EntityType.ARMOR_STAND);
 		a.setMarker(true);
 		a.setInvulnerable(true);
 		a.setInvisible(true);
 		
 		
-		tracker.put(event.getPlayer(), a);
-		messages.put(event.getPlayer(), 0);
+		tracker.put(player, a);
+		messages.put(player, 0);
 		
-		event.getPlayer().setPassenger(a);
+		player.setPassenger(a);
+	}
+	
+	@EventHandler
+	public void join(PlayerJoinEvent event) {
+		
+		spawnArmorStand(event.getPlayer());
 		
 	}
 	
@@ -60,7 +87,70 @@ public class PlayerJoin implements Listener {
 		tracker.get(event.getPlayer()).remove();
 		tracker.remove(event.getPlayer());
 		messages.remove(event.getPlayer());
+		
 	}
+	
+	@EventHandler(priority=EventPriority.HIGHEST)
+	public void asyncChat(AsyncPlayerChatEvent event) {
+		event.setCancelled(true); // Cancel default broadcast
+
+        Player sender = event.getPlayer();
+        Profile prof = Profile.findByOwner(sender);
+        String message = event.getMessage();
+
+        for (Player receiver : Bukkit.getOnlinePlayers()) {
+            if (receiver.equals(sender)) {
+            	
+            	
+            	
+                receiver.sendMessage(Rank.findByPermission(prof.permission).displayName + " " + event.getPlayer().getDisplayName() + "§7: §r" + event.getMessage());
+                
+                continue;
+            }
+
+            double distance = sender.getLocation().distance(receiver.getLocation());
+
+            if (distance > 32) continue; // Too far, ignore
+
+            String finalMessage = message;
+
+            if (distance > 16) {
+                double percent = (distance - 16) / 16.0; // 0.0 to 1.0
+                finalMessage = obfuscateMessage(message, percent);
+            }
+
+            receiver.sendMessage(Rank.findByPermission(prof.permission).displayName + "§7: §r" + finalMessage);
+        }
+	}
+	
+	private String obfuscateMessage(String message, double percentObfuscate) {
+        StringBuilder result = new StringBuilder();
+        for (char c : message.toCharArray()) {
+//            if (Character.isWhitespace(c)) {
+//                result.append(c);
+//                continue;
+//            }
+
+            if (Math.random() < percentObfuscate) {
+                result.append(ChatColor.MAGIC).append("?").append(ChatColor.RESET);
+            } else {
+                result.append(c);
+            }
+        }
+        return result.toString();
+    }
+	
+	@EventHandler
+    public void onEntityDismount(EntityDismountEvent event) {
+        if (event.getEntity() instanceof Player && event.getDismounted() instanceof Player) {
+            Player player = (Player) event.getEntity();
+            
+            
+            Player dismounted = (Player) event.getDismounted();
+            
+            dismounted.setPassenger(tracker.get(dismounted));
+        }
+    }
 	
 	@SuppressWarnings("deprecation")
 	@EventHandler
@@ -111,11 +201,11 @@ public class PlayerJoin implements Listener {
 					armordistance.remove(a);
 				}
 				
-//				Bukkit.broadcastMessage("Tracking task " + tasktracker.get(a) + " " + a.getTicksLived());
+//				//("Tracking task " + tasktracker.get(a) + " " + a.getTicksLived());
 				
 				if (displayedmsgamount.get(a) != messageamount.get(a)) {
 					displayedmsgamount.put(a, messageamount.get(a));
-//					Bukkit.broadcastMessage("additional message added");
+//					//("additional message added");
 					a.setCustomName("§a" + event.getMessage() + " §7x" + messageamount.get(a));
 				}
 				

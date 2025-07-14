@@ -4,10 +4,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,6 +20,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -27,7 +29,6 @@ import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.gunmod.deathutils.DeathUtils.PlayerGhostEvent;
 import net.itsrelizc.health2.Body;
 import net.itsrelizc.health2.Limb;
-import net.itsrelizc.health2.ballistics.Collisions.BodyPart;
 import net.itsrelizc.menus.ItemGenerator;
 import net.itsrelizc.menus.Menu2;
 import net.itsrelizc.menus.MenuTemplate2;
@@ -39,7 +40,7 @@ import net.minecraft.nbt.CompoundTag;
 
 public class DeathSummaryScreen extends MenuTemplate2 {
 	
-	public static Map<String, Player> killer = new HashMap<String, Player>();
+	public static Map<String, LivingEntity> killer = new HashMap<String, LivingEntity>();
 	public static Map<String, String> cause = new HashMap<String, String>();
 	
 	public static class DeathSummaryListeners implements Listener {
@@ -84,10 +85,10 @@ public class DeathSummaryScreen extends MenuTemplate2 {
 		@EventHandler
 		public void interact(PlayerInteractEvent event) {
 			if (event.getItem() == null) return;
-			//Bukkit.broadcastMessage(event.getItem().getItemMeta().getDisplayName().replace("§", "&") + " ");
+			////(event.getItem().getItemMeta().getDisplayName().replace("§", "&") + " ");
 			if (!(NBT.getString(NBT.getNBT(event.getItem()), "interactid").equals("menu"))) return;
 			
-			//Bukkit.broadcastMessage("LOL");
+			////("LOL");
 			Menu2 menu = new Menu2(event.getPlayer(),6 , new DeathSummaryScreen(event.getPlayer()));
 			menu.open();
 		}
@@ -194,7 +195,7 @@ public class DeathSummaryScreen extends MenuTemplate2 {
 		this.fillAllWith(BLACK_GLASS());
 		
 		Body body = Body.parts.get(getPlayer().getUniqueId().toString());
-		//Bukkit.broadcastMessage(body.getHealth() + " ");
+		////(body.getHealth() + " ");
 		
 		Limb head = body.convert(0);
 		
@@ -274,7 +275,7 @@ public class DeathSummaryScreen extends MenuTemplate2 {
 		
 		
 	
-		Player kill = killer.get(this.getPlayer().getUniqueId().toString());
+		LivingEntity kill = killer.get(this.getPlayer().getUniqueId().toString());
 		String caus = cause.get(this.getPlayer().getUniqueId().toString());
 	
 		String deathinfo;
@@ -284,8 +285,25 @@ public class DeathSummaryScreen extends MenuTemplate2 {
 			trophy = new ItemStack(Material.SKELETON_SKULL, 1);
 			deathinfo = Locale.a(getPlayer(), "item.RELIZC_PLAYER_HEAD.whokilled").formatted(Locale.a(getPlayer(), "item.RELIZC_PLAYER_HEAD.unknown"));
 		} else {
-			trophy = Skull.getPlayerSkull(kill.getName());
-			deathinfo = Locale.a(getPlayer(), "item.RELIZC_PLAYER_HEAD.whokilled").formatted(Profile.coloredName(kill));
+			if (kill instanceof Player) {
+				if (Profile.findByOwner((Player) kill) == null) {
+					String NPCactualName = kill.getPersistentDataContainer().get(new NamespacedKey(EventRegistery.main, "bodied_name"), PersistentDataType.STRING);
+					if (NPCactualName == null) {
+						trophy = new ItemStack(Material.ZOMBIE_HEAD, 1);
+						deathinfo = Locale.a(getPlayer(), "item.RELIZC_PLAYER_HEAD.whokilled").formatted(Locale.a(getPlayer(), "item.RELIZC_PLAYER_HEAD.unknown"));
+					} else {
+						trophy = Skull.getPlayerSkull(kill.getName());
+						deathinfo = Locale.a(getPlayer(), "item.RELIZC_PLAYER_HEAD.whokilled").formatted(NPCactualName);
+					}
+				} else {
+					trophy = Skull.getPlayerSkull(kill.getName());
+					deathinfo = Locale.a(getPlayer(), "item.RELIZC_PLAYER_HEAD.whokilled").formatted(Profile.coloredName((Player) kill));
+				}
+				
+			} else {
+				trophy = new ItemStack(Material.ZOMBIE_HEAD, 1);
+				deathinfo = Locale.a(getPlayer(), "item.RELIZC_PLAYER_HEAD.whokilled").formatted(kill.getName());
+			}
 		}
 		
 
@@ -361,10 +379,11 @@ public class DeathSummaryScreen extends MenuTemplate2 {
 		
 		if (event.getSlot() == 41) {
 			DeathUtils.removePlayer(getPlayer());
+			getPlayer().closeInventory();
 		} else if (event.getSlot() == 31) {
 			Body body = Body.parts.get(getPlayer().getUniqueId().toString());
 			
-			//Bukkit.broadcastMessage(body.getHealth() + " " + body.getMaxHealth() + " " + (body.getHealth() == body.getMaxHealth()));
+			////(body.getHealth() + " " + body.getMaxHealth() + " " + (body.getHealth() == body.getMaxHealth()));
 			
 			if (!(body.getHealth() == body.getMaxHealth())) {
 				//body.healWithPriority(body.getMaxHealth());

@@ -226,7 +226,7 @@ public class CommandPay extends RelizcCommand {
 				s += " " + Locale.get(player, "commands.pay.balance.notenough");
 			}
 			
-//			Bukkit.broadcastMessage(desc);
+//			//(desc);
 			
 			return new TabCompleteInfo(true, new TabCompleteType[] {TabCompleteType.NUMBER},(Player) sender, Locale.get((Player)sender, "commands.pay.arg0.description"), StringUtils.fromArgs(
 					desc.formatted(ct),

@@ -59,7 +59,7 @@ public class Grouping implements Listener {
 	
 	public static void initlizeRankGroups(Plugin plugin) {
 		ScoreboardManager manager = Bukkit.getScoreboardManager();
-		board = manager.getNewScoreboard();
+		board = manager.getMainScoreboard();
 		
 		for (Rank r : Rank.values()) {
 			
@@ -80,6 +80,12 @@ public class Grouping implements Listener {
 		
 		Bukkit.getPluginManager().registerEvents(new Grouping(), plugin);
 		
+	}
+	
+	public static void removeAllTeams() {
+		for (Team team : board.getTeams()) {
+			team.unregister();
+		}
 	}
 	
 	@EventHandler
@@ -141,7 +147,7 @@ public class Grouping implements Listener {
 	public void _b(PlayerQuitEvent event) {
 		Team t = playersoleTeams.remove(event.getPlayer());
 		t.unregister();
-		Profile.removeProfile(Profile.findByOwner(event.getPlayer()));
+		//Profile.removeProfile(Profile.findByOwner(event.getPlayer()));
 	}
 	
 	@EventHandler

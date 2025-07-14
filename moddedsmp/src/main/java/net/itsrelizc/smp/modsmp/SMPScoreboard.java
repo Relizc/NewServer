@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
+import org.json.simple.JSONObject;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
@@ -100,7 +101,7 @@ public class SMPScoreboard extends RelizcScoreboard {
 	
 	private void applyPage() {
 		
-		//Bukkit.broadcastMessage(page.toString());
+		////(page.toString());
 		
 		if (page == Pages.MAIN) {
 			//addLine(2, "");
@@ -110,10 +111,13 @@ public class SMPScoreboard extends RelizcScoreboard {
 				addLine(4, " ");
 				addLine(5, " " + Locale.a(player, "quest.tablist").formatted(Locale.a(player, QuestUtils.getActiveQuest(player).DISPLAY_NAME)));
 				
+				Profile profile = Profile.findByOwner(player);
+				JSONObject questInfo = (JSONObject) profile.getMetadata("quest." + QuestUtils.getActiveQuest(player).ID);
 				int i =5;
 				for (QuestObjective obj : QuestUtils.getActiveQuest(player).OBJECTIVES) {
+					
+					if (!((boolean)questInfo.get(obj.getID() + ".active"))) continue;
 					i ++;
-					if (!obj.isActive()) continue;
 					addLine(i, " §e• " + obj.toString(player));
 					
 				}
@@ -205,7 +209,7 @@ public class SMPScoreboard extends RelizcScoreboard {
 		if (page != Pages.HEALTH) return;
 		
 		Body body = Body.parts.get(player.getUniqueId().toString());
-		//Bukkit.broadcastMessage("changededit" + page.toString() + " " + body.convert(partId).getCriticalColor(player));
+		////("changededit" + page.toString() + " " + body.convert(partId).getCriticalColor(player));
 		
 		editLine(5 + partId, body.convert(partId).getCriticalColor(player));
 		editLine(3, "  " + Profile.coloredName(player) + " §8- §a%d§8/§7%d §c❤".formatted(body.getHealth(),body.getMaxHealth()));

@@ -1,27 +1,31 @@
 package net.itsrelizc.itemlib;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.CreativeCategory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.*;
 
 import net.itsrelizc.items.RelizcItemMeta;
-import net.itsrelizc.nbt.NBT;
 import net.itsrelizc.nbt.NBT.NBTTagType;
 import net.itsrelizc.players.Profile;
 import net.itsrelizc.players.locales.Locale;
 import net.itsrelizc.players.locales.Locale.Language;
 import net.itsrelizc.string.StringUtils;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 
 /**
  * General item utility
@@ -54,6 +58,10 @@ public class ItemUtils {
 		
 	}
 	
+	public static Set<String> getRegisteredIDs() {
+		return handlers.keySet();
+	}
+	
 	/**
 	 * Gets the class handler associated with this custom / vanilla item.
 	 * @param namespace The custom item ID. If the item is a vanilla item, it starts with MINECRAFT_ and plus the Bukkit Material name.
@@ -64,23 +72,26 @@ public class ItemUtils {
 	}
 	
 	/**
-	 * Renders the name, quality, and item status (cannot trade, cannot sell, ...). <strong>Does NOT render item statistics</strong>.
-	 * For that please use {@link RelizcItem.renderStats}
+	 * Renders the name, quality, enchantment, and item status (cannot trade, cannot sell, ...). <strong>Does NOT render item statistics</strong>.
+	 * For that please use {@link RelizcItem.renderStats}. No new item is created during this process
 	 * @param annotation
 	 * @param item
 	 * @param player
+	 * @param lang 
 	 * 
 	 * @see #renderStats(RelizcItem, ItemStack, Player)
 	 */
-	protected static void renderNames(RelizcItem annotation, ItemStack item, Player player) {
+	protected static void renderNames(RelizcItem annotation, ItemStack item, Player player, Language lang) {
 		
 		ItemMeta meta = item.getItemMeta();
 		String status = "";
 		
+		net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
+		
 		Quality quality;
 		
 		if (annotation == null) {
-			quality = Quality.COMMON;
+			quality = Quality.fromNMSRarity(nmsItem.getRarity());
 		} else {
 			if (!annotation.tradeable()) {
 				status += "§6🚷 " + Locale.get(player, "itemmeta.untradable");
@@ -88,12 +99,34 @@ public class ItemUtils {
 			quality = annotation.quality();
 		}
 		
-		List<String> lore = StringUtils.fromArgs(Locale.get(player, "itemmeta.general.quality", quality.getColor() + Locale.get(player, "itemmeta.quality." + quality.toString())));
+		String cat;
+		if (annotation == null || annotation.category().equals("DEFAULT")) {
+			cat = "";
+		} else {
+			cat = "itemmeta.category." + annotation.category();
+		}
+		
+		List<String> lore = StringUtils.fromArgs(Locale.get(player, "itemmeta.general.quality").formatted(quality.getColor() + Locale.get(player, "itemmeta.quality." + quality.toString())) + " §8" + Locale.a(player, cat));
+	
 		if (status.length() != 0) {
 			lore.add(status);
 		}
 		
 		lore.add(" ");
+		
+		////("asshole " + item.getEnchantments().size());
+		
+		for (Entry<Enchantment, Integer> ench : item.getEnchantments().entrySet()) {
+			String namespace = "enchantment.";
+			namespace += ench.getKey().getKey().getNamespace().toLowerCase() + ".";
+			namespace += ench.getKey().getKey().getKey().toLowerCase();
+			String levl = StringUtils.intToRoman(ench.getValue());
+			
+			lore.add("§b" + Locale.getMojang(player, namespace) + " " + levl);
+		}
+		if (item.getEnchantments().size() > 0) lore.add(" ");
+		
+		
 		meta.setLore(lore);
 		
 		item.setItemMeta(meta);
@@ -104,8 +137,12 @@ public class ItemUtils {
 	}
 	
 	public static RelizcItemStack castOrCreateItem(Player player, ItemStack item) {
-		return castOrCreateItem(player, item, Profile.findByOwner(player).lang);
+		Language lang = Language.ZH_CN;
+		if (player != null) lang = Profile.findByOwner(player).lang;
+		return castOrCreateItem(player, item, lang);
 	}
+	
+	
 	
 	/**
 	 * Casts a regular minecraft item to a RelizcItemStack, and create necessary NBT tags
@@ -137,6 +174,8 @@ public class ItemUtils {
 			it.setTag(tag);
 			ItemStack copy = CraftItemStack.asBukkitCopy(it);
 			
+			
+			
 			ItemMeta meta = copy.getItemMeta();
 			
 			meta.addItemFlags(ItemFlag.values());
@@ -144,10 +183,12 @@ public class ItemUtils {
 			copy.setItemMeta(meta);
 			
 			RelizcItemStack completed = null;
+			
+			
 
 			
 			if (handler == null) {
-				renderNames(null, copy, player);
+				renderNames(null, copy, player, lang);
 				
 				completed = new RelizcItemStack(player, copy);
 				ItemMeta meta2 = completed.getBukkitItem().getItemMeta();
@@ -158,8 +199,22 @@ public class ItemUtils {
 				
 			} else {
 				RelizcItem annotation = handler.getAnnotation(RelizcItem.class);
+				RelizcItemMeta[] metas = handler.getAnnotationsByType(RelizcItemMeta.class);
+				net.minecraft.world.item.ItemStack it2 = CraftItemStack.asNMSCopy(copy);
+				tag = it2.getOrCreateTag();
+				for (RelizcItemMeta m : metas) {
+					if (!tag.contains(m.key())) {
+						if (m.type() == NBTTagType.TAG_Int) tag.putInt(m.key(), m.int_init());
+						else if (m.type() == NBTTagType.TAG_Long) tag.putLong(m.key(), m.long_init());
+						else if (m.type() == NBTTagType.TAG_String) tag.putString(m.key(), m.str_init());
+						else if (m.type() == NBTTagType.TAG_Double) tag.putDouble(m.key(), m.double_init());
+					}
+				}
+				it2.setTag(tag);
+				copy = CraftItemStack.asBukkitCopy(it2);
 				
-				renderNames(annotation, copy, player);
+				
+				renderNames(annotation, copy, player, lang);
 				
 				try {
 					completed = handler.getDeclaredConstructor(Player.class, ItemStack.class).newInstance(player, copy);
@@ -173,13 +228,18 @@ public class ItemUtils {
 				
 				List<String> l = meta2.getLore();
 				List<String> rendered = completed.renderInternalLore();
+				if (rendered.size() > 0) {
+					if (item.getEnchantments().size() > 0) {
+						l.add(" ");
+					}
+				}
 				rendered.forEach(s -> l.add(s));
 				
 				
 				
 				if (rendered.size() == 0) {
 					l.remove(l.size() - 1);
-				}
+				} 
 				
 				meta2.setLore(l);
 				completed.getBukkitItem().setItemMeta(meta2);
@@ -216,13 +276,39 @@ public class ItemUtils {
 	 */
 	public static <T extends RelizcItemStack> T createItem(Class<T> itemClass, Player player, MetadataPair... defaultMetadatas) {
 		RelizcItem annotation = itemClass.getAnnotation(RelizcItem.class);
+		Quality q;
+		String id;
+		Material mat;
+		if (annotation == null) {
+			RelizcNativeMinecraftItem item = itemClass.getAnnotation(RelizcNativeMinecraftItem.class);
+			q = Quality.fromNMSRarity(CraftItemStack.asNMSCopy(new ItemStack(item.material())).getRarity());
+			id = "MINECRAFT_" + item.material().toString();
+			mat = item.material();
+		} else {
+			q = annotation.quality();
+			id = annotation.id();
+			mat = annotation.material();
+		}
+		
 		RelizcItemMeta[] metas = itemClass.getAnnotationsByType(RelizcItemMeta.class);
 		
-		Quality q = annotation.quality();
-		String id = annotation.id();
-		ItemStack created;
+		Method method;
+		ItemStack created = null;
+		try {
+			method = itemClass.getDeclaredMethod("getGeneratedItemStack");
+			created = (ItemStack) method.invoke(null, player);  // Output: Hello, World!
+		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			created = null;
+			//e.printStackTrace();
+		}
 
-		created = new ItemStack(annotation.material());
+        // Step 3: Call the method with null as the object, since it's static
+        
+		
+		
+
+			
+		if (created == null) created = new ItemStack(mat);
 
 		
 		
@@ -231,8 +317,10 @@ public class ItemUtils {
 		CompoundTag tag = nms.getOrCreateTag();
 		
 		UUID unique = UUID.randomUUID();
-		tag.putUUID("uid", unique);
-		tag.putString("id", annotation.id());
+		if (mat.getMaxStackSize() == 1) {
+			tag.putUUID("uid", unique);
+		}
+		tag.putString("id", id);
 		
 		
 		String lang;
@@ -255,6 +343,8 @@ public class ItemUtils {
 						tag.putString(meta.key(), (String) def.value);
 					} else if (meta.type() == NBTTagType.TAG_Long) {
 						tag.putLong(meta.key(), (long) def.value);
+					} else if (meta.type() == NBTTagType.TAG_Double) {
+						tag.putDouble(meta.key(), (double) def.value);
 					}
 					found = true;
 					break;
@@ -268,6 +358,8 @@ public class ItemUtils {
 					tag.putString(meta.key(), meta.str_init());
 				} else if (meta.type() == NBTTagType.TAG_Long) {
 					tag.putLong(meta.key(), meta.long_init());
+				} else if (meta.type() == NBTTagType.TAG_Double) {
+					tag.putDouble(meta.key(), meta.double_init());
 				}
 			}
 			
@@ -283,7 +375,7 @@ public class ItemUtils {
 		meta.addItemFlags(ItemFlag.values());
 		copy.setItemMeta(meta);
 		
-		renderNames(annotation, copy, player);
+		renderNames(annotation, copy, player, Language.valueOf(lang));
 		
 		T stack = null;
 		try {
@@ -294,7 +386,7 @@ public class ItemUtils {
 			e.printStackTrace();
 		}
 		ItemMeta meta2 = stack.getBukkitItem().getItemMeta();
-		meta2.setDisplayName(annotation.quality().getColor() + stack.renderName());
+		meta2.setDisplayName(q.getColor() + stack.renderName());
 		List<String> l = meta2.getLore();
 		List<String> rendered = stack.renderInternalLore();
 		rendered.forEach(s -> l.add(s));
@@ -314,4 +406,21 @@ public class ItemUtils {
 	public static RelizcItemStack castOrCreateItem(ItemStack content) {
 		return castOrCreateItem(null, content);
 	}
+
+	public static Class<? extends RelizcItemStack> getHandler(RelizcItemStack it) {
+		return getHandler(it.getID());
+	}
+	
+	
+	public static RelizcItem getItemInfo(RelizcItemStack it) {
+		Class<? extends RelizcItemStack> clazz = getHandler(it);
+		if (clazz == null) return null;
+		
+		return getHandler(it).getAnnotation(RelizcItem.class);
+	}
+	
+	
+	
+
+
 }

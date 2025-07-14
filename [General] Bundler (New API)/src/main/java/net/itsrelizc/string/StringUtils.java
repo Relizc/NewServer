@@ -4,6 +4,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -18,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 
 import net.itsrelizc.players.locales.Locale;
+import net.itsrelizc.players.locales.Locale.Language;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -91,6 +93,27 @@ public class StringUtils {
 		else return "";
 	}
 	
+	public static String intToRoman(int num) {
+        if (num <= 0 || num > 3999) {
+            throw new IllegalArgumentException("Input must be between 1 and 3999");
+        }
+
+        // Define numeral mappings
+        int[] values =    {1000, 900, 500, 400, 100, 90,  50, 40,  10, 9,   5,  4,  1};
+        String[] numerals = {"M","CM","D","CD","C","XC","L","XL","X","IX","V","IV","I"};
+
+        StringBuilder result = new StringBuilder();
+
+        for (int i = 0; i < values.length; i++) {
+            while (num >= values[i]) {
+                result.append(numerals[i]);
+                num -= values[i];
+            }
+        }
+
+        return result.toString();
+    }
+	
 	/**
 	 * Sorts an array by padding it with Minecraft color codes (§0-9a-f)
 	 * Used to sort tab complete commands
@@ -102,7 +125,7 @@ public class StringUtils {
 	}
 	
 	public static void broadcastSystemMessage(String channel, String message) {
-		Bukkit.broadcastMessage(channel.toUpperCase() + " §r§8> §r" + message);
+		//(channel.toUpperCase() + " §r§8> §r" + message);
 	}
 	
 	public static void broadcastSystemMessage(String channel, TextComponent content) {
@@ -195,6 +218,88 @@ public class StringUtils {
 		c.addExtra(content);
 		player.spigot().sendMessage(c);
 	}
+	
+	private static final String INVALID_LINE_START_CN = "，。！？：；、）】）》’”";
+    // Punctuation that should not end a line
+    private static final String INVALID_LINE_END = "（【《‘“";
+    
+    public static String wrapWithColor(String text, Language lang) {
+    	
+    	if (lang == Language.ZH_CN || lang == Language.JA_JP) {
+    		return wrapChineseWithColor(text, 15);
+    	} else {
+    		return wrapTextColor(text, lang.getStandardItemWrapLength());
+    	}
+    	
+    }
+
+    public static String wrapChineseWithColor(String text, int maxWidth) {
+        if (text == null || text.isEmpty() || maxWidth <= 0) {
+            return text;
+        }
+
+        StringBuilder result = new StringBuilder();
+        StringBuilder line = new StringBuilder();
+        String lastColorCodes = "";
+        int visibleCount = 0;
+
+        for (int i = 0; i < text.length(); ) {
+            char c = text.charAt(i);
+
+            // Check for Minecraft color codes
+            if (c == '§' && i + 1 < text.length()) {
+                char code = text.charAt(i + 1);
+                line.append(c).append(code);
+                i += 2;
+
+                // Update formatting state
+                if (code == 'r') {
+                    lastColorCodes = "";
+                } else {
+                    lastColorCodes += "§" + code;
+                }
+
+                continue;
+            }
+
+            // If we're about to exceed line width
+            if (visibleCount >= maxWidth) {
+                // Check Chinese line break rules
+                char prev = line.length() > 0 ? line.charAt(line.length() - 1) : '\0';
+                char next = c;
+
+                // Don't break before invalid start or after invalid end
+                if (INVALID_LINE_START_CN.indexOf(next) >= 0 || INVALID_LINE_END.indexOf(prev) >= 0) {
+                    line.append(c);
+                    visibleCount++;
+                    i++;
+                    continue;
+                }
+
+                // Add current line and reset
+                result.append(line).append('\n');
+                line.setLength(0);
+
+                // Insert current color code if needed
+                if (!lastColorCodes.isEmpty()) {
+                    line.append(lastColorCodes);
+                }
+
+                visibleCount = 0;
+            }
+
+            line.append(c);
+            visibleCount++;
+            i++;
+        }
+
+        // Append the last line
+        if (line.length() > 0) {
+            result.append(line);
+        }
+
+        return result.toString();
+    }
 	
 	public static void message(Player player, String channel, String localizedString) {
 		
@@ -346,5 +451,17 @@ public class StringUtils {
         
         // Return the result as a formatted string
         return new long[] {days, hours, minutes, seconds};
+    }
+
+	private static final String CHARACTERS = "abcdefghijklmnopqrstuvwxyz0123456789";
+    private static final Random RANDOM = new Random();
+
+    public static String randomString(int length) {
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            int index = RANDOM.nextInt(CHARACTERS.length());
+            sb.append(CHARACTERS.charAt(index));
+        }
+        return sb.toString();
     }
 }

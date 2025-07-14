@@ -2,6 +2,7 @@ package net.itsrelizc.quests;
 
 import java.io.File;
 
+import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -15,6 +16,8 @@ import net.itsrelizc.bundler.JSON;
 import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.players.Profile.NewPlayerJoinedEvent;
 import net.itsrelizc.players.locales.Locale;
+import net.itsrelizc.quests.Quest.PlayerQuestObjectiveCompletedEvent;
+import net.itsrelizc.quests.Quest.PlayerQuestObjectiveStartedEvent;
 import net.itsrelizc.quests.Quest.QuestObjective;
 import net.itsrelizc.quests.Quest.QuestReward;
 import net.itsrelizc.quests.QuestUtils.PlayerNewQuestStarted;
@@ -26,6 +29,41 @@ public class QuestListener implements Listener {
 	public void join(NewPlayerJoinedEvent event) {
 		event.getProfile().setMetadata("activeQuest", null);
 		
+	}
+	
+	@EventHandler
+	public void completd(PlayerQuestObjectiveCompletedEvent event) {
+		
+		Song song = NBSDecoder.parse(new File(JSON.PREFIX + "sounds/objective_completed.nbs")); // Preloaded song
+		// Create RadioSongPlayer.
+		RadioSongPlayer rsp = new RadioSongPlayer(song);
+		// Add player to SongPlayer so he will hear the song.
+		rsp.addPlayer(event.getPlayer());
+		// Start RadioSongPlayer playback
+		rsp.setPlaying(true);
+		
+		String message = "" +
+				"§e§m--------------------------------§r\n" +
+				" §6§l" + Locale.a(event.getPlayer(), "quest.objective.complete") + "§r §8- §f" + Locale.a(event.getPlayer(), event.getQuest().DISPLAY_NAME) + "\n" +
+				" §a✔ " + event.getObjective().getDescription(event.getPlayer()) + "\n" +
+				"§e§m--------------------------------";
+		
+		event.getPlayer().sendMessage(message);
+		
+	}
+	
+	@EventHandler
+	public void started(PlayerQuestObjectiveStartedEvent event) {
+		
+		event.getPlayer().playSound(event.getPlayer(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 2f, 2f);
+		
+		String message = "" +
+				"§e§m--------------------------------§r\n" +
+				" §6§l" + Locale.a(event.getPlayer(), "quest.objective.start") + "§r §8- §f" + Locale.a(event.getPlayer(), event.getQuest().DISPLAY_NAME) + "\n" +
+				" §e• " + event.getObjective().getDescription(event.getPlayer()) + "\n" +
+				"§e§m--------------------------------";
+		
+		event.getPlayer().sendMessage(message);
 	}
 	
 	@EventHandler

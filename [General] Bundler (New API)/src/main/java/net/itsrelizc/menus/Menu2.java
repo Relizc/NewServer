@@ -32,11 +32,20 @@ public class Menu2 implements Listener, RelizcInteractiveMenu {
 		
 	}
 	
+	public static boolean isMenuItem(ItemStack it) {
+		
+		CompoundTag tag = NBT.getNBT(it);
+		////(tag.toString());
+		return tag.contains("generatedMenu");
+		
+	}
+	
 	
 	
 	private Inventory inventory;
 	private MenuTemplate2 currentTemplate;
 	private Player player;
+	
 	
 	public Menu2(Player player, int rows, MenuTemplate2 template) {
 		
@@ -51,7 +60,7 @@ public class Menu2 implements Listener, RelizcInteractiveMenu {
 	
 	public void open() {
 		
-		//Bukkit.broadcastMessage(this.player.getOpenInventory().toString());
+		////(this.player.getOpenInventory().toString());
 		
 		if (this.player.getOpenInventory() != null && !(this.getPlayer().getOpenInventory() instanceof CraftInventoryView)) {
 			this.player.getOpenInventory().close();
@@ -112,7 +121,7 @@ public class Menu2 implements Listener, RelizcInteractiveMenu {
 		
 		this.currentTemplate.onClick(event);
 		
-//		Bukkit.broadcastMessage("invclick by " + event.getWhoClicked().getName());
+//		//("invclick by " + event.getWhoClicked().getName());
 	}
 	
 	public static void removeAllDupedItems(Player player) {
@@ -148,7 +157,7 @@ public class Menu2 implements Listener, RelizcInteractiveMenu {
 		
 		
 		
-//		Bukkit.broadcastMessage("invclose by " + event.getPlayer().getName());
+//		//("invclose by " + event.getPlayer().getName());
 	}
 	
 

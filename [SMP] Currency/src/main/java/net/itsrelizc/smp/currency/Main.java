@@ -36,6 +36,8 @@ public class Main extends JavaPlugin {
 		EventRegistery.register(new QuestListener());
 		EventRegistery.register(new LevelListeners());
 		
+		EventRegistery.register(new QuestNewArrival.Listeners());
+		
 		QuestUtils.registerQuest(QuestNewArrival.INSTANCE);
 		//EventRegistery.register(new ContractListener());
 		

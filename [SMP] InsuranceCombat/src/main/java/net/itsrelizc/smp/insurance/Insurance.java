@@ -10,7 +10,8 @@ public class Insurance {
 	//public static CorporateBusiness JUSTIN_INSURANCE = CorporateBusiness.loadCompany("justin_insurance");
 	
 	public static String getInsuranceStatusColorCode(Player player) {
-		return "§6♻ ";
+		//return "§6♻ ";
+		return "§7♻ ";
 		
 	}
 

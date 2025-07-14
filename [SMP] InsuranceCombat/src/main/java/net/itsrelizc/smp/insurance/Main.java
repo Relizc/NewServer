@@ -1,8 +1,5 @@
 package net.itsrelizc.smp.insurance;
 
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -16,6 +13,7 @@ import net.itsrelizc.itemlib.ItemUtils;
 import net.itsrelizc.itemlib.RelizcItemStack;
 import net.itsrelizc.smp.insurance.listeners.ListenerCraftItem;
 import net.itsrelizc.smp.insurance.listeners.ListenerWhenSomeoneDies;
+import net.itsrelizc.smp.insurance.npcs.CommandSpawnJustin;
 
 public class Main extends JavaPlugin {
 	
@@ -23,9 +21,12 @@ public class Main extends JavaPlugin {
 	public void onEnable() {
 		
 		CommandRegistery.register(new InsuranceCommand());
+		CommandRegistery.register(new CommandSpawnJustin());
+		CommandRegistery.register(new PlayerStashManager.GiveMyStashBackCommand());
 		
 		EventRegistery.register(new ListenerCraftItem());
 		EventRegistery.register(new ListenerWhenSomeoneDies());
+		EventRegistery.register(new ListenerNewGuyInsurance());
 		
 	}
 	
@@ -40,17 +41,17 @@ public class Main extends JavaPlugin {
 				Player deadguy = npc.data().get("craftplayer");
 				
 				Inventory contents = npc.data().get("inventory");
-				//Bukkit.broadcastMessage(contents.getSize() + " ");
+				////(contents.getSize() + " ");
 				
 				for (ItemStack content : contents.getContents()) {
 					
 					
 					
 					if (content == null) continue;
-					//Bukkit.broadcastMessage(content.toString());
+					////(content.toString());
 					
 					RelizcItemStack it = ItemUtils.castOrCreateItem(deadguy, content);
-					//Bukkit.broadcastMessage(it.toString());
+					////(it.toString());
 					
 					if (!it.getID().equals("RELIZC_PLAYER_HEAD")) {
 						manager.addItem(deadguy, it.getBukkitItem());

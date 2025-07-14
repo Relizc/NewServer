@@ -1,5 +1,6 @@
 package net.itsrelizc.gunmod.deathutils;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -7,12 +8,11 @@ import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.GameRule;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
-import org.bukkit.entity.Entity;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -20,24 +20,26 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.scoreboard.Team.Option;
+
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Equipment;
-import net.citizensnpcs.trait.SkinTrait;
 import net.itsrelizc.events.EventRegistery;
-import net.itsrelizc.gunmod.npcs.SleepingTrait;
 import net.itsrelizc.health2.Body;
 import net.itsrelizc.itemlib.ItemUtils;
 import net.itsrelizc.itemlib.ItemUtils.MetadataPair;
+import net.itsrelizc.players.CustomPlayerTeleportEvent;
 import net.itsrelizc.players.Profile;
-import net.itsrelizc.players.Rank;
 import net.itsrelizc.players.locales.Locale;
+import net.minecraft.world.entity.Pose;
 
 public class DeathUtils {
 	
@@ -47,9 +49,9 @@ public class DeathUtils {
 	    private boolean cancelled;
 		private boolean isGhost;
 		private String cause;
-		private Player killer;
+		private LivingEntity killer;
 
-	    public PlayerGhostEvent(Player player, Player killer, boolean isGhost, String damageCause) {
+	    public PlayerGhostEvent(Player player, LivingEntity killer, boolean isGhost, String damageCause) {
 	        this.player = player;
 	        this.killer = killer;
 	        this.cancelled = false;
@@ -65,7 +67,7 @@ public class DeathUtils {
 	    	return isGhost;
 	    }
 	    
-	    public Player getKiller() {
+	    public LivingEntity getKiller() {
 			return killer;
 	    	
 	    }
@@ -127,13 +129,36 @@ public class DeathUtils {
 		addPlayer(player, damageCause, null);
 	}
 	
-	private static void spawnDeadBody(Player player, Player killer, String damageCause, Profile prof) {
-		NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, "body" + player.getName());
+	private static void spawnDeadBody(Player player, LivingEntity killer, String damageCause, Profile prof) {
+		
+		String actualName = player.getPersistentDataContainer().get(new NamespacedKey(EventRegistery.main, "bodied_name"), PersistentDataType.STRING);
+		if (actualName == null) {
+			actualName = player.getName();
+		}
+		
+		
+		NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, "=body" + player.getName());
 		npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
 		npc.spawn(player.getLocation());
-		SkinTrait skin = npc.getOrAddTrait(SkinTrait.class);
-		skin.setSkinName(player.getName()); // uses Mojang's skin servers
-		npc.addTrait(SleepingTrait.class);
+		
+		Player bukkitPlayer = (Player) npc.getEntity();
+		net.minecraft.world.entity.player.Player nmsPlayer = ((CraftPlayer) bukkitPlayer).getHandle();
+		
+		net.minecraft.world.entity.player.Player originalPlayer = ((CraftPlayer) player).getHandle();
+		GameProfile original = originalPlayer.getGameProfile();
+		Collection<Property> ppts = original.getProperties().get("textures");
+		if (ppts.size() > 0) {
+			Property copied = ppts.iterator().next();
+			String texture = copied.getValue();
+	        String signature = copied.getSignature();
+
+
+	        // Get the GameProfile
+	        GameProfile profile = nmsPlayer.getGameProfile();
+	        profile.getProperties().put("textures", new Property("textures", texture, signature));
+		}
+		
+		nmsPlayer.setPose(Pose.SLEEPING);
 		
 		for (EquipmentSlot slot : EquipmentSlot.values()) {
 			if (player.getInventory().getItem(slot) != null) {
@@ -141,12 +166,25 @@ public class DeathUtils {
 			}
 		}
 		
-		Inventory cloned = Bukkit.createInventory(null, 45, player.getName() + "的尸体");
+		Inventory cloned = Bukkit.createInventory(null, 45, actualName + "的尸体");
 		
 		
 		String kp;
 		if (killer != null) {
-			kp = Profile.coloredName(killer);
+			if (killer instanceof Player) {
+				if (Profile.findByOwner((Player) killer) == null) {
+					String NPCactualName = killer.getPersistentDataContainer().get(new NamespacedKey(EventRegistery.main, "bodied_name"), PersistentDataType.STRING);
+					if (NPCactualName == null) {
+						kp = player.getName();
+					} else {
+						kp = NPCactualName;
+					}
+				} else {
+					kp = Profile.coloredName((Player) killer);
+				}
+			} else {
+				kp = killer.getName();
+			}
 		} else {
 			kp = "item.RELIZC_PLAYER_HEAD.unknown";
 		}
@@ -157,7 +195,9 @@ public class DeathUtils {
 		} else {
 			rank = prof.permission;
 		}
-		RelizcOverridedPlayerHead item = ItemUtils.createItem(RelizcOverridedPlayerHead.class, player, new MetadataPair("DEATH_TIME", System.currentTimeMillis()), new MetadataPair("WEAPON_DISPLAY", damageCause), new MetadataPair("KILLER_DISPLAY", kp), new MetadataPair("OWNER_NAME", player.getName()), new MetadataPair("OWNER_RANK", rank));
+		
+
+		RelizcOverridedPlayerHead item = ItemUtils.createItem(RelizcOverridedPlayerHead.class, player, new MetadataPair("DEATH_TIME", System.currentTimeMillis()), new MetadataPair("WEAPON_DISPLAY", damageCause), new MetadataPair("KILLER_DISPLAY", kp), new MetadataPair("OWNER_NAME", actualName), new MetadataPair("OWNER_RANK", rank));
 		
 
 		// Clone all items
@@ -178,9 +218,9 @@ public class DeathUtils {
 		npc.data().set("name", player.getName());
 	}
 	
-	public static void addPlayer(Player player, String damageCause, Player killer) {
+	public static void addPlayer(Player player, String damageCause, LivingEntity killer) {
 		
-		//Bukkit.broadcastMessage("added " + player);
+		////("added " + player);
 		if (Profile.findByOwner(player) == null) {
 			
 			spawnDeadBody(player, killer, damageCause, null);
@@ -291,7 +331,8 @@ public class DeathUtils {
 			bed = Bukkit.getWorld("world").getSpawnLocation();
 			player.sendMessage(Locale.a(player, "death.nobed"));
 		}
-		player.teleport(bed);
+//		player.teleport(bed);
+		CustomPlayerTeleportEvent.teleport(player, bed);
 		player.setFallDistance(0);
 		body.refreshHealthDisplay();
 		

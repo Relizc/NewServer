@@ -30,6 +30,8 @@ public @interface RelizcItem {
 	boolean customItemstack() default false;
 
 	boolean placeable() default true;
+
+	String category() default "DEFAULT";
 	
 }
 

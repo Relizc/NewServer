@@ -108,7 +108,7 @@ public class Limb {
 		}
 		
 		
-		//Bukkit.broadcastMessage(this.name);
+		////(this.name);
 		//logs.debugBroadcastRecords(owner);
 		
 		this.health -= amount;
@@ -136,7 +136,7 @@ public class Limb {
 	
 	public long damage(long amount, RelizcDamageCause cause) {
 		long as = damage(amount, "damage." + cause.toString().toLowerCase());
-		//Bukkit.broadcastMessage(cause.toString());
+		////(cause.toString());
 		return as;
 	}
 
@@ -172,9 +172,11 @@ public class Limb {
 
 	public long damage(long amount, String damageCause, Limb limb) {
 		
+		////(amount + " aaabb" + this.name); 
+		
 		if (amount == 0) return 0;
 		if (limb == null) {
-			damage(amount, damageCause);
+			amount = damage(amount, damageCause);
 		}
 		
 		long actual = this.health;
@@ -189,7 +191,7 @@ public class Limb {
 		
 		logs.add(new DamageRecord(damageCause, amount, limb));
 		
-		//Bukkit.broadcastMessage(this.name);
+		////(this.name);
 		//logs.debugBroadcastRecords(owner);
 		
 		return 0;

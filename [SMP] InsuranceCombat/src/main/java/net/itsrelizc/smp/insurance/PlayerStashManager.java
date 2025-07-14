@@ -14,8 +14,35 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import net.itsrelizc.bundler.JSON;
+import net.itsrelizc.commands.RelizcCommand;
 
 public class PlayerStashManager {
+	
+	public static class GiveMyStashBackCommand extends RelizcCommand {
+
+		public GiveMyStashBackCommand() {
+			super("fuckugivemebackmystuff", "");
+			// TODO Auto-generated constructor stub
+		}
+		
+		@Override
+		public boolean onPlayerExecute(Player player, String[] args) {
+			
+			PlayerStashManager manager = new PlayerStashManager();
+			
+			List<ItemStack> stash = manager.loadStash(player.getUniqueId());
+			
+			for (ItemStack it : stash) {
+				player.getWorld().dropItem(player.getLocation(), it);
+			}
+			
+			manager.clear(player.getUniqueId());
+			
+			return true;
+			
+		}
+		
+	}
 
     private final Map<UUID, List<ItemStack>> stashCache = new HashMap<>();
 

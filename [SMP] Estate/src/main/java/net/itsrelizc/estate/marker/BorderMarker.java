@@ -29,12 +29,15 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.joml.Math;
 import org.yaml.snakeyaml.util.ArrayStack;
 
 import net.itsrelizc.commands.RelizcCommand;
 import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.events.TaskDelay;
 import net.itsrelizc.nbt.ChunkMetadata;
+import net.itsrelizc.players.Profile;
+import net.itsrelizc.players.Profile.NewPlayerJoinedEvent;
 import net.itsrelizc.players.locales.Locale;
 import net.itsrelizc.string.Hologram;
 import net.itsrelizc.string.StringUtils;
@@ -134,6 +137,11 @@ public class BorderMarker implements Listener {
 	}
 	
 	@EventHandler
+	public void newguy(NewPlayerJoinedEvent event) {
+		event.getProfile().setMetadata("claimedPlots", 0);
+	}
+	
+	@EventHandler
 	public void join(PlayerJoinEvent event) {
 		
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(EventRegistery.main, new Runnable() {
@@ -161,7 +169,7 @@ public class BorderMarker implements Listener {
 		        	
 		        	
 		        	if (!eq(owner, owner2) || !eq(ownerName, owner2Name)) {
-		        		//Bukkit.broadcastMessage(nex + " " + owner + " " + owner2);
+		        		////(nex + " " + owner + " " + owner2);
 		        		int[] coords = findAdjacentEdge(cur.getX() * 16, cur.getZ() * 16, nex.getX() * 16, nex.getZ() * 16);
 		        		
 
@@ -277,7 +285,7 @@ public class BorderMarker implements Listener {
 					
 					BorderCoordinate prev = previous.get(player);
 					
-//					Bukkit.broadcastMessage(prev.x + " PREV " + prev.y);
+//					//(prev.x + " PREV " + prev.y);
 					
 					display(player, prev.x, prev.y + 16, "adj");
 					display(player, prev.x, prev.y - 16, "adj");
@@ -330,7 +338,7 @@ public class BorderMarker implements Listener {
 		
 //		if (Math.abs(chunkx - player.getLocation().getX()) * Math.abs(chunkx - player.getLocation().getX()) + Math.abs(chunkz - player.getLocation().getZ()) * Math.abs(chunkz - player.getLocation().getZ()) > )
 		
-		//Bukkit.broadcastMessage(chunkx + " " + chunkz);
+		////(chunkx + " " + chunkz);
 		double height = player.getLocation().getWorld().getHighestBlockAt(chunkx, chunkz, HeightMap.MOTION_BLOCKING_NO_LEAVES).getY() + 1;
 		
 		if (collected.get(player).containsKey(chunkx) && collected.get(player).get(chunkx).contains(chunkz)) {
@@ -454,7 +462,7 @@ public class BorderMarker implements Listener {
 	
 	private static void enclose(Player player) {
 		Bukkit.getScheduler().cancelTask(tasks.get(player));
-		//Bukkit.broadcastMessage("Lines: " + working.get(player).size());
+		////("Lines: " + working.get(player).size());
 		
 		//showlace formula
 		int n = working.get(player).size() - 1;
@@ -467,7 +475,21 @@ public class BorderMarker implements Listener {
         }
         int area = (int) ((a + v.get(n - 1).x * v.get(0).y - v.get(0).x * v.get(n - 1).y) / 2);
         
-        //Bukkit.broadcastMessage("Area: " + area);
+        Profile prof = Profile.findByOwner(player);
+        long level = (long) prof.getMetadata("level");
+        long currentArea = (long) prof.getMetadata("claimedPlots");
+        
+        ////(area + " " + level);
+        if (Math.abs(area) + currentArea > Math.max(4 * 256, level)) {
+        	if (level < 0) {
+        		StringUtils.systemMessage(player, Locale.get(player, "marker.name"), Locale.get(player, "marker.fail.notfornew"));
+        	} else {
+        		StringUtils.systemMessage(player, Locale.get(player, "marker.name"), Locale.get(player, "marker.fail.toomuch").formatted(Math.min(4, level)));
+        	}
+        	return;
+        }
+        
+        ////("Area: " + area);
         
         Map<Integer, HashSet<Integer>> outside = new HashMap<Integer, HashSet<Integer>>();
         
@@ -493,7 +515,7 @@ public class BorderMarker implements Listener {
         			outer = new BorderCoordinate(nex.x, nex.y - 16); // 
         		}
         		        		
-        		//Bukkit.broadcastMessage(cur.getChunkX() + " " + cur.getChunkY() + " | " + nex.getChunkX() + " " + nex.getChunkY() + " | Outside: " + outer.getChunkX() + " " + outer.getChunkY());
+        		////(cur.getChunkX() + " " + cur.getChunkY() + " | " + nex.getChunkX() + " " + nex.getChunkY() + " | Outside: " + outer.getChunkX() + " " + outer.getChunkY());
         		
         		if (!outside.containsKey(outer.x)) outside.put(outer.x, new HashSet<Integer>());
         		outside.get(outer.x).add(outer.y);
@@ -519,7 +541,7 @@ public class BorderMarker implements Listener {
         			outer = new BorderCoordinate(nex.x, nex.y); //
         		}
         		        		
-        		//Bukkit.broadcastMessage(cur.getChunkX() + " " + cur.getChunkY() + " | " + nex.getChunkX() + " " + nex.getChunkY() + " | Outside: " + outer.getChunkX() + " " + outer.getChunkY());
+        		////(cur.getChunkX() + " " + cur.getChunkY() + " | " + nex.getChunkX() + " " + nex.getChunkY() + " | Outside: " + outer.getChunkX() + " " + outer.getChunkY());
         		
         		if (!outside.containsKey(outer.x)) outside.put(outer.x, new HashSet<Integer>());
         		outside.get(outer.x).add(outer.y);
@@ -532,6 +554,10 @@ public class BorderMarker implements Listener {
         // Flood filling inner areas:
         String name = generateRandomLandName();
         StringUtils.systemMessage(player, Locale.get(player, "marker.name"), Locale.get(player, "marker.sucessclose", name));
+        
+        prof.setMetadata("claimedPlots", currentArea + area);
+        
+        
         
         Stack<BorderCoordinate> chunks = new Stack<BorderCoordinate>();
         chunks.add(inner);
@@ -546,7 +572,7 @@ public class BorderMarker implements Listener {
         	visited.get(current.x).add(current.y);
         	
         	// do operation
-        	//Bukkit.broadcastMessage("flooding " + current.getChunkX() + " " + current.getChunkY() + " Rest: " + chunks.size());
+        	////("flooding " + current.getChunkX() + " " + current.getChunkY() + " Rest: " + chunks.size());
         	Chunk chun = player.getLocation().getWorld().getChunkAt(current.getChunkX(), current.getChunkY());
         	ChunkMetadata.set(chun, "relizcPurchasedOwner", PersistentDataType.STRING, player.getUniqueId().toString());
         	ChunkMetadata.set(chun, "chunkPermissionList", PersistentDataType.STRING, "");
@@ -673,7 +699,7 @@ public class BorderMarker implements Listener {
 	        	
 	        	
 	        	if (!eq(owner, owner3) || !eq(ownerName, owner3Name)) {
-	        		//Bukkit.broadcastMessage(nex + " " + owner + " " + owner2);
+	        		////(nex + " " + owner + " " + owner2);
 	        		int[] coords = findAdjacentEdge(cur.getX() * 16, cur.getZ() * 16, nex.getX() * 16, nex.getZ() * 16);
 	        		
 

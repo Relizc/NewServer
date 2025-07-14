@@ -70,7 +70,7 @@ public class RelizcScoreboard {
 //
 //			@Override
 //			public void run() {
-//				Bukkit.broadcastMessage("bruh " + t.getPlayers().size() + " " + player.getName() + " " + t.getPrefix() + "");
+//				//("bruh " + t.getPlayers().size() + " " + player.getName() + " " + t.getPrefix() + "");
 //				
 //				Grouping.setSuffix(player, ChatColor.AQUA + "noob");
 //				t.setSuffix(ChatColor.AQUA + "noob");

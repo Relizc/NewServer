@@ -73,8 +73,9 @@ public class RightClickBody implements Listener {
 	    Location rayEnd = eyeLoc.add(direction.multiply(2)); // 2 blocks ahead
 
 	    for (NPC npc : CitizensAPI.getNPCRegistry()) {
-	        if (!npc.isSpawned()) continue;
-	        if (!npc.hasTrait(SleepingTrait.class)) continue;
+//	        if (!npc.isSpawned()) continue;
+//	        if (!npc.hasTrait(SleepingTrait.class)) continue;
+	    	if (!(npc.getName().startsWith("=body"))) continue;
 
 	        Location npcLoc = npc.getEntity().getLocation().add(0, 0.5, 0); // middle of the body
 

@@ -1,9 +1,9 @@
 package net.itsrelizc.itemlib;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
@@ -11,9 +11,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import net.itsrelizc.nbt.NBT;
+import net.itsrelizc.players.Profile;
 import net.itsrelizc.players.locales.Locale;
 import net.itsrelizc.players.locales.Locale.Language;
-import net.itsrelizc.string.StringUtils;
 import net.minecraft.nbt.CompoundTag;
 
 /**
@@ -24,7 +24,6 @@ import net.minecraft.nbt.CompoundTag;
  * Please note that this class does not extend Bukkit ItemStack nor Mojang's ItemStack. Please use {@link #getBukkitItem()} to convert it to 
  * Bukkit items, which is safe enough to keep its essential RelizcItem NBT tags and convert it back later.
  * 
- * 
  * When comparing RelizcItemStacks, do not use double equals operator. Instead, please use {@link #equals(Object)}
  * 
  * @see org.bukkit.inventory.ItemStack
@@ -32,7 +31,7 @@ import net.minecraft.nbt.CompoundTag;
 public class RelizcItemStack {
 	
 	private ItemStack bukkit;
-	private Player owner;
+	protected Player owner;
 	private Language renderedLangauge;	
 	private UUID uniqueId;
 	
@@ -45,6 +44,8 @@ public class RelizcItemStack {
 		
 		this.renderedLangauge = Language.valueOf(NBT.getString(it, "lang"));
 		this.uniqueId = getUniqueId();
+		
+		
 		
 		// updateReferenceSlot(); DO NOT CALL THIS or else it will be marked "outside-inventory"
 	}
@@ -97,7 +98,7 @@ public class RelizcItemStack {
 		for (int i = 0; i < owner.getInventory().getSize(); i ++) {
 			ItemStack content = owner.getInventory().getItem(i);
 			
-			// Bukkit.broadcastMessage("Going over slot " + i + " with " + content);
+			// //("Going over slot " + i + " with " + content);
 			
 			if (content == null || content.getType() == Material.AIR) continue;
 			
@@ -107,7 +108,7 @@ public class RelizcItemStack {
 			if (!it.getOrCreateTag().hasUUID("uid")) continue;
 			UUID the = it.getOrCreateTag().getUUID("uid");
 			
-			// Bukkit.broadcastMessage("Mines " + getUniqueId() + " " + the + " " + the.equals(getUniqueId()));
+			// //("Mines " + getUniqueId() + " " + the + " " + the.equals(getUniqueId()));
 			
 			if (getUniqueId().equals(the)) {
 				this.referenceSlot = i;
@@ -142,8 +143,7 @@ public class RelizcItemStack {
 	 * 
 	 * @return itemStack.
 	 */
-	@Deprecated
-	public ItemStack getGeneratedItemStack() {
+	public ItemStack getGeneratedItemStack(Player player) {
 		return null;
 	}
 	
@@ -168,7 +168,11 @@ public class RelizcItemStack {
 	 * An function that is REQUIRED and RECOMMENDED to be overridden. Allows user to add custom user rendering by code.
 	 */
 	public List<String> renderInternalLore() {
-		return StringUtils.fromArgs(StringUtils.wrapTextColor(Locale.get(owner, "item.NULL.specialweek"), renderedLangauge.getStandardItemWrapLength()).split("\n"));
+		List<String> additional = new ArrayList<String>();
+		if (this.getBukkitItem().getEnchantments().size() > 0) {
+			additional.add(" ");
+		}
+		return additional;
 	}
 	
 	
@@ -177,12 +181,17 @@ public class RelizcItemStack {
 	 * @param string The NBT key
 	 * @return The Integer NBT value
 	 */
-	protected Integer getTagInteger(String string) {
+	public Integer getTagInteger(String string) {
 		return CraftItemStack.asNMSCopy(bukkit).getTag().getInt(string);
 	}
 	
 	protected CompoundTag getTag() {
 		return CraftItemStack.asNMSCopy(bukkit).getTag();
+	}
+	
+	public double getTagDouble(String string) {
+		// TODO Auto-generated method stub
+		return CraftItemStack.asNMSCopy(bukkit).getTag().getDouble(string);
 	}
 	
 	private ItemStack _nGetHelper(int slot) {
@@ -203,7 +212,7 @@ public class RelizcItemStack {
 			this.updateReferenceSlot();
 		} 
 		
-		// Bukkit.broadcastMessage(this.referenceSlot + " ");
+		// //(this.referenceSlot + " ");
 	}
 	
 	/**
@@ -219,7 +228,7 @@ public class RelizcItemStack {
 		tag.putInt(string, value);
 		is.setTag(tag);
 		ItemStack finished = CraftItemStack.asBukkitCopy(is);
-		//Bukkit.broadcastMessage(" " + this.referenceSlot);
+		////(" " + this.referenceSlot);
 		owner.getInventory().setItem(referenceSlot, finished);
 		bukkit = finished;
 	}
@@ -232,7 +241,7 @@ public class RelizcItemStack {
 		tag.putString(string, value);
 		is.setTag(tag);
 		ItemStack finished = CraftItemStack.asBukkitCopy(is);
-		//Bukkit.broadcastMessage(" " + this.referenceSlot);
+		////(" " + this.referenceSlot);
 		owner.getInventory().setItem(referenceSlot, finished);
 		bukkit = finished;
 	}
@@ -257,7 +266,11 @@ public class RelizcItemStack {
 		
 		RelizcItem annotation = this.getClass().getAnnotation(RelizcItem.class);
 		
-		ItemUtils.renderNames(annotation, bukkit, owner);
+		Language lang;
+		if (owner == null) lang = Language.ZH_CN;
+		else lang = Profile.findByOwner(owner).lang;
+		
+		ItemUtils.renderNames(annotation, bukkit, owner, lang);
 		
 		ItemMeta meta2 = bukkit.getItemMeta();	
 		
@@ -312,7 +325,14 @@ public class RelizcItemStack {
 	 */
 	protected String renderName() {
 		// TODO Auto-generated method stub
-		return Locale.get(owner, "item." + getID().toLowerCase() + ".name");
+		String id = getID();
+		if (id.toLowerCase().startsWith("minecraft")) {
+			return Locale.getMojang(owner, "item.minecraft." + id.substring(10).toLowerCase());
+		} else {
+			return Locale.get(owner, "item." + getID().toLowerCase() + ".name");
+		}
+		
+		
 	}
 
 }

@@ -54,10 +54,10 @@ public class RayCast {
 //	    double time = distance / bulletSpeed; // Time of flight
 //	    double yShift = 0.5 * Hit.g * time * time;
 //	    
-////	    Bukkit.broadcastMessage("g: " + Hit.g + " bs: " + bulletSpeed);
-////	    Bukkit.broadcastMessage("distance of projectile " + distance);
-////	    Bukkit.broadcastMessage("time of projectile " + time);
-////	    Bukkit.broadcastMessage("yShift of projectile " + yShift);
+////	    //("g: " + Hit.g + " bs: " + bulletSpeed);
+////	    //("distance of projectile " + distance);
+////	    //("time of projectile " + time);
+////	    //("yShift of projectile " + yShift);
 //
 //	    // Adjust the AABB to simulate gravity
 //	    boxMin.add(new Vector(0, yShift, 0));
@@ -80,7 +80,7 @@ public class RayCast {
 //	    // Gravity adjustment
 //	    double distance = rayOrigin.distance(boxMin);
 //	    
-//	    Bukkit.broadcastMessage("Distance: " + distance);
+//	    //("Distance: " + distance);
 //	    
 //	    double time = distance / bulletSpeed;
 //	    double gravity = Hit.g; // Minecraft's gravity in blocks/second^2

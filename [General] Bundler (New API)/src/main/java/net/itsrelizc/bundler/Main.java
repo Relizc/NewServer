@@ -5,15 +5,16 @@ import org.bukkit.command.Command;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.Team;
 
 import net.itsrelizc.commands.CSetTabListName;
 import net.itsrelizc.commands.CommandHelp;
 import net.itsrelizc.commands.CommandRegistery;
 import net.itsrelizc.commands.CommandTestSign;
 import net.itsrelizc.commands.RelizcCommand;
-import net.itsrelizc.events.CommandCheckEvents;
 import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.nbt.CommandGetNBTOnHand;
+import net.itsrelizc.npc.CommandPath;
 import net.itsrelizc.players.AFKDetector;
 import net.itsrelizc.players.Grouping;
 import net.itsrelizc.players.locales.CommandReloadLocale;
@@ -52,9 +53,12 @@ public class Main extends JavaPlugin {
 		CommandRegistery.register(new CommandTestSign());
 		CommandRegistery.register(new CommandReloadLocale());
 		CommandRegistery.register(new CommandHelp());
-		CommandRegistery.register(new CommandCheckEvents());
+		//CommandRegistery.register(new CommandCheckEvents());
 		CommandRegistery.register(new CommandGetNBTOnHand());
 		CommandRegistery.register(new CommandVersion());
+		CommandRegistery.register(new CommandPath());
+		
+		
 
 		
 //		try {
@@ -77,6 +81,13 @@ public class Main extends JavaPlugin {
 		//EventRegistery.register(new ModerationListener());
 		//EventRegistery.register(new Menu2Failsafe());
 		
+	}
+	
+	@Override
+	public void onDisable() {
+		for (Team team : Bukkit.getScoreboardManager().getMainScoreboard().getTeams()) {
+			team.unregister();
+		}
 	}
 
 	public static String getVersion() {

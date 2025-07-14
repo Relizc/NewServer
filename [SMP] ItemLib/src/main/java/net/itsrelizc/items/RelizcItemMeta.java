@@ -25,6 +25,8 @@ public @interface RelizcItemMeta {
 	String str_init() default "";
 
 	long long_init() default 0;
+
+	double double_init() default 0.0d;
 }
 
 

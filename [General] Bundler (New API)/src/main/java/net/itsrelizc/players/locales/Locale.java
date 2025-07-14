@@ -22,7 +22,7 @@ public class Locale {
 	 */
 	public static enum Language {
 		EN_US(45),
-		ZH_CN, ZH_CN_MOJANG,
+		ZH_CN(15), ZH_CN_MOJANG,
 		ZH_TW, JA_JP, KO_KR, ES_ES;
 
 		private int wrapLength;
@@ -77,6 +77,10 @@ public class Locale {
 		
 	}
 	
+	public static void addEntry(String lang, String key, String value) {
+		locales.get(lang).put(key, value);
+	}
+	
 	/**
 	 * Gets the declared language entries in this language's JSON file. Mainly used for calculating language
 	 * completion rate and debugging.
@@ -95,6 +99,9 @@ public class Locale {
 	 */
 	public static String get(Player player, String namespace) {
 		
+		
+		
+		if (player == null) return get(Language.ZH_CN, namespace.toLowerCase());
 		if (namespace == null) return namespace;
 		Language lang;
 		if (Profile.findByOwner(player) == null) {
@@ -119,6 +126,8 @@ public class Locale {
 	 * @return The translated string, or the translation key itself if the entry is not present in the language JSON file.
 	 */
 	public static String getMojang(Player player, String namespace) {
+		if (player == null) return getMojang(Language.ZH_CN, namespace.toLowerCase());
+		if (player == null || namespace == null) return namespace;
 		return locales.get(Profile.findByOwner(player).lang.toString() + "_MOJANG").getOrDefault(namespace, namespace);
 	}
 	

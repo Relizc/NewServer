@@ -56,7 +56,7 @@ public class TPSService {
 	
 	public static String getTablistDisplayInfo(Player player) {
 		
-		//for (World w : Bukkit.getWorlds()) Bukkit.broadcastMessage(w.getName());
+		//for (World w : Bukkit.getWorlds()) //(w.getName());
 		
 		double t = TPSUtils.getTPS();
 		

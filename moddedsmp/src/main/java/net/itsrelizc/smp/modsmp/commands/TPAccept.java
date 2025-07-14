@@ -6,6 +6,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import net.itsrelizc.players.CustomPlayerTeleportEvent;
 import net.itsrelizc.players.locales.Locale;
 import net.itsrelizc.string.StringUtils;
 
@@ -30,7 +31,8 @@ public class TPAccept implements CommandExecutor {
 		}
 		
 		
-		target.teleport(player);
+		//target.teleport(player);
+		CustomPlayerTeleportEvent.teleport(target, player.getLocation());
 		StringUtils.systemMessage(player, Locale.get(player, "commands.tpa"), String.format(Locale.get(player, "commands.tpy.success"), target.getDisplayName()));
 		StringUtils.systemMessage(target, Locale.get(target, "commands.tpa"), String.format(Locale.get(player, "commands.tpy.agreed"), player.getDisplayName()));
 		

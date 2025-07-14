@@ -122,7 +122,7 @@ public class ContractListener implements Listener {
 				
 			} else {
 				String name = NBT.getString(party2, "party");
-//				Bukkit.broadcastMessage(party2.toString());
+//				//(party2.toString());
 				CorporateBusiness current = CorporateBusiness.getByID(name);
 				
 				currentbusinesses.put(name, current);

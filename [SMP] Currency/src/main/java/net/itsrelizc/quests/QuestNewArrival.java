@@ -6,7 +6,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
+import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.players.locales.Locale;
 
 public class QuestNewArrival extends Quest {
@@ -17,9 +19,14 @@ public class QuestNewArrival extends Quest {
 		public void craft(CraftItemEvent event) {
 			
 			if (!(QuestUtils.getActiveQuest((Player) event.getView().getPlayer()) instanceof QuestNewArrival)) return;
+			QuestObjective obj = QuestUtils.getActiveObjectives((Player) event.getView().getPlayer()).get(0);
+			if (!(obj.getID().equals("CRAFT_TABLE"))) return;
+			
+			Player player = (Player) event.getView().getPlayer();
 			
 			if (event.getRecipe().getResult().getType() == Material.CRAFTING_TABLE) {
-				
+				//QuestUtils.setActiveQuestObjectiveMetadata(player, obj, true);
+				obj.complete(player);
 			}
 			
 		}
@@ -30,8 +37,8 @@ public class QuestNewArrival extends Quest {
 	
 	private static class QuestCraftTable extends QuestObjective {
 
-		public QuestCraftTable() {
-			super("CRAFT_TABLE", false, true);
+		public QuestCraftTable(Quest parent) {
+			super("CRAFT_TABLE", false, true, parent);
 			
 		}
 		
@@ -56,12 +63,30 @@ public class QuestNewArrival extends Quest {
 			return Locale.a(player, "quest.NEW_ARRIVAL.objective.craft_table_neutral");
 		}
 		
+		@Override
+		public void complete(Player player) {
+			super.complete(player);
+			
+			QuestUtils.setActiveQuestObjectiveMetadata(player, this, true);
+			QuestUtils.setActiveQuestObjective(player, parent.OBJECTIVES[1], false);
+			
+			new BukkitRunnable() {
+
+				@Override
+				public void run() {
+					QuestUtils.questStatusChanged(player);
+					parent.OBJECTIVES[1].start(player);
+				}
+				
+			}.runTaskLater(EventRegistery.main, 40L);
+		}
+		
 	}
 	
 	private static class QuestClaimLand extends QuestObjective {
 
-		public QuestClaimLand() {
-			super("CLAIM_LAND", false, false);
+		public QuestClaimLand(Quest parent) {
+			super("CLAIM_LAND", false, false, parent);
 			// TODO Auto-generated constructor stub
 		}
 		
@@ -86,6 +111,20 @@ public class QuestNewArrival extends Quest {
 			return Locale.a(player, "quest.NEW_ARRIVAL.objective.claim_land_neutral");
 		}
 		
+		@Override
+		public void complete(Player player) {
+			super.complete(player);
+			QuestUtils.setActiveQuestObjectiveMetadata(player, this, true);
+		}
+		
+		@Override
+		public void start(Player player) {
+			super.start(player);
+			
+			
+			
+		}
+		
 	}
 
 	
@@ -94,8 +133,8 @@ public class QuestNewArrival extends Quest {
 		this.DESCRIPTION = "quest.NEW_ARRIVAL.description";
 		this.DISPLAY_NAME = "quest.NEW_ARRIVAL.name";
 		this.OBJECTIVES = new QuestObjective[]{
-				new QuestCraftTable(),
-				new QuestClaimLand()
+				new QuestCraftTable(this),
+				new QuestClaimLand(this)
 		};
 		this.REWARDS = new QuestReward[] {
 				new QuestRewardItem(new ItemStack(Material.OAK_PLANKS, 4)),

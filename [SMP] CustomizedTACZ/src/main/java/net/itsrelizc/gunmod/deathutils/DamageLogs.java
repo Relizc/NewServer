@@ -22,7 +22,7 @@ public class DamageLogs implements Iterable<DamageRecord> {
 
 	public void debugBroadcastRecords(Player player) {
 		for (DamageRecord str : records) {
-			Bukkit.broadcastMessage(str.toString(player));
+			//(str.toString(player));
 		}
 	}
 

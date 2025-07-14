@@ -12,4 +12,5 @@ public class EventRegistery {
 		Bukkit.getPluginManager().registerEvents(listener, main);
 	}
 
+
 }
