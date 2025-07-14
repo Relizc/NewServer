@@ -37,6 +37,7 @@ import net.itsrelizc.gunmod.deathutils.RightClickBody;
 import net.itsrelizc.gunmod.items.RelizcItemMFCU;
 import net.itsrelizc.gunmod.items.RelizcItemSatellitePhone;
 import net.itsrelizc.gunmod.npcs.SleepingTrait;
+import net.itsrelizc.health2.BedHealListener;
 import net.itsrelizc.health2.Body;
 import net.itsrelizc.health2.ballistics.FragUtils;
 import net.itsrelizc.health2.fletching.ArrowUtils;
@@ -62,6 +63,7 @@ public class Main extends JavaPlugin implements Listener {
 		EventRegistery.register(new DeathSummaryScreen.DeathSummaryListeners());
 		EventRegistery.register(new LegBrokenJumpListeners());
 		EventRegistery.register(new ArrowHitListeners());
+		EventRegistery.register(new BedHealListener());
 		
 		DeathUtils.init();
 		
@@ -264,29 +266,6 @@ public class Main extends JavaPlugin implements Listener {
     	event.setCancelled(true);
     }
     
-
-    @EventHandler
-    public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-        if (!event.getPlayer().isSneaking()) {
-        	Locale.a(event.getPlayer(), "damage.heal.shift_click_bed_notice");
-        	return;
-        }
-
-        Block clicked = event.getClickedBlock();
-        if (clicked == null) return;
-
-        Material type = clicked.getType();
-        if (!type.name().endsWith("_BED")) return; // matches all bed types
-        
-        Player player = event.getPlayer();
-        
-        player.playSound(player, Sound.ENTITY_PLAYER_LEVELUP, 1f, 2f);
-        player.playSound(player, Sound.BLOCK_LAVA_EXTINGUISH, 1f, 2f);
-        player.playSound(player, Sound.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR, 1f, 2f);
-
-        
-    }
     
     
     

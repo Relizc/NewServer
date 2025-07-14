@@ -1,5 +1,28 @@
 package net.itsrelizc.health2;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+import org.bukkit.Color;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Particle.DustOptions;
+import org.bukkit.Sound;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
+
+import net.itsrelizc.events.EventRegistery;
+import net.itsrelizc.players.locales.Locale;
+
 public class BedHealListener implements Listener {
 
     private final Map<UUID, BukkitTask> repeatingTasks = new HashMap<>();
@@ -15,8 +38,16 @@ public class BedHealListener implements Listener {
         Player player = event.getPlayer();
 
         // Conditions
-        if (!player.isSneaking()) return;
-        if (player.getInventory().getItemInMainHand().getType() != Material.AIR) return;
+        if (!player.isSneaking()) {
+        	Locale.a(player, "damage.heal.shift_click_bed_notice");
+        	return;
+        }
+        if (player.getInventory().getItemInMainHand().getType() != Material.AIR) {
+        	Locale.a(player, "damage.heal.shift_click_bed_notice");
+        	return;
+        }
+        
+        event.setCancelled(true);
 
         UUID uuid = player.getUniqueId();
 
@@ -34,9 +65,32 @@ public class BedHealListener implements Listener {
                         return;
                     }
 
-                    player.sendMessage(ChatColor.YELLOW + "You're holding right-click on a bed!");
+                    Body body = Body.parts.get(player.getUniqueId().toString());
+                    body.healWithPriority(10);
+                    
+                    player.playSound(player, Sound.BLOCK_LAVA_EXTINGUISH, 1f, 2f);
+                    //player.playSound(player, Sound.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR, 1f, 2f);
+                    player.getLocation().getWorld().spawnParticle(
+                    	    Particle.REDSTONE,        // Particle type
+                    	    player.getLocation(),     // Where the particle spawns
+                    	    15,                      // Number of particles
+                    	    0.5, 1.0, 0.5,            // Offsets (x, y, z spread)
+                    	    0.1,                      // Speed
+                    	    new DustOptions(
+                    	        Color.fromRGB(0, 255, 0), // Green color
+                    	        2.0f                        // Size (2.0 = large)
+                    	    )
+                    	);
+
+                    if (body.isAllHealthy()) {
+                    	Locale.a(player, "menu.death.cure.all");
+                    	player.playSound(player, Sound.ENTITY_PLAYER_LEVELUP, 1f, 2f);
+                    } else {
+                    	player.playSound(player, Sound.BLOCK_NOTE_BLOCK_BELL, 1f, 2f);
+                    }
+
                 }
-            }.runTaskTimer(YourPluginInstance.getInstance(), 0L, 10L); // 10 ticks = 0.5 sec
+            }.runTaskTimer(EventRegistery.main, 0L, 10L); // 10 ticks = 0.5 sec
 
             repeatingTasks.put(uuid, task);
         }

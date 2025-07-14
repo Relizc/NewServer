@@ -140,6 +140,10 @@ public class Body {
 		return c;
 	}
 	
+	public boolean isAllHealthy() {
+		return countHealthyParts() == 7;
+	}
+	
 	public void damage(int partId, long amount, String damageCause) {
 		damage(partId, amount, damageCause, null, null);
 	}
