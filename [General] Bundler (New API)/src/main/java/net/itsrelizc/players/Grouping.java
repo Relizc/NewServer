@@ -58,8 +58,15 @@ public class Grouping implements Listener {
 	}
 	
 	public static void initlizeRankGroups(Plugin plugin) {
+		
+		for (Team team : Bukkit.getScoreboardManager().getMainScoreboard().getTeams()) {
+			team.unregister();
+		}
+		
 		ScoreboardManager manager = Bukkit.getScoreboardManager();
 		board = manager.getMainScoreboard();
+		
+		
 		
 		for (Rank r : Rank.values()) {
 			
