@@ -3,22 +3,22 @@ package net.itsrelizc.gunmod;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.EntityType;
+import org.bukkit.Sound;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Firework;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.FireworkExplodeEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -38,7 +38,6 @@ import net.itsrelizc.gunmod.items.RelizcItemMFCU;
 import net.itsrelizc.gunmod.items.RelizcItemSatellitePhone;
 import net.itsrelizc.gunmod.npcs.SleepingTrait;
 import net.itsrelizc.health2.Body;
-import net.itsrelizc.health2.ballistics.Collisions;
 import net.itsrelizc.health2.ballistics.FragUtils;
 import net.itsrelizc.health2.fletching.ArrowUtils;
 import net.itsrelizc.health2.fletching.RelizcNeoArrow;
@@ -47,6 +46,7 @@ import net.itsrelizc.health2.fletching.RelizcOverridenCrossbow;
 import net.itsrelizc.health2.penetration.ArrowHitListeners;
 import net.itsrelizc.itemlib.ItemUtils;
 import net.itsrelizc.players.Grouping;
+import net.itsrelizc.players.locales.Locale;
 
 public class Main extends JavaPlugin implements Listener {
 	
@@ -265,7 +265,28 @@ public class Main extends JavaPlugin implements Listener {
     }
     
 
-    
+    @EventHandler
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+        if (!event.getPlayer().isSneaking()) {
+        	Locale.a(event.getPlayer(), "damage.heal.shift_click_bed_notice");
+        	return;
+        }
+
+        Block clicked = event.getClickedBlock();
+        if (clicked == null) return;
+
+        Material type = clicked.getType();
+        if (!type.name().endsWith("_BED")) return; // matches all bed types
+        
+        Player player = event.getPlayer();
+        
+        player.playSound(player, Sound.ENTITY_PLAYER_LEVELUP, 1f, 2f);
+        player.playSound(player, Sound.BLOCK_LAVA_EXTINGUISH, 1f, 2f);
+        player.playSound(player, Sound.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR, 1f, 2f);
+
+        
+    }
     
     
     

@@ -91,7 +91,7 @@ public class Main extends JavaPlugin {
 	}
 
 	public static String getVersion() {
-		return "8.0.13";
+		return "8.1";
 	}
 
 }
