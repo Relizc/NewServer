@@ -388,7 +388,7 @@ public class ArrowHitListeners implements Listener{
             	    long damage = arrow.getPersistentDataContainer().get(new NamespacedKey(EventRegistery.main, "damage"), PersistentDataType.LONG);
             	    long point = arrow.getPersistentDataContainer().get(new NamespacedKey(EventRegistery.main, "point"), PersistentDataType.LONG);
 
-				    AStarPathfinder.drawParticleLine(current.getWorld(), current, previous, 0.5);
+				    //AStarPathfinder.drawParticleLine(current.getWorld(), current, previous, 0.5);
 				    if (arrow.getTicksLived() > 0) {
 				    	for (LivingEntity player : getAllPlayerEntities()) {
 				    		

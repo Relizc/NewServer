@@ -39,11 +39,11 @@ public class BedHealListener implements Listener {
 
         // Conditions
         if (!player.isSneaking()) {
-        	Locale.a(player, "damage.heal.shift_click_bed_notice");
+        	player.sendMessage(Locale.a(player, "damage.heal.shift_click_bed_notice"));;
         	return;
         }
         if (player.getInventory().getItemInMainHand().getType() != Material.AIR) {
-        	Locale.a(player, "damage.heal.shift_click_bed_notice");
+        	player.sendMessage(Locale.a(player, "damage.heal.shift_click_bed_notice"));;
         	return;
         }
         
@@ -54,14 +54,19 @@ public class BedHealListener implements Listener {
         // Start only if not already running
         if (!repeatingTasks.containsKey(uuid)) {
             BukkitTask task = new BukkitRunnable() {
+            	
+            	private void stop() {
+            		this.cancel();
+                    repeatingTasks.remove(uuid);
+            	}
+            	
                 @Override
                 public void run() {
                     // Check again if player still meets the conditions
                     if (!player.isSneaking()
                             || player.getInventory().getItemInMainHand().getType() != Material.AIR
                             || !isBed(player.getTargetBlockExact(5) != null ? player.getTargetBlockExact(5).getType() : null)) {
-                        this.cancel();
-                        repeatingTasks.remove(uuid);
+                        stop();
                         return;
                     }
 
@@ -85,6 +90,9 @@ public class BedHealListener implements Listener {
                     if (body.isAllHealthy()) {
                     	Locale.a(player, "menu.death.cure.all");
                     	player.playSound(player, Sound.ENTITY_PLAYER_LEVELUP, 1f, 2f);
+                    	
+                    	stop();
+                    	return;
                     } else {
                     	player.playSound(player, Sound.BLOCK_NOTE_BLOCK_BELL, 1f, 2f);
                     }
