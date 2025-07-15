@@ -69,6 +69,19 @@ public class BedHealListener implements Listener {
                         stop();
                         return;
                     }
+                    
+                    if (!(player.getFoodLevel() >= 1)) {
+                    	player.sendMessage(Locale.a(player, "menu.death.cure.no_hunger"));;
+                    	player.playSound(player, Sound.ENTITY_PLAYER_BURP, 1f, 0f);
+                    	player.playSound(player, Sound.ENTITY_ITEM_BREAK, 1f, 1f);
+                    	
+                    	stop();
+                    	return;
+                    }
+                    
+                    player.setFoodLevel(player.getFoodLevel() - 1);
+                    	
+                    	
 
                     Body body = Body.parts.get(player.getUniqueId().toString());
                     body.healWithPriority(10);
@@ -88,7 +101,7 @@ public class BedHealListener implements Listener {
                     	);
 
                     if (body.isAllHealthy()) {
-                    	Locale.a(player, "menu.death.cure.all");
+                    	player.sendMessage(Locale.a(player, "menu.death.cure.all"));;
                     	player.playSound(player, Sound.ENTITY_PLAYER_LEVELUP, 1f, 2f);
                     	
                     	stop();
