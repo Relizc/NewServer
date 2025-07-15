@@ -3,22 +3,19 @@ package net.itsrelizc.gunmod;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Firework;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.FireworkExplodeEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -44,10 +41,10 @@ import net.itsrelizc.health2.fletching.ArrowUtils;
 import net.itsrelizc.health2.fletching.RelizcNeoArrow;
 import net.itsrelizc.health2.fletching.RelizcOverridenBow;
 import net.itsrelizc.health2.fletching.RelizcOverridenCrossbow;
+import net.itsrelizc.health2.fletching.RelizcSpectralArrow;
 import net.itsrelizc.health2.penetration.ArrowHitListeners;
 import net.itsrelizc.itemlib.ItemUtils;
 import net.itsrelizc.players.Grouping;
-import net.itsrelizc.players.locales.Locale;
 
 public class Main extends JavaPlugin implements Listener {
 	
@@ -73,6 +70,7 @@ public class Main extends JavaPlugin implements Listener {
 		ItemUtils.register(RelizcOverridenCrossbow.class);
 		ItemUtils.register(RelizcItemMFCU.class);
 		ItemUtils.register(RelizcItemSatellitePhone.class);
+		ItemUtils.register(RelizcSpectralArrow.class);
 		
 		ArrowUtils.loadAllArrowPoints();
 		ArrowUtils.loadAllArrowFletchings();
@@ -98,16 +96,32 @@ public class Main extends JavaPlugin implements Listener {
     public void onPlayerDamagesPlayer(EntityDamageByEntityEvent event) {
         // Check if the entity being damaged is a player
         if (!(event.getEntity() instanceof Player)) return;
+        if (!(event.getDamager() instanceof LivingEntity)) return;
 
         // Check if the damager is a player (can also be a projectile, etc.)
-        if (!(event.getDamager() instanceof Player)) return;
+        //if (!(event.getDamager() instanceof Player)) return;
 
-        Player damager = (Player) event.getDamager();
+        LivingEntity damager = (LivingEntity) event.getDamager();
         Player damaged = (Player) event.getEntity();
+        
+        long actual = (long) (event.getFinalDamage() * 5);
+		
+		event.setDamage(0);
 
         // Call your custom logic here
-        damager.sendMessage("You hit " + damaged.getName());
-        damaged.sendMessage("You were hit by " + damager.getName());
+//        damager.sendMessage("You hit " + damaged.getName());
+//        damaged.sendMessage("You were hit by " + damager.getName());
+        Body body = Body.parts.get(damaged.getUniqueId().toString());
+        
+        ItemStack it = damager.getEquipment().getItemInMainHand();
+        String name;
+        if (it == null || it.getType() == Material.AIR) {
+        	name = "damage.empty_hand";
+        } else {
+        	name = it.getItemMeta().getDisplayName();
+        }
+        
+        body.damageAverage(actual, name, damager);
     }
 	
 	@EventHandler
@@ -146,20 +160,22 @@ public class Main extends JavaPlugin implements Listener {
 	@EventHandler(priority=EventPriority.HIGHEST, ignoreCancelled=true)
 	public void damage(EntityDamageEvent event) {
 		if (!(event.getEntity() instanceof Player)) return;
+		if (event.getCause() == DamageCause.ENTITY_ATTACK || event.getCause() == DamageCause.ENTITY_SWEEP_ATTACK) return;
+		DamageCause cause = event.getCause();
+		if (cause == DamageCause.PROJECTILE || cause == DamageCause.FALL) return;
 		
-		long actual = (long) (event.getFinalDamage() * 10);
+		long actual = (long) (event.getFinalDamage() * 5);
 		
 		event.setDamage(0);
 		
-		DamageCause cause = event.getCause();
-		if (cause == DamageCause.PROJECTILE || cause == DamageCause.FALL) return;
+		
 		
 		Player player = (Player) event.getEntity();
 		
 		
 		Body body = Body.parts.get(player.getUniqueId().toString());
 		
-		body.damageAverage(actual, "damage." + event.getCause().toString());
+		body.damageAverage(actual, "damage." + event.getCause().toString(), null);
 		
 	}
 	

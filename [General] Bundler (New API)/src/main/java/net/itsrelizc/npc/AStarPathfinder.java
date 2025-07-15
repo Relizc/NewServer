@@ -237,7 +237,7 @@ public class AStarPathfinder {
 	    Location particleLoc = a.clone();
 
 	    for (int i = 0; i <= steps; i++) {
-	        //world.spawnParticle(Particle.VILLAGER_HAPPY, particleLoc, 1, 0, 0, 0, 0, null, true);
+	        world.spawnParticle(Particle.VILLAGER_HAPPY, particleLoc, 1, 0, 0, 0, 0, null, true);
 	        particleLoc.add(step);
 	    }
 	}

@@ -17,10 +17,10 @@ import net.itsrelizc.nbt.NBT.NBTTagType;
 import net.itsrelizc.players.locales.Locale;
 import net.itsrelizc.players.locales.LocaleSession;
 import net.itsrelizc.string.StringUtils;
-
+	
 @RelizcNativeMinecraftItem(material=Material.ARROW)
 @RelizcItemMeta(key = "point", type = NBTTagType.TAG_Int, int_init=-992184946)
-@RelizcItemMeta(key = "shaft", type = NBTTagType.TAG_Int, int_init=-1478126976)
+@RelizcItemMeta(key = "shaft", type = NBTTagType.TAG_Int, int_init=2032762523)
 @RelizcItemMeta(key = "fletching", type = NBTTagType.TAG_Int, int_init=-488142409)
 public class RelizcNeoArrow extends RelizcItemStack {
 

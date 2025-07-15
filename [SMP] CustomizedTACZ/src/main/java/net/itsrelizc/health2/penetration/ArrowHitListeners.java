@@ -19,6 +19,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.TippedArrow;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -57,13 +58,18 @@ public class ArrowHitListeners implements Listener{
         if (!(event.getDamager().getType() == EntityType.ARROW || event.getDamager().getType() == EntityType.SPECTRAL_ARROW)) return;
         
         Player player = (Player) event.getEntity();
+        Arrow damager = (Arrow) event.getDamager();
         
         if (DeathUtils.isDead(player)) {
         	event.setCancelled(true);
         	return;
         }
         
+        damager.setKnockbackStrength(0);
         event.setDamage(0);
+        
+        
+        
         return;
         
         
@@ -254,6 +260,7 @@ public class ArrowHitListeners implements Listener{
         // Step 4: Scale to original speed
         return newDir.multiply(speed);
     }
+    
 	
 	@EventHandler
 	public void onShootArrow(EntityShootBowEvent event) {
@@ -316,6 +323,8 @@ public class ArrowHitListeners implements Listener{
 
 	    net.minecraft.world.item.ItemStack it = CraftItemStack.asNMSCopy(usedArrow);
 	    CompoundTag tag = it.getOrCreateTag();
+	    
+	    //System.out.println(tag.toString());
 	    
 	    
 	    ArrowPoint point = ArrowUtils.getPoint(tag.getInt("point"));
@@ -408,8 +417,11 @@ public class ArrowHitListeners implements Listener{
 				    		
 				    		
 		                	
-//		                    if (loc.distance(player.getLocation()) > 4) continue; // distance check optimization
-		                    BodyPart hit = Collisions.getHitBodyPart(player, current, previous);
+//		                    if (loc.distance(player.getLocation()) > 4) continue; // distance check optimization\
+	                        Vector direction = current.toVector().subtract(previous.toVector()).normalize();
+	                        Location extended = current.clone().add(direction); // 1 block further
+		                    BodyPart hit = Collisions.getHitBodyPart(player, extended, previous);
+		                    
 		                    if (hit != BodyPart.NONE) {
 		                        HitDirection side = Collisions.getHitSide(current, player);
 		                        

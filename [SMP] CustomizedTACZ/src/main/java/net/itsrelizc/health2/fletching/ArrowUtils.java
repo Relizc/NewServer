@@ -440,17 +440,17 @@ public class ArrowUtils {
 
 	public static ArrowPoint getPoint(Integer tagInteger) {
 		
-		return points.getOrDefault(tagInteger, null);
+		return points.getOrDefault(tagInteger, points.getOrDefault(-992184946, null));
 	}
 	
 	public static ArrowShaft getShaft(Integer tagInteger) {
 		
-		return shafts.getOrDefault(tagInteger, null);
+		return shafts.getOrDefault(tagInteger, shafts.getOrDefault(-1478126976, null));
 	}
 	
 	public static ArrowFletching getFletching(Integer tagInteger) {
 		
-		return fletchings.getOrDefault(tagInteger, null);
+		return fletchings.getOrDefault(tagInteger, fletchings.getOrDefault(-488142409, null));
 	}
 
 

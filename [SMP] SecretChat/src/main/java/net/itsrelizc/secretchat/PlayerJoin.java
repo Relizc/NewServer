@@ -80,6 +80,8 @@ public class PlayerJoin implements Listener {
 		
 		spawnArmorStand(event.getPlayer());
 		
+		event.setJoinMessage(null);
+		
 	}
 	
 	@EventHandler

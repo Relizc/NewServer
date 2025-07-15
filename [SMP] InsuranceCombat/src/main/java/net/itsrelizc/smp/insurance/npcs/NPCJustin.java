@@ -357,7 +357,7 @@ public class NPCJustin extends BodiedNPC {
         
         player.getInventory().setHelmet(it);
         
-        ItemStack it2 = ItemUtils.createItem(RelizcNeoArrow.class, null, new MetadataPair("point", 1642375599), new MetadataPair("shaft", 2053745532), new MetadataPair("fletching", -1786176692)).getBukkitItem();
+        ItemStack it2 = ItemUtils.createItem(RelizcNeoArrow.class, null, new MetadataPair("point", 1642375599), new MetadataPair("shaft", -1031998313), new MetadataPair("fletching", -1786176692)).getBukkitItem();
         it2.setAmount(random.nextInt(40) + 12);
         this.setItemInInventoryRandomLocation(it2, true);
 	}

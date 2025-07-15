@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -183,7 +184,7 @@ public class Body {
 		}
 		
 		owner.playHurtAnimation(0f);
-
+		owner.getWorld().playSound(owner.getLocation(), Sound.ENTITY_PLAYER_HURT, 1f, 1f);
 //		
 		Limb limb = convert(partId);
 		
@@ -482,7 +483,7 @@ public class Body {
 	    }
 	}
 
-	public void damageAverage(long actual, String damageCause) {
+	public void damageAverage(long actual, String damageCause, LivingEntity damager) {
 		
 		int healthy = this.countHealthyParts();
 		long avg = actual / healthy;
@@ -491,12 +492,12 @@ public class Body {
 			Limb limb = convert(i);
 			
 			//limb.damage(avg, damageCause);
-			damage(i, avg, damageCause);
+			damage(i, avg, damageCause, null, damager);
 			actual -= avg;
 		}
 		
 		for (int i = 6; i >= 0; i --) {
-			damage(i, 1, damageCause);
+			damage(i, 1, damageCause, null, damager);
 			actual -= 1;
 			
 			if (actual <= 0) break;
