@@ -215,6 +215,8 @@ public class Main extends JavaPlugin implements Listener {
 		long avg = amt / 2;
 		long other = amt - avg;
 		
+		event.setDamage(0);
+		
 		Body body = Body.parts.get(player.getUniqueId().toString());
 		body.damage(5, avg, "damage." + event.getCause().toString().toLowerCase());
 		body.damage(6, other, "damage." + event.getCause().toString().toLowerCase());
