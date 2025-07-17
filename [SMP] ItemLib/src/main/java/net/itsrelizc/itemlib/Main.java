@@ -8,6 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import net.itsrelizc.commands.CommandRegistery;
 import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.items.RelizcOverridedWoodenSword;
+import net.itsrelizc.items.RelizcOverridenEnchantedBook;
 import net.itsrelizc.items.RelizcTestSword;
 
 public class Main extends JavaPlugin implements Listener {
@@ -22,6 +23,7 @@ public class Main extends JavaPlugin implements Listener {
 		
 		//Native mineraft weapons
 		ItemUtils.register(RelizcOverridedWoodenSword.class);
+		ItemUtils.register(RelizcOverridenEnchantedBook.class);
 		
 		CommandRegistery.register(new CommandGenerateItem());
 	}

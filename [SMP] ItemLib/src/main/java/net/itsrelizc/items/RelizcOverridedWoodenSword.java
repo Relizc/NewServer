@@ -21,11 +21,5 @@ public class RelizcOverridedWoodenSword extends RelizcItemStack{
 		super(owner, it);
 		// TODO Auto-generated constructor stub
 	}
-	
-	@Override
-	public List<String> renderInternalLore() {
-		return StringUtils.fromArgs("bozo");
-		
-	}
 
 }
