@@ -13,6 +13,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 import net.itsrelizc.commands.CommandRegistery;
+import net.itsrelizc.commands.DebugAnticheatModBlocks;
 import net.itsrelizc.diamonds.DiamondCommand;
 import net.itsrelizc.diamonds.DiamondCounter;
 import net.itsrelizc.diamonds.DiamondPurse;
@@ -56,6 +57,7 @@ public class Main extends JavaPlugin {
 		
 		CommandRegistery.register(new SitCommand());
 		CommandRegistery.register(new PrestigeCommand());
+		CommandRegistery.register(new DebugAnticheatModBlocks());
 		
 		SitCommand.enable(this);
 		

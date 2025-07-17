@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import net.itsrelizc.diamonds.DiamondPurse;
@@ -130,6 +131,11 @@ public class LoginLogoutHandler implements Listener {
 //		menu.open();
 		
 		
+	}
+	
+	@EventHandler
+	public void quit(PlayerQuitEvent event) {
+		event.setQuitMessage(null);
 	}
 	
 
