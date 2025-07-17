@@ -398,7 +398,21 @@ public class ArrowHitListeners implements Listener{
             	    long point = arrow.getPersistentDataContainer().get(new NamespacedKey(EventRegistery.main, "point"), PersistentDataType.LONG);
 
 				    //AStarPathfinder.drawParticleLine(current.getWorld(), current, previous, 0.5);
+            	    
+            	    if (arrow.getLocation().getBlock().getType() == Material.END_PORTAL || arrow.getLocation().getBlock().getType() == Material.NETHER_PORTAL) {
+            	    	// Patch 8.1.52-7: Fixed arrows causing damage in portals
+            	    	
+            	    	arrow.setTicksLived(999999); 
+            	    	
+            	    }
+            	    
+            	    
+            	    
 				    if (arrow.getTicksLived() > 0) {
+				    	
+				    	
+				    	
+				    	
 				    	for (LivingEntity player : getAllPlayerEntities()) {
 				    		
 				    		if (!(player.getLocation().getWorld().getName().equals(current.getWorld().getName()))) continue;
