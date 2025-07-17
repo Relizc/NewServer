@@ -141,8 +141,18 @@ public class Body {
 		return c;
 	}
 	
+	private int countFullHealthyParts() {
+		int c = 0;
+		for (int i = 0; i < 7; i ++) {
+			if (convert(i).getHealth() == convert(i).getMaxHealth()) {
+				c ++;
+			}
+		}
+		return c;
+	}
+	
 	public boolean isAllHealthy() {
-		return countHealthyParts() == 7;
+		return countFullHealthyParts() == 7;
 	}
 	
 	public void damage(int partId, long amount, String damageCause) {

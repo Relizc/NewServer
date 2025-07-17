@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import net.itsrelizc.bundler.Main;
@@ -144,6 +145,11 @@ public class LoginLogoutHandler implements Listener {
 		}.runTaskLater(EventRegistery.main, 60l);
 		
 		
+	}
+	
+	@EventHandler
+	public void quit(PlayerQuitEvent event) {
+		event.setQuitMessage(null);
 	}
 	
 

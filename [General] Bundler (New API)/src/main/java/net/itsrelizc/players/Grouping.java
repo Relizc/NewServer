@@ -152,6 +152,10 @@ public class Grouping implements Listener {
 	
 	@EventHandler
 	public void _b(PlayerQuitEvent event) {
+		
+		Profile prof = Profile.findByOwner(event.getPlayer());
+		prof.save();
+		
 		Team t = playersoleTeams.remove(event.getPlayer());
 		t.unregister();
 		//Profile.removeProfile(Profile.findByOwner(event.getPlayer()));

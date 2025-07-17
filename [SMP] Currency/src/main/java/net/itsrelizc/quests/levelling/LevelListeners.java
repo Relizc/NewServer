@@ -1,12 +1,11 @@
 package net.itsrelizc.quests.levelling;
 
-import java.util.UUID;
-
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerExpChangeEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 import net.itsrelizc.players.Profile;
 import net.itsrelizc.players.Profile.NewPlayerJoinedEvent;
@@ -24,8 +23,22 @@ public class LevelListeners implements Listener {
 	    Player player = event.getPlayer();
 	    int gainedXP = event.getAmount();
 	    event.setAmount(0); // Cancel default XP gain
+	    
 
 	    addCustomXP(player, gainedXP);
+	}
+	
+	@EventHandler
+	public void join(PlayerJoinEvent event) {
+		Profile prof = Profile.findByOwner(event.getPlayer());
+		
+		long level = (long) prof.getMetadata("level");
+		long currentXP = (long) prof.getMetadata("exp");
+		
+		float fxp = (float) currentXP;
+		
+		event.getPlayer().setLevel((int) level);
+		event.getPlayer().setExp(fxp / 1603f);
 	}
 	
 	private void addCustomXP(Player player, int amount) {

@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -19,7 +20,6 @@ import java.util.UUID;
 public class AFKDetector implements Listener {
 
     // Stores the last location + timestamp of players
-    private final HashMap<UUID, Location> lastLocations = new HashMap<>();
     private final HashMap<UUID, Long> lastMoveTimestamps = new HashMap<>();
     
     private final Set<UUID> afkPlayers = new HashSet<>();		
@@ -59,20 +59,26 @@ public class AFKDetector implements Listener {
         Location from = event.getFrom();
         Location to = event.getTo();
 
-        if (to == null || from.distanceSquared(to) < 0.01) return; // minor movement
-        
-        if (afkPlayers.contains(uuid)) {
-        	afkPlayers.remove(uuid);
-        	Bukkit.getPluginManager().callEvent(new PlayerAFKEvent(player, false));
+        if (to == null) return;
 
+        boolean positionChanged = from.distanceSquared(to) >= 0.01;
+        boolean cameraChanged = from.getYaw() != to.getYaw() || from.getPitch() != to.getPitch();
+
+        if (!positionChanged && !cameraChanged) return;
+
+        if (afkPlayers.contains(uuid)) {
+            afkPlayers.remove(uuid);
+            Bukkit.getPluginManager().callEvent(new PlayerAFKEvent(player, false));
         }
 
-        lastLocations.put(uuid, to);
         lastMoveTimestamps.put(uuid, System.currentTimeMillis());
     }
 
+    
+    
+
     public void onDisable() {
-        lastLocations.clear();
+
         lastMoveTimestamps.clear();
     }
 }

@@ -94,7 +94,7 @@ public class Main extends JavaPlugin implements Listener {
 	
 	
 	
-	@EventHandler
+	@EventHandler(priority=EventPriority.HIGHEST, ignoreCancelled=true)
     public void onPlayerDamagesPlayer(EntityDamageByEntityEvent event) {
         // Check if the entity being damaged is a player
         if (!(event.getEntity() instanceof Player)) return;
@@ -216,6 +216,8 @@ public class Main extends JavaPlugin implements Listener {
 		long amt = (long) (event.getDamage() * 10);
 		long avg = amt / 2;
 		long other = amt - avg;
+		
+		event.setDamage(0);
 		
 		Body body = Body.parts.get(player.getUniqueId().toString());
 		body.damage(5, avg, "damage." + event.getCause().toString().toLowerCase());

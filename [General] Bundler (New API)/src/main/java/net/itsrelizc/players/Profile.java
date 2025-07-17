@@ -198,6 +198,10 @@ public class Profile {
 	public void setMetadata(String key, Object value) {
 		profiledata.put(key, value);
 		
+		
+	}
+	
+	public void save() {
 		JSONObject c = JSON.loadDataFromDataBase("players.json");
 		c.put(this.realUUID.toString(), profiledata);
 		JSON.saveDataFromDataBase("players.json", c);
