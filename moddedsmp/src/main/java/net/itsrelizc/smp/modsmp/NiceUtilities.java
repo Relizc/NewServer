@@ -1,5 +1,7 @@
 package net.itsrelizc.smp.modsmp;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
@@ -8,12 +10,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerListPingEvent;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.players.Grouping;
@@ -70,6 +71,8 @@ public class NiceUtilities implements Listener {
 		}
 	}
 	
+	private static Map<String, BukkitTask> prepareKickTasks = new HashMap<String, BukkitTask>();
+	
 	@EventHandler
 	public void afk(PlayerAFKEvent event) {
 		
@@ -78,8 +81,25 @@ public class NiceUtilities implements Listener {
 			Player player = event.getPlayer();
 			
 			Grouping.setSuffix(player, Grouping.getSuffix(player) + k);
+			
+			BukkitTask task = new BukkitRunnable() {
+
+				@Override
+				public void run() {
+					player.kickPlayer(Locale.a(player, "kick.afk"));
+				}
+				
+			}.runTaskLater(EventRegistery.main, 20 * 5 * 60); // 5 mins
+			
+			prepareKickTasks.put(player.getUniqueId().toString(), task);
 		} else {
+			
+			
+			
 			Player player = event.getPlayer();
+			if (prepareKickTasks.containsKey(player.getUniqueId().toString())) {
+				prepareKickTasks.get(player.getUniqueId().toString()).cancel();
+			};
 			int g = Grouping.getSuffix(player).length();
 			Grouping.setSuffix(player, Grouping.getSuffix(player).substring(0, g - k.length()));
 		}
