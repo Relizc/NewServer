@@ -176,7 +176,7 @@ public class SMPScoreboard extends RelizcScoreboard {
 
 	@Override
 	public void addGameInfo() {
-    	addLine(" §8" + this.player.getPing() + "ms ↑0 ↓0");
+    	addLine(" §8" + this.player.getPing() + "ms");
     	setDisplayName("§e§l" + Locale.get(this.player, GameInfo.gameName));
     }
 	
