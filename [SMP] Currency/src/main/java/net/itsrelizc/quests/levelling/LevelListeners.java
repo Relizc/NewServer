@@ -37,7 +37,7 @@ public class LevelListeners implements Listener {
 		
 		float fxp = (float) currentXP;
 		
-		event.getPlayer().setLevel((int) level);
+		event.getPlayer().setLevel(Math.max((int) level, 0));
 		event.getPlayer().setExp(fxp / 1603f);
 	}
 	

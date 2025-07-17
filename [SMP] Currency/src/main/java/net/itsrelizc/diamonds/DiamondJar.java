@@ -102,7 +102,7 @@ public class DiamondJar implements Listener {
 	}
 	
 	public static ItemStack createFor(Player player, long value) {
-		ItemStack pot = ItemGenerator.generate(Material.POTION, 1, Locale.get(player, "item.diamond_jar.name"), Locale.get(player, "item.diamond_jar.lore"), Locale.get(player, "item.diamond_jar.lore_2").formatted(value / 1000f));
+		ItemStack pot = ItemGenerator.generate(Material.POTION, 1, Locale.get(player, "item.diamond_jar.name"), Locale.get(player, "item.diamond_jar.lore"), Locale.get(player, "item.diamond_jar.lore_2").formatted(value));
 		PotionMeta meta = (PotionMeta) pot.getItemMeta();
 		meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 		meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
@@ -129,10 +129,10 @@ public class DiamondJar implements Listener {
 //			ChatUtils.broadcastSystemMessage("diamondtest", String.valueOf(im.getCustomTagContainer().getCustomTag(key, ItemTagType.LONG)));
 
 			event.getItemDrop().setCustomNameVisible(true);
-			event.getItemDrop().setCustomName("§b%,.3f ct".formatted(im.getCustomTagContainer().getCustomTag(key, ItemTagType.LONG) / 1000.0));
+			event.getItemDrop().setCustomName("§b%,d ct".formatted(im.getCustomTagContainer().getCustomTag(key, ItemTagType.LONG)));
 		} else if (event.getItemDrop().getItemStack().getType() == Material.DIAMOND) {
 			event.getItemDrop().setCustomNameVisible(true);
-			event.getItemDrop().setCustomName("§b0.100 ct");
+			event.getItemDrop().setCustomName("§b100 ct");
 		}
 	}
 	
@@ -161,9 +161,6 @@ public class DiamondJar implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityDamage(EntityDamageEvent e) {
 
-        EntityDamageEvent.DamageCause cause = e.getCause();
-        double damage = e.getDamage();
-        double finalDamage = e.getFinalDamage();
         EntityType entity = e.getEntity().getType();
         
        
@@ -180,11 +177,15 @@ public class DiamondJar implements Listener {
         	ItemStack item = it.getItemStack();
         	
         	if (item.getType() == Material.DIAMOND) {
-        		it.getLocation().getWorld().spawnParticle(Particle.PORTAL, it.getLocation(), 100, 0, 0, 0, 0.5f);
-				it.getLocation().getWorld().spawnParticle(Particle.GLOW, it.getLocation(), 20, 0, 0, 0, 0.5f);
-				it.getLocation().getWorld().playSound(it.getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1f, 0f);
-				
-        		DiamondCounter.remaining += item.getAmount();
+//        		it.getLocation().getWorld().spawnParticle(Particle.PORTAL, it.getLocation(), 100, 0, 0, 0, 0.5f);
+//				it.getLocation().getWorld().spawnParticle(Particle.GLOW, it.getLocation(), 20, 0, 0, 0, 0.5f);
+//				it.getLocation().getWorld().playSound(it.getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1f, 0f);
+//				
+//        		DiamondCounter.remaining += item.getAmount();
+        		e.setCancelled(true);
+        		
+        		it.setInvulnerable(true);
+        		
         		return;
         	}
         	
@@ -194,16 +195,34 @@ public class DiamondJar implements Listener {
 			
 			if (value == null) return;
 			
-			if (value % 1000 != 0) {
-				it.getLocation().getWorld().spawnParticle(Particle.PORTAL, it.getLocation(), 100, 0, 0, 0, 0.5f);
-				it.getLocation().getWorld().spawnParticle(Particle.GLOW, it.getLocation(), 20, 0, 0, 0, 0.5f);
-				it.getLocation().getWorld().playSound(it.getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1f, 0f);
+			if (value % 100 != 0) {
+
+
+				ItemStack pot = ItemGenerator.generate(Material.POTION, 1, Locale.a(null, "item.diamond_jar.name"), Locale.a(null, "item.diamond_jar.lore"), Locale.a(null, "item.diamond_jar.lore_2").formatted(value));
+				PotionMeta meta = (PotionMeta) pot.getItemMeta();
+				meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+				meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+				meta.addEnchant(Enchantment.ARROW_DAMAGE, 1, false);
+				meta.setColor(Color.AQUA);
+				NamespacedKey key = new NamespacedKey(EventRegistery.main, "diamondValue");
+				meta.getCustomTagContainer().setCustomTag(key, ItemTagType.LONG, value);
+				
+				item.setItemMeta(meta);
+				it.setItemStack(item);
+				
+				it.setInvulnerable(true);;
 				
 				
+				e.setCancelled(true);
+				return;
 				
 			}
 			
 			long amt = value / 100;
+			
+			it.getLocation().getWorld().spawnParticle(Particle.PORTAL, it.getLocation(), 100, 0, 0, 0, 0.5f);
+			it.getLocation().getWorld().spawnParticle(Particle.GLOW, it.getLocation(), 20, 0, 0, 0, 0.5f);
+			it.getLocation().getWorld().playSound(it.getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1f, 0f);
 			
 			Item ent = it.getLocation().getWorld().dropItemNaturally(it.getLocation(), ItemGenerator.generate(Material.DIAMOND, (int) amt));
 			ent.setInvulnerable(true);

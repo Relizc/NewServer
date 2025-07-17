@@ -135,10 +135,15 @@ public class LoginLogoutHandler implements Listener {
 
 			@Override
 			public void run() {
-				String content = " §7" + Main.getVersion() + " §a更新日志 §8(2025/7/16)";
-				content += "\n §8- §r修复了部分箭矢 (包括灵光箭、药箭...) 无法使用与不正常显示的问题";
-				content += "\n §8- §r修复了部分箭矢判定失常的问题";
-				content += "\n §8- §r添加了下蹲并右键床可以治疗伤情的功能";
+				String content = " §7" + Main.getVersion() + " §a更新日志 §8(2025/7/17)";
+				content += "\n §8- §r修复了部分箭矢显示失常的情况";
+				content += "\n §8- §r修复了服务器间歇性卡顿的情况";
+				content += "\n §8- §r修复了部分箭矢造成神秘伤害的情况";
+				content += "\n §8- §r修复了经验系统失常的情况";
+				content += "\n §8- §r修复了通过滥用死亡视角探索地图的问题";
+				content += "\n §8- §r添加了踢出闲置玩家的功能";
+				content += "\n §8- §r添加了记录游戏时长功能";
+				
 				event.getPlayer().sendMessage("\n\n§e§m--------------------------------§r\n" + content + "\n§e§m--------------------------------");
 			}
 			

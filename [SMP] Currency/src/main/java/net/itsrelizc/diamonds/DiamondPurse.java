@@ -131,6 +131,9 @@ public class DiamondPurse {
 
 	public static void removePurse(Player player, long ct) {
 		balance.put(player, balance.get(player) - ct);
+		
+		PlayerPurseChangedEvent event = new PlayerPurseChangedEvent(player);
+		Bukkit.getPluginManager().callEvent(event);
 	}
 
 }

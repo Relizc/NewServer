@@ -103,7 +103,7 @@ public class CommandSpit extends RelizcCommand {
 			}
 			
 			DiamondPurse.removePurse(player, ct);
-			DiamondJar.createFor(player, (long) (ct * 1000));
+			DiamondJar.createFor(player, (long) ct);
 			player.playSound(player.getLocation(), Sound.ENTITY_SHULKER_AMBIENT, 1f, 2f);
 			StringUtils.systemMessage(player, Locale.get(player, "commands.spit"), Locale.get(player, "commands.spit.sucess").formatted(ct));
 			
@@ -136,7 +136,7 @@ public class CommandSpit extends RelizcCommand {
 			if (args[0].equalsIgnoreCase("max")) {
 				
 				ct = bal;
-				desc = "(?) MAX (" + Locale.get((Player) sender, "commands.general.max") + ") = %,.3f ct";
+				desc = "(?) MAX (" + Locale.get((Player) sender, "commands.general.max") + ") = %,d ct";
 				
 			} else if (args[0].endsWith("%") && isNumeric(args[0].substring(0, args[0].length() - 1))) {
 				
@@ -154,21 +154,21 @@ public class CommandSpit extends RelizcCommand {
 							"(X) " + Locale.get(player, "commands.spit.ratio.invalid")));
 				}
 				ratio /= 100.0;
-				desc = "(?) " + Locale.get(player, "commands.spit.ofbalance").formatted(kf)  + " = %,.3f ct (" + Locale.get(player, "commands.spit.percentifasdecimal").formatted(ratio, "(" + kf + ")") +")";
+				desc = "(?) " + Locale.get(player, "commands.spit.ofbalance").formatted(kf)  + " = %,d ct (" + Locale.get(player, "commands.spit.percentifasdecimal").formatted(ratio, "(" + kf + ")") +")";
 				ct = (long) (bal * ratio);
 				
 			} else if (args[0].equalsIgnoreCase("half")) {
 				
 				ct = bal / 2;
-				desc = "(?) HALF (" + Locale.get((Player) sender, "commands.general.half") + ") = %,.3f ct";
+				desc = "(?) HALF (" + Locale.get((Player) sender, "commands.general.half") + ") = %,d ct";
 				
 			} else if (args[0].equalsIgnoreCase("quarter")) {
 				ct = bal / 4;
-				desc = "(?) QUARTER (" + Locale.get((Player) sender, "commands.general.quarter") + ") = %,.3f ct";
+				desc = "(?) QUARTER (" + Locale.get((Player) sender, "commands.general.quarter") + ") = %,d ct";
 
 			} else if (args[0].equalsIgnoreCase("eighth")) {
 				ct = bal / 8;
-				desc = "(?) EIGHTH (" + Locale.get((Player) sender, "commands.general.eighth") + ") = %,.3f ct";
+				desc = "(?) EIGHTH (" + Locale.get((Player) sender, "commands.general.eighth") + ") = %,d ct";
 
 			} else if (args[0].length() > 0) {
 				
@@ -184,7 +184,7 @@ public class CommandSpit extends RelizcCommand {
 							"(X) " + Locale.get(player, "commands.spit.invalid")));
 				}
 				
-				desc = "(?) " + args[0].replaceAll("%", "%%") + " = %,.3f ct";
+				desc = "(?) " + args[0].replaceAll("%", "%%") + " = %,d ct";
 				
 				
 			} else {
@@ -239,7 +239,7 @@ public class CommandSpit extends RelizcCommand {
 //					}
 //					
 //					return new TabCompleteInfo(true, new TabCompleteType[] {TabCompleteType.NUMBER},(Player) sender, Locale.get((Player)sender, "commands.spit.arg0.description"), StringUtils.fromArgs(
-//							"(?) MAX (" + Locale.get((Player) sender, "commands.general.max") + ") = %,.3f ct".formatted(ct),
+//							"(?) MAX (" + Locale.get((Player) sender, "commands.general.max") + ") = %,d ct".formatted(ct),
 //							"(?) " + s));
 //					
 //				} else if (args[0].equalsIgnoreCase("half")) {
@@ -252,7 +252,7 @@ public class CommandSpit extends RelizcCommand {
 //					}
 //					
 //					return new TabCompleteInfo(true, new TabCompleteType[] {TabCompleteType.NUMBER},(Player) sender, Locale.get((Player)sender, "commands.spit.arg0.description"), StringUtils.fromArgs(
-//							"(?) HALF (" + Locale.get((Player) sender, "commands.general.half") + ") = %,.3f ct".formatted(ct),
+//							"(?) HALF (" + Locale.get((Player) sender, "commands.general.half") + ") = %,d ct".formatted(ct),
 //							"(?) " + s));
 //					
 //				} else if (args[0].equalsIgnoreCase("quarter")) {
@@ -264,7 +264,7 @@ public class CommandSpit extends RelizcCommand {
 //					}
 //					
 //					return new TabCompleteInfo(true, new TabCompleteType[] {TabCompleteType.NUMBER},(Player) sender, Locale.get((Player)sender, "commands.spit.arg0.description"), StringUtils.fromArgs(
-//							"(?) QUARTER (" + Locale.get((Player) sender, "commands.general.quarter") + ") = %,.3f ct".formatted(ct),
+//							"(?) QUARTER (" + Locale.get((Player) sender, "commands.general.quarter") + ") = %,d ct".formatted(ct),
 //							"(?) " + s));
 //				} else if (args[0].equalsIgnoreCase("eighth")) {
 //					ct = bal / 8;
@@ -275,7 +275,7 @@ public class CommandSpit extends RelizcCommand {
 //					}
 //					
 //					return new TabCompleteInfo(true, new TabCompleteType[] {TabCompleteType.NUMBER},(Player) sender, Locale.get((Player)sender, "commands.spit.arg0.description"), StringUtils.fromArgs(
-//							"(?) EIGHTH (" + Locale.get((Player) sender, "commands.general.eighth") + ") = %,.3f ct".formatted(ct),
+//							"(?) EIGHTH (" + Locale.get((Player) sender, "commands.general.eighth") + ") = %,d ct".formatted(ct),
 //							"(?) " + s));
 //				} else {
 //					return new TabCompleteInfo(true, new TabCompleteType[] {TabCompleteType.NUMBER},(Player) sender, Locale.get((Player)sender, "commands.spit.arg0.description"), StringUtils.fromArgs(
@@ -306,7 +306,7 @@ public class CommandSpit extends RelizcCommand {
 //			}
 //			
 //			return new TabCompleteInfo(true, new TabCompleteType[] {TabCompleteType.NUMBER},(Player) sender, Locale.get((Player)sender, "commands.spit.arg0.description"), StringUtils.fromArgs(
-//					"(?) " + dias + " " + Locale.get((Player) sender, "item.diamond") + " = %,.3f ct".formatted(ct),
+//					"(?) " + dias + " " + Locale.get((Player) sender, "item.diamond") + " = %,d ct".formatted(ct),
 //					"(?) " + s));
 //		} else {
 //			

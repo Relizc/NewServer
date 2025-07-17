@@ -156,7 +156,7 @@ public class CommandPay extends RelizcCommand {
 			if (args[0].equalsIgnoreCase("max")) {
 				
 				ct = bal;
-				desc = "(?) MAX (" + Locale.get((Player) sender, "commands.general.max") + ") = %,.3f ct";
+				desc = "(?) MAX (" + Locale.get((Player) sender, "commands.general.max") + ") = %,d ct";
 				
 			} else if (args[0].endsWith("%") && isNumeric(args[0].substring(0, args[0].length() - 1))) {
 				
@@ -174,21 +174,21 @@ public class CommandPay extends RelizcCommand {
 							"(X) " + Locale.get(player, "commands.pay.ratio.invalid")));
 				}
 				ratio /= 100.0;
-				desc = "(?) " + Locale.get(player, "commands.pay.ofbalance").formatted(kf)  + " = %,.3f ct (" + Locale.get(player, "commands.pay.percentifasdecimal").formatted(ratio, "(" + kf + ")") +")";
+				desc = "(?) " + Locale.get(player, "commands.pay.ofbalance").formatted(kf)  + " = %,d ct (" + Locale.get(player, "commands.pay.percentifasdecimal").formatted(ratio, "(" + kf + ")") +")";
 				ct = (long) (bal * ratio);
 				
 			} else if (args[0].equalsIgnoreCase("half")) {
 				
 				ct = bal / 2;
-				desc = "(?) HALF (" + Locale.get((Player) sender, "commands.general.half") + ") = %,.3f ct";
+				desc = "(?) HALF (" + Locale.get((Player) sender, "commands.general.half") + ") = %,d ct";
 				
 			} else if (args[0].equalsIgnoreCase("quarter")) {
 				ct = bal / 4;
-				desc = "(?) QUARTER (" + Locale.get((Player) sender, "commands.general.quarter") + ") = %,.3f ct";
+				desc = "(?) QUARTER (" + Locale.get((Player) sender, "commands.general.quarter") + ") = %,d ct";
 
 			} else if (args[0].equalsIgnoreCase("eighth")) {
 				ct = bal / 8;
-				desc = "(?) EIGHTH (" + Locale.get((Player) sender, "commands.general.eighth") + ") = %,.3f ct";
+				desc = "(?) EIGHTH (" + Locale.get((Player) sender, "commands.general.eighth") + ") = %,d ct";
 
 			} else if (args[0].length() > 0) {
 				
@@ -204,7 +204,7 @@ public class CommandPay extends RelizcCommand {
 							"(X) " + Locale.get(player, "commands.pay.invalid")));
 				}
 				
-				desc = "(?) " + args[0].replaceAll("%", "%%") + " = %,.3f ct";
+				desc = "(?) " + args[0].replaceAll("%", "%%") + " = %,d ct";
 				
 				
 			} else {
