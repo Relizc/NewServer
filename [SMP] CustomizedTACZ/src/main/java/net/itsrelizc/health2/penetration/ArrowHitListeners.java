@@ -11,15 +11,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
+import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.AbstractArrow.PickupStatus;
-import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
-import org.bukkit.entity.TippedArrow;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -33,7 +33,6 @@ import org.bukkit.util.Vector;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.itsrelizc.events.EventRegistery;
-import net.itsrelizc.gunmod.deathutils.DeathUtils;
 import net.itsrelizc.health2.Body;
 import net.itsrelizc.health2.ballistics.Collisions;
 import net.itsrelizc.health2.ballistics.Collisions.BodyPart;
@@ -49,6 +48,20 @@ import net.itsrelizc.npc.AStarPathfinder;
 import net.minecraft.nbt.CompoundTag;
 
 public class ArrowHitListeners implements Listener{
+	public static float getYawTo(Location from, Location to) {
+	    Vector dir = to.clone().subtract(from).toVector();
+	    dir.setY(0);  // ignore vertical difference for yaw
+	    dir.normalize();
+
+	    double yawRad = dir.getZ() < 0
+	        ? -Math.acos(dir.getX())
+	        : Math.acos(dir.getX());
+	    
+	    float yaw = (float) Math.toDegrees(yawRad);
+
+	    // Minecraft yaw is measured from -180° to +180°
+	    return yaw;
+	}
 	@EventHandler(ignoreCancelled=true)
     public void onArrowHit(EntityDamageByEntityEvent event) {
 		// DamageCause.PROJECTILE
@@ -58,16 +71,25 @@ public class ArrowHitListeners implements Listener{
         if (!(event.getDamager().getType() == EntityType.ARROW || event.getDamager().getType() == EntityType.SPECTRAL_ARROW)) return;
         
         Player player = (Player) event.getEntity();
-        Arrow damager = (Arrow) event.getDamager();
+        AbstractArrow damager = (AbstractArrow) event.getDamager();
         
-        if (DeathUtils.isDead(player)) {
-        	event.setCancelled(true);
-        	return;
-        }
+//        if (DeathUtils.isDead(player)) {
+//        	event.setCancelled(true);
+//        	return;
+//        }
+//        
+//        damager.setKnockbackStrength(0);
+//        
+//        
+//        event.setDamage(0);
+        event.setCancelled(true);
+        System.out.println("canecl");
+        damager.remove();
         
-        damager.setKnockbackStrength(0);
-        event.setDamage(0);
+        player.playHurtAnimation(getYawTo(player.getLocation(), damager.getLocation()));
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_PLAYER_HURT, 1f, 1f);
         
+        player.setArrowsInBody(player.getArrowsInBody() + 1);
         
         
         return;
@@ -265,12 +287,12 @@ public class ArrowHitListeners implements Listener{
 	@EventHandler
 	public void onShootArrow(EntityShootBowEvent event) {
 		
-		if (!(event.getProjectile() instanceof Arrow)) {
+		if (!(event.getProjectile() instanceof AbstractArrow)) {
 			return;
 		}
 
 		LivingEntity player = event.getEntity();
-	    Arrow arrow = (Arrow) event.getProjectile();
+		AbstractArrow arrow = (AbstractArrow) event.getProjectile();
 	    
 	    arrow.setCritical(false);
 	    
@@ -381,14 +403,15 @@ public class ArrowHitListeners implements Listener{
 
 			@Override
 			public void run() {
-				Iterator<Map.Entry<Arrow, Location>> iterator = arrowLocationStorage.entrySet().iterator();
+				Iterator<Map.Entry<AbstractArrow, Location>> iterator = arrowLocationStorage.entrySet().iterator();
 
 				while (iterator.hasNext()) {
-				    Map.Entry<Arrow, Location> entry = iterator.next();
+				    Map.Entry<AbstractArrow, Location> entry = iterator.next();
 				    
 				    
 				    
-				    Arrow arrow = entry.getKey();
+				    AbstractArrow arrow = entry.getKey();
+				    
 				    ////(arrow.getTicksLived() + "");
 				    Location previous = entry.getValue();
 				    Location current = arrow.getLocation();
@@ -397,13 +420,14 @@ public class ArrowHitListeners implements Listener{
             	    long damage = arrow.getPersistentDataContainer().get(new NamespacedKey(EventRegistery.main, "damage"), PersistentDataType.LONG);
             	    long point = arrow.getPersistentDataContainer().get(new NamespacedKey(EventRegistery.main, "point"), PersistentDataType.LONG);
 
-				    //AStarPathfinder.drawParticleLine(current.getWorld(), current, previous, 0.5);
+				    //
 				    if (arrow.getTicksLived() > 0) {
+				    	
 				    	for (LivingEntity player : getAllPlayerEntities()) {
 				    		
 				    		if (!(player.getLocation().getWorld().getName().equals(current.getWorld().getName()))) continue;
 				    		
-				    		if (player.getLocation().distance(current) > arrow.getVelocity().length()) continue;
+				    		if (player.getLocation().distance(current) - 3 > arrow.getVelocity().length()) continue;
 				    		
 				    		if (arrow.getShooter() instanceof Player) {
 				    			Player shooter = (Player) arrow.getShooter();
@@ -415,12 +439,23 @@ public class ArrowHitListeners implements Listener{
 	                        	continue;
 	                        }
 				    		
-				    		
+	                        
 		                	
 //		                    if (loc.distance(player.getLocation()) > 4) continue; // distance check optimization\
-	                        Vector direction = current.toVector().subtract(previous.toVector()).normalize();
-	                        Location extended = current.clone().add(direction); // 1 block further
-		                    BodyPart hit = Collisions.getHitBodyPart(player, extended, previous);
+	                        Vector direction = current.toVector()
+	                                .subtract(previous.toVector())
+	                                .normalize();
+
+					      // Extend 'current' forward:
+					      Location extendedForward = current.clone().add(direction.clone().multiply(arrow.getVelocity().length() + 1));
+				
+					      // Extend 'previous' backward:
+					      Location extendedPrevious = previous.clone().subtract(direction);
+				
+					      // Now perform your hit check:
+					      BodyPart hit = Collisions.getHitBodyPart(player, extendedForward, extendedPrevious);
+					      //System.out.println(hit);
+					      //AStarPathfinder.drawParticleLine(current.getWorld(), extendedForward, extendedPrevious, 0.5);
 		                    
 		                    if (hit != BodyPart.NONE) {
 		                        HitDirection side = Collisions.getHitSide(current, player);
@@ -481,8 +516,8 @@ public class ArrowHitListeners implements Listener{
 		
 	}
 	
-	public static HashMap<Arrow, Location> arrowLocationStorage = new HashMap<Arrow, Location>();
-	public static HashMap<Arrow, Integer> getLastTicksLived = new HashMap<Arrow, Integer>();
+	public static HashMap<AbstractArrow, Location> arrowLocationStorage = new HashMap<AbstractArrow, Location>();
+	public static HashMap<AbstractArrow, Integer> getLastTicksLived = new HashMap<AbstractArrow, Integer>();
 	
 	public static Vector getRandomDirection() {
 	    ThreadLocalRandom rand = ThreadLocalRandom.current();

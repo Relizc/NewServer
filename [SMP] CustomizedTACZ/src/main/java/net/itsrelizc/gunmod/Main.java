@@ -42,6 +42,7 @@ import net.itsrelizc.health2.fletching.RelizcNeoArrow;
 import net.itsrelizc.health2.fletching.RelizcOverridenBow;
 import net.itsrelizc.health2.fletching.RelizcOverridenCrossbow;
 import net.itsrelizc.health2.fletching.RelizcSpectralArrow;
+import net.itsrelizc.health2.fletching.RelizcTippedArrow;
 import net.itsrelizc.health2.penetration.ArrowHitListeners;
 import net.itsrelizc.itemlib.ItemUtils;
 import net.itsrelizc.players.Grouping;
@@ -71,6 +72,7 @@ public class Main extends JavaPlugin implements Listener {
 		ItemUtils.register(RelizcItemMFCU.class);
 		ItemUtils.register(RelizcItemSatellitePhone.class);
 		ItemUtils.register(RelizcSpectralArrow.class);
+		ItemUtils.register(RelizcTippedArrow.class);
 		
 		ArrowUtils.loadAllArrowPoints();
 		ArrowUtils.loadAllArrowFletchings();

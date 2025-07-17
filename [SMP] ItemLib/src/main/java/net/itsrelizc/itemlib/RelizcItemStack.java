@@ -186,7 +186,7 @@ public class RelizcItemStack {
 	}
 	
 	protected CompoundTag getTag() {
-		return CraftItemStack.asNMSCopy(bukkit).getTag();
+		return CraftItemStack.asNMSCopy(bukkit).getOrCreateTag();
 	}
 	
 	public double getTagDouble(String string) {

@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
+import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
@@ -398,26 +399,26 @@ public class ArrowUtils {
 	    ArrowHitListeners.getLastTicksLived.put(arrow, Integer.MIN_VALUE);
     }
     
-    public static void shootArrowWithSameVelocityInDirection(Arrow originalArrow, Vector newDirection, ProjectileSource shooter) {
+    public static void shootArrowWithSameVelocityInDirection(AbstractArrow arrow, Vector newDirection, ProjectileSource shooter) {
         // Normalize new direction
         Vector dir = newDirection.clone().normalize();
 
         // Get original speed (magnitude of velocity vector)
-        double speed = originalArrow.getVelocity().length();
+        double speed = arrow.getVelocity().length();
 
         // Compute new velocity vector
         Vector newVelocity = dir.multiply(speed);
 
         // Offset position slightly backward (to avoid hitting the shooter)
-        Location spawnLoc = originalArrow.getLocation().clone().add(dir.multiply(1)); // move 0.5 blocks back
+        Location spawnLoc = arrow.getLocation().clone().add(dir.multiply(1)); // move 0.5 blocks back
 
         // Spawn new arrow
-        World world = originalArrow.getWorld();
-        Arrow newArrow = world.spawnArrow(spawnLoc, newVelocity, (float) speed, 0);
+        World world = arrow.getWorld();
+        AbstractArrow newArrow = world.spawnArrow(spawnLoc, newVelocity, (float) speed, 0, arrow.getClass());
         newArrow.setShooter(shooter);
 
         // Transfer persistent data
-        PersistentDataContainer originalData = originalArrow.getPersistentDataContainer();
+        PersistentDataContainer originalData = arrow.getPersistentDataContainer();
         PersistentDataContainer newData = newArrow.getPersistentDataContainer();
 
         NamespacedKey keyPenetration = new NamespacedKey(EventRegistery.main, "penetration");

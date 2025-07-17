@@ -11,6 +11,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import net.itsrelizc.bundler.Main;
 import net.itsrelizc.diamonds.DiamondPurse;
 import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.menus.ItemGenerator;
@@ -102,11 +103,11 @@ public class LoginLogoutHandler implements Listener {
 		
 		event.getPlayer().sendMessage(Locale.get(event.getPlayer(), "smp.login.welcome"));
 		
-		TextComponent x = new TextComponent(Locale.get(event.getPlayer(), "smp.login.serverstatus"));
-		TextComponent y = new TextComponent(Locale.get(event.getPlayer(), "smp.login.updates"));
-		StringUtils.attachCommand(y, "updates", null);
-		x.addExtra(y);
-		event.getPlayer().spigot().sendMessage(x);
+//		TextComponent x = new TextComponent(Locale.get(event.getPlayer(), "smp.login.serverstatus"));
+//		TextComponent y = new TextComponent(Locale.get(event.getPlayer(), "smp.login.updates"));
+//		StringUtils.attachCommand(y, "updates", null);
+//		x.addExtra(y);
+//		event.getPlayer().spigot().sendMessage(x);
 		
 		TextComponent fairplay = new TextComponent(Locale.get(event.getPlayer(), "smp.login.fairplaylink"));
 		StringUtils.attachOpenURL(fairplay, "https://relizc.github.io/relizcnetwork/fair-play-policy.html");
@@ -128,6 +129,19 @@ public class LoginLogoutHandler implements Listener {
 		
 //		Menu2 menu = new Menu2(event.getPlayer(), 5, new T4j(Locale.get(event.getPlayer(), "t4j.toyou")));
 //		menu.open();
+		
+		new BukkitRunnable() {
+
+			@Override
+			public void run() {
+				String content = " §7" + Main.getVersion() + " §a更新日志 §8(2025/7/16)";
+				content += "\n §8- §r修复了部分箭矢 (包括灵光箭、药箭...) 无法使用与不正常显示的问题";
+				content += "\n §8- §r修复了部分箭矢判定失常的问题";
+				content += "\n §8- §r添加了下蹲并右键床可以治疗伤情的功能";
+				event.getPlayer().sendMessage("\n\n§e§m--------------------------------§r\n" + content + "\n§e§m--------------------------------");
+			}
+			
+		}.runTaskLater(EventRegistery.main, 60l);
 		
 		
 	}

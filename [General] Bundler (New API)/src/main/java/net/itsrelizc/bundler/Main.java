@@ -1,5 +1,9 @@
 package net.itsrelizc.bundler;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.PluginCommand;
@@ -34,8 +38,22 @@ public class Main extends JavaPlugin {
 		EventRegistery.main = this;
 	}
 	
+	private final String url = "http://localhost:5000/keepalive";
+
 	@Override
 	public void onEnable() {
+		
+		getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
+            try {
+                HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+                conn.setRequestMethod("GET");
+                conn.setConnectTimeout(2000);
+                conn.getResponseCode(); // Fire request
+                conn.disconnect();
+            } catch (IOException e) {
+                getLogger().warning("Failed to send keepalive: " + e.getMessage());
+            }
+        }, 0L, 20L * 10); // every 30 seconds
 		
 		CommandRegistery.register(new RelizcCommand("mycrushisneitherofthegirlsyouknow", "you suck", StringUtils.fromArgs("testcommandpleaseignore", "test")));
 		
