@@ -99,6 +99,7 @@ public class NiceUtilities implements Listener {
 			Player player = event.getPlayer();
 			if (prepareKickTasks.containsKey(player.getUniqueId().toString())) {
 				prepareKickTasks.get(player.getUniqueId().toString()).cancel();
+				prepareKickTasks.remove(player.getUniqueId().toString());
 			};
 			int g = Grouping.getSuffix(player).length();
 			Grouping.setSuffix(player, Grouping.getSuffix(player).substring(0, g - k.length()));
