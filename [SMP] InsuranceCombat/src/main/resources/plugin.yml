@@ -3,5 +3,5 @@ main: net.itsrelizc.smp.insurance.Main
 version: 1.0.0
 author: Relizc
 api-version: 1.13
-depend: [RelizcBundlerNewAPI, RelizcItemLib]
+depend: [Relizc, RelizcItemLib]
       

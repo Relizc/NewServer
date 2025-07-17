@@ -47,6 +47,7 @@ public class RelizcCommand extends BukkitCommand {
 		private String description;
 		private List<String> preset = null;
 		private boolean optional = false;
+		private boolean force = false;
 		
 		TabCompleteInfo(TabCompleteType[] type) {
 			tab = type;
@@ -58,7 +59,7 @@ public class RelizcCommand extends BukkitCommand {
 			this.description = description;
 		}
 		
-		TabCompleteInfo(TabCompleteType[] type, Player player, String description, List<String> preset) {
+		public TabCompleteInfo(TabCompleteType[] type, Player player, String description, List<String> preset) {
 			tab = type;
 			this.player = player;
 			this.description = description;
@@ -72,15 +73,21 @@ public class RelizcCommand extends BukkitCommand {
 			this.optional  = optional;
 		}
 
-		public TabCompleteInfo(boolean b, TabCompleteType[] tabCompleteTypes, Player sender, String string,
+		public TabCompleteInfo(boolean forceShow, TabCompleteType[] tabCompleteTypes, Player sender, String string,
 				List<String> fromArgs) {
 			tab = tabCompleteTypes;
 			this.player = sender;
 			this.description = string;
 			this.preset = fromArgs;
+			this.force  = forceShow;
 		}
 
-		public List<String> raw() {
+		public List<String> raw(String[] args) {
+			
+			String already = null;
+			if (args.length >= 1) {
+				already = args[args.length - 1];
+			}
 			
 			if (player == null) {
 				return StringUtils.reversedFromArgs("TabComplete not supported for console");
@@ -98,7 +105,22 @@ public class RelizcCommand extends BukkitCommand {
 						);
 				
 				if (this.preset != null) {
-					return Stream.concat(a.stream(), preset.stream()).toList();
+					
+					if (already == null || already.trim().length() == 0 || force) {
+						return Stream.concat(a.stream(), preset.stream()).toList();
+					} else {
+						List<String> suggests = StringUtils.fromNewList();
+						for (String s : preset) {
+							if (s.startsWith(already.toUpperCase()) || s.startsWith(already.toLowerCase())) suggests.add(s);
+						}
+						if (suggests.size() == 0) {
+							a.add(" [%s]".formatted(Locale.a(player, "commands.general.tabcomplete.nosuggestions")));
+							return a;
+						} else return suggests;
+						
+					}
+					
+					
 				} else {
 					return a;
 				}
@@ -240,7 +262,7 @@ public class RelizcCommand extends BukkitCommand {
 	
 	@Override
 	public List<String> tabComplete(CommandSender sender, String alias, String[] args, Location location) {
-		return onTabComplete(sender, alias, args, location).raw();
+		return onTabComplete(sender, alias, args, location).raw(args);
 		
 	}
 	

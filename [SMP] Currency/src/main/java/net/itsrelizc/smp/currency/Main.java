@@ -7,10 +7,12 @@ import net.itsrelizc.diamonds.DiamondCommand;
 import net.itsrelizc.diamonds.DiamondEatListener;
 import net.itsrelizc.diamonds.DiamondJar;
 import net.itsrelizc.diamonds.DiamondPurse;
+import net.itsrelizc.diamonds.RelizcItemDiamondJar;
 import net.itsrelizc.diamonds.commands.CommandPay;
 import net.itsrelizc.diamonds.commands.CommandSpit;
 import net.itsrelizc.diamonds.commands.GiveDiamondPotion;
 import net.itsrelizc.events.EventRegistery;
+import net.itsrelizc.itemlib.ItemUtils;
 import net.itsrelizc.quests.QuestListener;
 import net.itsrelizc.quests.QuestNewArrival;
 import net.itsrelizc.quests.QuestUtils;
@@ -40,6 +42,7 @@ public class Main extends JavaPlugin {
 		
 		QuestUtils.registerQuest(QuestNewArrival.INSTANCE);
 		//EventRegistery.register(new ContractListener());
+		ItemUtils.register(RelizcItemDiamondJar.class);
 		
 		
 	}

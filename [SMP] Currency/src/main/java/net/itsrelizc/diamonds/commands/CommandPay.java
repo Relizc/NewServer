@@ -68,7 +68,7 @@ public class CommandPay extends RelizcCommand {
 				try {
 					ratio = Double.valueOf(args[0].substring(0, args[0].length() - 1));
 				} catch (Exception e) {
-					player.playSound(player.getLocation(), Sound.ENTITY_SHULKER_AMBIENT, 1f, 0f);
+					player.playSound(player, Sound.ENTITY_SHULKER_AMBIENT, 1f, 0f);
 					StringUtils.systemMessage(player, Locale.get(player, "commands.pay"), Locale.get(player, "commands.pay.fail.format"));
 					return true;
 				}
@@ -103,21 +103,26 @@ public class CommandPay extends RelizcCommand {
 			}	
 			
 			if (bal - ct < 0) {
-				player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 2f);
+				player.playSound(player, Sound.ENTITY_VILLAGER_NO, 1f, 2f);
 				StringUtils.systemMessage(player, Locale.get(player, "commands.pay"), Locale.get(player, "commands.pay.fail.notenough"));
 				return true;
 			} 
 			
+			if (player.getUniqueId().equals(who.getUniqueId())) {
+				player.playSound(player, Sound.ENTITY_VILLAGER_NO, 1f, 2f);
+				StringUtils.systemMessage(player, Locale.get(player, "commands.pay"), Locale.get(player, "commands.pay.fail.notarget"));
+			}
+			
 			DiamondPurse.removePurse(player, ct);
-			player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_YES, 1f, 2f);
+			player.playSound(player, Sound.ENTITY_VILLAGER_YES, 1f, 2f);
 			StringUtils.systemMessage(player, Locale.get(player, "commands.pay"), Locale.get(player, "commands.pay.sucess").formatted(Profile.coloredName(who), ct));
 			
-			DiamondPurse.addPurse(who, (long) (ct * 1000l));
-			who.playSound(who.getLocation(), Sound.ENTITY_VILLAGER_YES, 1f, 2f);
+			DiamondPurse.addPurse(who, (long) ct);
+			who.playSound(who, Sound.ENTITY_VILLAGER_YES, 1f, 2f);
 			StringUtils.systemMessage(who, Locale.get(who, "commands.pay"), Locale.get(who, "commands.pay.sucess.from").formatted(Profile.coloredName(player), ct));
 			
 		} else {
-			player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 2f);
+			player.playSound(player, Sound.ENTITY_VILLAGER_NO, 1f, 2f);
 			StringUtils.systemMessage(player, Locale.get(player, "commands.pay"), Locale.get(player, "commands.pay.fail.notarget"));
 			return true;
 			

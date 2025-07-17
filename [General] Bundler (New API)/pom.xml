@@ -2,7 +2,7 @@
  	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.itsrelizc</groupId>
   	<artifactId>newbundler</artifactId>
-  	<name>RelizcBundlerNewAPI</name>
+  	<name>Relizc</name>
   	<version>1.0.0</version>
    	<build>
       <plugins>

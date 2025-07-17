@@ -7,18 +7,18 @@ import net.itsrelizc.string.StringUtils;
 
 public class DiamondPickUpWatchdog implements Listener {
 	
-	@EventHandler(ignoreCancelled=true)
-	public void a(PlayerPickupItemEvent event) {
-		
-//		ChatUtils.broadcastSystemMessage("diamondchecker", "picked up " + event.getItem().getType().toString());
-		
-//		if (event.isCancelled()) return;
-		
-		if (event.getItem().getItemStack().getType().toString().equalsIgnoreCase("DIAMOND")) {
-//			ChatUtils.broadcastSystemMessage("diamondchecker", "picked up diamond");
-			DiamondUtils.scanValueThenCreate(event.getItem().getItemStack());
-		}
-		
-	}
+//	@EventHandler(ignoreCancelled=true)
+//	public void a(PlayerPickupItemEvent event) {
+//		
+////		ChatUtils.broadcastSystemMessage("diamondchecker", "picked up " + event.getItem().getType().toString());
+//		
+////		if (event.isCancelled()) return;
+//		
+//		if (event.getItem().getItemStack().getType().toString().equalsIgnoreCase("DIAMOND")) {
+////			ChatUtils.broadcastSystemMessage("diamondchecker", "picked up diamond");
+//			DiamondUtils.scanValueThenCreate(event.getItem().getItemStack());
+//		}
+//		
+//	}
 	
 }

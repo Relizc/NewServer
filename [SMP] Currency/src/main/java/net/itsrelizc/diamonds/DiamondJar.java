@@ -18,6 +18,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.ItemMergeEvent;
 import org.bukkit.event.inventory.BrewEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -43,6 +44,9 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.nbt.NbtBase;
 
 import net.itsrelizc.events.EventRegistery;
+import net.itsrelizc.itemlib.ItemUtils;
+import net.itsrelizc.itemlib.ItemUtils.MetadataPair;
+import net.itsrelizc.itemlib.RelizcItemStack;
 import net.itsrelizc.menus.ItemGenerator;
 import net.itsrelizc.players.locales.Locale;
 import net.itsrelizc.string.StringUtils;
@@ -102,39 +106,45 @@ public class DiamondJar implements Listener {
 	}
 	
 	public static ItemStack createFor(Player player, long value) {
-		ItemStack pot = ItemGenerator.generate(Material.POTION, 1, Locale.get(player, "item.diamond_jar.name"), Locale.get(player, "item.diamond_jar.lore"), Locale.get(player, "item.diamond_jar.lore_2").formatted(value));
-		PotionMeta meta = (PotionMeta) pot.getItemMeta();
-		meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-		meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
-		meta.addEnchant(Enchantment.ARROW_DAMAGE, 1, false);
-		meta.setColor(Color.AQUA);
 		
+		RelizcItemDiamondJar pot = ItemUtils.createItem(RelizcItemDiamondJar.class, player, new MetadataPair("VALUE", value));
 		
-		NamespacedKey key = new NamespacedKey(EventRegistery.main, "diamondValue");
-		meta.getCustomTagContainer().setCustomTag(key, ItemTagType.LONG, value);
+		player.getInventory().addItem(pot.getBukkitItem());
 		
-		pot.setItemMeta(meta);
-		player.getInventory().addItem(pot);
-		
-		return pot;
+		return pot.getBukkitItem();
 	}
 	
 	@EventHandler
 	public void a(PlayerDropItemEvent event) {
-		if (event.getItemDrop().getItemStack().getItemMeta().getDisplayName().equalsIgnoreCase("§b钻石瓶")) {
+		
+		RelizcItemStack stack = ItemUtils.castOrCreateItem(event.getItemDrop().getItemStack());
+		
+		if (stack.getID().equals("DIAMOND_JAR")) {
 //			ChatUtils.broadcastSystemMessage("diamondtest", "dropped bottle");
 			
-			ItemMeta im = event.getItemDrop().getItemStack().getItemMeta();
-			NamespacedKey key = new NamespacedKey(EventRegistery.main, "diamondValue");
+			long val = stack.getTagLong("VALUE");
 //			ChatUtils.broadcastSystemMessage("diamondtest", String.valueOf(im.getCustomTagContainer().getCustomTag(key, ItemTagType.LONG)));
 
 			event.getItemDrop().setCustomNameVisible(true);
-			event.getItemDrop().setCustomName("§b%,d ct".formatted(im.getCustomTagContainer().getCustomTag(key, ItemTagType.LONG)));
+			event.getItemDrop().setCustomName("§b%,d ct".formatted(val));
 		} else if (event.getItemDrop().getItemStack().getType() == Material.DIAMOND) {
 			event.getItemDrop().setCustomNameVisible(true);
-			event.getItemDrop().setCustomName("§b100 ct");
+			event.getItemDrop().setCustomName("§b%,d ct".formatted(event.getItemDrop().getItemStack().getAmount() * 100));
 		}
 	}
+	
+	@EventHandler
+    public void onItemMerge(ItemMergeEvent event) {
+        Item source = event.getEntity(); // the item that will merge
+        Item target = event.getTarget(); // the item being merged into
+        
+        if (!(source.getItemStack().getType() == Material.DIAMOND)) return;
+
+        target.setCustomName("§b%,d ct".formatted((target.getItemStack().getAmount() + source.getItemStack().getAmount())  * 100));
+        
+        // Optionally cancel the merge
+        // event.setCancelled(true);
+    }
 	
 	@EventHandler
 	public void brew(InventoryClickEvent event) {
@@ -142,7 +152,8 @@ public class DiamondJar implements Listener {
 		if (event.getInventory().getType() == InventoryType.BREWING) {
 			if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.POTION) {
 				
-				Long value = event.getCurrentItem().getItemMeta().getCustomTagContainer().getCustomTag(new NamespacedKey(EventRegistery.main, "diamondValue"), ItemTagType.LONG);
+				RelizcItemStack stack = ItemUtils.castOrCreateItem(event.getCurrentItem());
+				Long value = stack.getTagLong("RELIZC:VALUE");
 				
 				if (value == null) return;
 				
@@ -176,6 +187,7 @@ public class DiamondJar implements Listener {
         	Item it = (Item) e.getEntity();
         	ItemStack item = it.getItemStack();
         	
+        	
         	if (item.getType() == Material.DIAMOND) {
 //        		it.getLocation().getWorld().spawnParticle(Particle.PORTAL, it.getLocation(), 100, 0, 0, 0, 0.5f);
 //				it.getLocation().getWorld().spawnParticle(Particle.GLOW, it.getLocation(), 20, 0, 0, 0, 0.5f);
@@ -190,32 +202,24 @@ public class DiamondJar implements Listener {
         	}
         	
         	if (item.getType() != Material.POTION) return;
-        	
-        	Long value = item.getItemMeta().getCustomTagContainer().getCustomTag(new NamespacedKey(EventRegistery.main, "diamondValue"), ItemTagType.LONG);
+        	RelizcItemStack ris = ItemUtils.castOrCreateItem(item);
+        	Long value = ris.getTagLong("VALUE");
 			
 			if (value == null) return;
 			
 			if (value % 100 != 0) {
 
-
-				ItemStack pot = ItemGenerator.generate(Material.POTION, 1, Locale.a(null, "item.diamond_jar.name"), Locale.a(null, "item.diamond_jar.lore"), Locale.a(null, "item.diamond_jar.lore_2").formatted(value));
-				PotionMeta meta = (PotionMeta) pot.getItemMeta();
-				meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-				meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
-				meta.addEnchant(Enchantment.ARROW_DAMAGE, 1, false);
-				meta.setColor(Color.AQUA);
-				NamespacedKey key = new NamespacedKey(EventRegistery.main, "diamondValue");
-				meta.getCustomTagContainer().setCustomTag(key, ItemTagType.LONG, value);
+				ris.setMetadata("VALUE", value % 100);
 				
-				item.setItemMeta(meta);
-				it.setItemStack(item);
-				
+				it.setItemStack(ris.getBukkitItem());
+				it.setCustomName("§b%,d ct".formatted(value % 100));
 				it.setInvulnerable(true);;
 				
 				
 				e.setCancelled(true);
-				return;
 				
+			} else {
+				it.remove();
 			}
 			
 			long amt = value / 100;
@@ -224,8 +228,17 @@ public class DiamondJar implements Listener {
 			it.getLocation().getWorld().spawnParticle(Particle.GLOW, it.getLocation(), 20, 0, 0, 0, 0.5f);
 			it.getLocation().getWorld().playSound(it.getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1f, 0f);
 			
-			Item ent = it.getLocation().getWorld().dropItemNaturally(it.getLocation(), ItemGenerator.generate(Material.DIAMOND, (int) amt));
-			ent.setInvulnerable(true);
+			
+			while (amt > 0) {
+				long thisstack = Math.min(amt, 64);
+				
+				RelizcItemStack dias = ItemUtils.castOrCreateItem(ItemGenerator.generate(Material.DIAMOND, (int) thisstack));
+				
+				Item ent = it.getLocation().getWorld().dropItemNaturally(it.getLocation(), dias.getBukkitItem());
+				ent.setCustomName("§b%,d ct".formatted(100 * thisstack));
+				ent.setInvulnerable(true);
+				amt -= thisstack;
+			}
         	
         }
     }

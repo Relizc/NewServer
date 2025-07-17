@@ -62,7 +62,7 @@ public class CommandSpit extends RelizcCommand {
 				try {
 					ratio = Double.valueOf(args[0].substring(0, args[0].length() - 1));
 				} catch (Exception e) {
-					player.playSound(player.getLocation(), Sound.ENTITY_SHULKER_AMBIENT, 1f, 0f);
+					player.playSound(player, Sound.ENTITY_SHULKER_AMBIENT, 1f, 0f);
 					StringUtils.systemMessage(player, Locale.get(player, "commands.spit"), Locale.get(player, "commands.spit.fail.format"));
 					return true;
 				}
@@ -88,7 +88,7 @@ public class CommandSpit extends RelizcCommand {
 				ct = MathEvaluator.evaluate(formula);
 				
 				if (ct == -1) {
-					player.playSound(player.getLocation(), Sound.ENTITY_SHULKER_AMBIENT, 1f, 0f);
+					player.playSound(player, Sound.ENTITY_SHULKER_AMBIENT, 1f, 0f);
 					StringUtils.systemMessage(player, Locale.get(player, "commands.spit"), Locale.get(player, "commands.spit.fail.format"));
 					return true;
 				}
@@ -97,14 +97,20 @@ public class CommandSpit extends RelizcCommand {
 			}
 			
 			if (bal - ct < 0) {
-				player.playSound(player.getLocation(), Sound.ENTITY_SHULKER_AMBIENT, 1f, 0f);
+				player.playSound(player, Sound.ENTITY_SHULKER_AMBIENT, 1f, 0f);
 				StringUtils.systemMessage(player, Locale.get(player, "commands.spit"), Locale.get(player, "commands.spit.fail.notenough"));
+				return true;
+			}
+			
+			if (ct <= 0) {
+				player.playSound(player, Sound.ENTITY_SHULKER_AMBIENT, 1f, 0f);
+				StringUtils.systemMessage(player, Locale.get(player, "commands.spit"), Locale.get(player, "commands.spit.fail.mustpositive"));
 				return true;
 			}
 			
 			DiamondPurse.removePurse(player, ct);
 			DiamondJar.createFor(player, (long) ct);
-			player.playSound(player.getLocation(), Sound.ENTITY_SHULKER_AMBIENT, 1f, 2f);
+			player.playSound(player, Sound.ENTITY_SHULKER_AMBIENT, 1f, 2f);
 			StringUtils.systemMessage(player, Locale.get(player, "commands.spit"), Locale.get(player, "commands.spit.sucess").formatted(ct));
 			
 		}

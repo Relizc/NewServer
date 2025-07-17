@@ -246,11 +246,11 @@ public class RelizcItemStack {
 		bukkit = finished;
 	}
 	
-	protected Long getTagLong(String string) {
+	public Long getTagLong(String string) {
 		return CraftItemStack.asNMSCopy(bukkit).getTag().getLong(string);
 	}
 	
-	protected String getTagString(String string) {
+	public String getTagString(String string) {
 		return CraftItemStack.asNMSCopy(bukkit).getTag().getString(string);
 	}
 	

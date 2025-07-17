@@ -3,4 +3,4 @@ main: net.itsrelizc.smp.subscription.Main
 version: 1.0.0
 author: Relizc
 api-version: 1.20
-depend: [RelizcBundlerNewAPI]
+depend: [Relizc]

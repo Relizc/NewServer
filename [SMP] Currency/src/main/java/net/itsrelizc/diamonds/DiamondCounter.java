@@ -56,13 +56,13 @@ public class DiamondCounter {
 						remaining = 0;
 						
 						item.setType(Material.EXPERIENCE_BOTTLE);
-						ItemMeta im = item.getItemMeta();
-						if (player == null) {
-							im.setDisplayName(Locale.get(Language.ZH_CN, "item.experience_bottle.fromdiamond"));
-						} else {
-							im.setDisplayName(Locale.get(player, "item.experience_bottle.fromdiamond"));
-						}
-						item.setItemMeta(im);
+//						ItemMeta im = item.getItemMeta();
+//						if (player == null) {
+//							im.setDisplayName(Locale.get(Language.ZH_CN, "item.experience_bottle.fromdiamond"));
+//						} else {
+//							im.setDisplayName(Locale.get(player, "item.experience_bottle.fromdiamond"));
+//						}
+//						item.setItemMeta(im);
 						item.setAmount(extra);
 						
 						total += extra;
@@ -79,7 +79,7 @@ public class DiamondCounter {
 	        
 	        JSONObject info = new JSONObject();
 	        info.put("type", "loot_table");
-	        info.put("who", player.getDisplayName());
+	        info.put("who", player == null ? null : player.getDisplayName());
 	        info.put("amount", orig);
 	        
 	        contents.add(info);
