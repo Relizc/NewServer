@@ -110,7 +110,8 @@ public class CommandPay extends RelizcCommand {
 			
 			if (player.getUniqueId().equals(who.getUniqueId())) {
 				player.playSound(player, Sound.ENTITY_VILLAGER_NO, 1f, 2f);
-				StringUtils.systemMessage(player, Locale.get(player, "commands.pay"), Locale.get(player, "commands.pay.fail.notarget"));
+				StringUtils.systemMessage(player, Locale.get(player, "commands.pay"), Locale.get(player, "commands.pay.fail.sameguy"));
+				return true;
 			}
 			
 			DiamondPurse.removePurse(player, ct);

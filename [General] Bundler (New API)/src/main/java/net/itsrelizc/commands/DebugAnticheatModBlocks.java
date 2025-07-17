@@ -68,6 +68,8 @@ public class DebugAnticheatModBlocks extends RelizcCommand {
 				continue;
 			}
 			
+			System.out.println(nam);
+			
 			checker.add(mat);
 			
 			b ++;

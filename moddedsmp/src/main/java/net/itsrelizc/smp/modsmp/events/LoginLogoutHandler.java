@@ -3,6 +3,7 @@ package net.itsrelizc.smp.modsmp.events;
 import java.util.List;
 
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -135,6 +136,9 @@ public class LoginLogoutHandler implements Listener {
 
 			@Override
 			public void run() {
+				
+				event.getPlayer().playSound(event.getPlayer(), Sound.ENTITY_VILLAGER_YES, 1f, 1f);
+				
 				String content = " §7" + Main.getVersion() + " §a更新日志 §8(2025/7/17)";
 				content += "\n §8- §r修复了部分箭矢显示失常的情况";
 				content += "\n §8- §r修复了服务器间歇性卡顿的情况";
@@ -143,11 +147,14 @@ public class LoginLogoutHandler implements Listener {
 				content += "\n §8- §r修复了通过滥用死亡视角探索地图的问题";
 				content += "\n §8- §r添加了踢出闲置玩家的功能";
 				content += "\n §8- §r添加了记录游戏时长功能";
+				content += "\n §8- §r添加了§c反作弊§r §7§o(例如反矿物透视)";
+				content += "\n §8- §r重新添加了§b付款 §7(/pay) §r与§b吐出钻石 §7(/spit) §r的功能";
+				content += "\n §7 ? 若想获得物理钻石, 可以尝试§c摧毁§7吐出来的§b钻石瓶§7!";
 				
 				event.getPlayer().sendMessage("\n\n§e§m--------------------------------§r\n" + content + "\n§e§m--------------------------------");
 			}
 			
-		}.runTaskLater(EventRegistery.main, 60l);
+		}.runTaskLater(EventRegistery.main, 80l);
 		
 		
 	}

@@ -48,8 +48,10 @@ import net.itsrelizc.itemlib.ItemUtils;
 import net.itsrelizc.itemlib.ItemUtils.MetadataPair;
 import net.itsrelizc.itemlib.RelizcItemStack;
 import net.itsrelizc.menus.ItemGenerator;
+import net.itsrelizc.nbt.NBT;
 import net.itsrelizc.players.locales.Locale;
 import net.itsrelizc.string.StringUtils;
+import net.minecraft.nbt.CompoundTag;
 
 public class DiamondJar implements Listener {
 	
@@ -153,7 +155,7 @@ public class DiamondJar implements Listener {
 			if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.POTION) {
 				
 				RelizcItemStack stack = ItemUtils.castOrCreateItem(event.getCurrentItem());
-				Long value = stack.getTagLong("RELIZC:VALUE");
+				Long value = stack.getTagLong("VALUE");
 				
 				if (value == null) return;
 				
@@ -209,9 +211,14 @@ public class DiamondJar implements Listener {
 			
 			if (value % 100 != 0) {
 
-				ris.setMetadata("VALUE", value % 100);
+
 				
-				it.setItemStack(ris.getBukkitItem());
+				RelizcItemStack ris2 = ItemUtils.createItem(RelizcItemDiamondJar.class, null, new MetadataPair("VALUE", value % 100));
+				
+				
+				//Bukkit.broadcastMessage(NBT.getNBT(item).toString());
+				
+				it.setItemStack(ris2.getBukkitItem());
 				it.setCustomName("§b%,d ct".formatted(value % 100));
 				it.setInvulnerable(true);;
 				
@@ -224,9 +231,11 @@ public class DiamondJar implements Listener {
 			
 			long amt = value / 100;
 			
-			it.getLocation().getWorld().spawnParticle(Particle.PORTAL, it.getLocation(), 100, 0, 0, 0, 0.5f);
-			it.getLocation().getWorld().spawnParticle(Particle.GLOW, it.getLocation(), 20, 0, 0, 0, 0.5f);
-			it.getLocation().getWorld().playSound(it.getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1f, 0f);
+			if (amt > 0) {
+				it.getLocation().getWorld().spawnParticle(Particle.PORTAL, it.getLocation(), 100, 0, 0, 0, 0.5f);
+				it.getLocation().getWorld().spawnParticle(Particle.GLOW, it.getLocation(), 20, 0, 0, 0, 0.5f);
+				it.getLocation().getWorld().playSound(it.getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1f, 0f);
+			}
 			
 			
 			while (amt > 0) {

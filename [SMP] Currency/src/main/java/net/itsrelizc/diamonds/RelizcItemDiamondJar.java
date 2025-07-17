@@ -44,7 +44,7 @@ public class RelizcItemDiamondJar extends RelizcItemStack {
 	
 	@Override
 	public String renderName() {
-		return Locale.a(owner, "item.DIAMOND_JAR.name");
+		return Locale.a(owner, "item.DIAMOND_JAR.name") + " §e(§b%,d ct§e)".formatted(this.getTagLong("VALUE"));
 		
 	}
 	
