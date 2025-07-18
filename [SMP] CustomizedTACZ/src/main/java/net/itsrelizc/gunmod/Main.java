@@ -29,6 +29,7 @@ import net.itsrelizc.gunmod.deathutils.DeathListeners;
 import net.itsrelizc.gunmod.deathutils.DeathSummaryScreen;
 import net.itsrelizc.gunmod.deathutils.DeathUtils;
 import net.itsrelizc.gunmod.deathutils.LegBrokenJumpListeners;
+import net.itsrelizc.gunmod.deathutils.PlayerGhostOutsideBoundChecker;
 import net.itsrelizc.gunmod.deathutils.RelizcOverridedPlayerHead;
 import net.itsrelizc.gunmod.deathutils.RightClickBody;
 import net.itsrelizc.gunmod.items.RelizcItemMFCU;
@@ -62,6 +63,7 @@ public class Main extends JavaPlugin implements Listener {
 		EventRegistery.register(new LegBrokenJumpListeners());
 		EventRegistery.register(new ArrowHitListeners());
 		EventRegistery.register(new BedHealListener());
+		EventRegistery.register(new PlayerGhostOutsideBoundChecker());
 		
 		DeathUtils.init();
 		
