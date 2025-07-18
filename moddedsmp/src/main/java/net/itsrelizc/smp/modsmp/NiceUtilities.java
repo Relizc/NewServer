@@ -6,12 +6,14 @@ import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
+import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -60,6 +62,15 @@ public class NiceUtilities implements Listener {
 		Bukkit.getLogger().info("Reimplemented MOTD");
 		
 	}
+	
+	@EventHandler
+    public void onPlayerPortal(PlayerPortalEvent event) {
+        if (event.getTo() != null && event.getTo().getWorld().getEnvironment() == Environment.THE_END) {
+            event.setCancelled(true);
+//            event.getPlayer().sendMessage("§cYou are not allowed to enter The End.");
+        }
+    }
+
 	
 	@EventHandler
 	public void chat(PlayerCommandPreprocessEvent event) {

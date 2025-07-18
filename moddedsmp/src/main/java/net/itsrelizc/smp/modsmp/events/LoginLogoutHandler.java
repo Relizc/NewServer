@@ -144,9 +144,11 @@ public class LoginLogoutHandler implements Listener {
 				content += "\n §8- §r修复了服务器间歇性卡顿的情况";
 				content += "\n §8- §r修复了部分箭矢造成神秘伤害的情况";
 				content += "\n §8- §r修复了经验系统失常的情况";
+				content += "\n §8- §r修复了附魔书不显示附魔的问题";
 				content += "\n §8- §r修复了通过滥用死亡视角探索地图的问题";
 				content += "\n §8- §r添加了踢出闲置玩家的功能";
 				content += "\n §8- §r添加了记录游戏时长功能";
+				
 				content += "\n §8- §r添加了§c反作弊§r §7§o(例如反矿物透视)";
 				content += "\n §8- §r重新添加了§b付款 §7(/pay) §r与§b吐出钻石 §7(/spit) §r的功能";
 				content += "\n §7 ? 若想获得物理钻石, 可以尝试§c摧毁§7吐出来的§b钻石瓶§7!";
