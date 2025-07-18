@@ -400,9 +400,18 @@ public class ArrowHitListeners implements Listener{
 	public static void startDetectingArrows() {
 		
 		new BukkitRunnable() {
-
+			
 			@Override
-			public void run() {
+            public void run() {
+            	try {
+            		_run();
+            	} catch (Exception e) {
+            		Bukkit.getLogger().warning("Arrow check event error! ");
+            		e.printStackTrace();
+            	}
+            }
+
+			public void _run() {
 				Iterator<Map.Entry<AbstractArrow, Location>> iterator = arrowLocationStorage.entrySet().iterator();
 
 				while (iterator.hasNext()) {

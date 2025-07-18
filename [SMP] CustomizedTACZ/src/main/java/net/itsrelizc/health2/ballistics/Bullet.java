@@ -75,6 +75,15 @@ public class Bullet {
 
             @Override
             public void run() {
+            	try {
+            		_run();
+            	} catch (Exception e) {
+            		Bukkit.getLogger().warning("Bullet event error! ");
+            		e.printStackTrace();
+            	}
+            }
+            
+            public void _run() {
                 if (currentStep++ > maxSteps || current.distance(center) > (maxDistance + 5)) {
                     cancel();
                     
