@@ -195,7 +195,11 @@ public class RelizcCommand extends BukkitCommand {
 	
 	public void setRelizcOp(boolean mustOpRun) {
 		this.relizcop = mustOpRun;
-		this.setPermission("main.admin");
+		if (mustOpRun) {
+			this.setPermission("main.admin");
+		} else {
+			this.setPermission("main.player");
+		}
 	}
 	
 	public RelizcCommand(String name, String description, String usage, String permission, List<String> alias) {
