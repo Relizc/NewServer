@@ -263,10 +263,22 @@ public class ItemUtils {
 			
 			return completed;
 		} else {
-			try {
-				return (T) new RelizcItemStack(player, item);
-			} catch (Exception e) {
-				return null;
+			
+			String code = it.getOrCreateTag().getString("id");
+			Class<? extends RelizcItemStack> handle = ItemUtils.getHandler(code);
+			
+			if (handle == null) {
+				try {
+					return (T) new RelizcItemStack(player, item);
+				} catch (Exception e) {
+					return null;
+				}
+			} else {
+				try {
+					return (T) handle.getDeclaredConstructor(Player.class, ItemStack.class).newInstance(player, item);
+				} catch (Exception e) {
+					return null;
+				}
 			}
 			
 		}
