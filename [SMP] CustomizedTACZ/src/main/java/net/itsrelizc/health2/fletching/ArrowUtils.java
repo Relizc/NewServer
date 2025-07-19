@@ -113,7 +113,7 @@ public class ArrowUtils {
 		} else if (lvl == 1) {
 			return "§4";
 		} else if (lvl == 2) {
-			return "§e";
+			return "§7";
 		} else if (lvl == 3) {
 			return "§f";
 		} else if (lvl == 4) {
@@ -157,7 +157,7 @@ public class ArrowUtils {
 		build += penToColor(lvl);
 		
 		if (lvl >= 1) {
-			build += StringUtils.intToRoman(lvl) + " ⛊";
+			build += StringUtils.intToTierCode(lvl) + " ⛊";
 		} else {
 			
 		}
@@ -166,7 +166,7 @@ public class ArrowUtils {
 			if (lvl >= 1) {
 				build += " §7+§r ";
 			}
-			build += strengthToColor(overflow * 10) + overflow * 10 + "% " + penToColor(lvl + 1) + StringUtils.intToRoman(lvl + 1) + " ⛊";
+			build += strengthToColor(overflow * 10) + overflow * 10 + "% " + penToColor(lvl + 1) + StringUtils.intToTierCode(lvl + 1) + " ⛊";
 		}
 		
 		

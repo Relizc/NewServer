@@ -34,6 +34,8 @@ import net.itsrelizc.gunmod.deathutils.RelizcOverridedPlayerHead;
 import net.itsrelizc.gunmod.deathutils.RightClickBody;
 import net.itsrelizc.gunmod.items.RelizcItemMFCU;
 import net.itsrelizc.gunmod.items.RelizcItemSatellitePhone;
+import net.itsrelizc.gunmod.items.armor.RelizcNeoArmor;
+import net.itsrelizc.gunmod.items.armor.RelizcOverridenLeatherHelmet;
 import net.itsrelizc.gunmod.npcs.SleepingTrait;
 import net.itsrelizc.health2.BedHealListener;
 import net.itsrelizc.health2.Body;
@@ -76,9 +78,16 @@ public class Main extends JavaPlugin implements Listener {
 		ItemUtils.register(RelizcSpectralArrow.class);
 		ItemUtils.register(RelizcTippedArrow.class);
 		
-		ArrowUtils.loadAllArrowPoints();
-		ArrowUtils.loadAllArrowFletchings();
-		ArrowUtils.loadAllArrowShafts();
+		EventRegistery.register(new RelizcNeoArmor.RelizcNeoArmorDamageRepairListener());
+		ItemUtils.register(RelizcOverridenLeatherHelmet.class);
+		
+		try {
+			ArrowUtils.loadAllArrowPoints();
+			ArrowUtils.loadAllArrowFletchings();
+			ArrowUtils.loadAllArrowShafts();
+		} catch (Exception e) {
+			this.getLogger().severe("One or more arrow ballistic data cannot be loaded.");
+		}
 		
 		CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(SleepingTrait.class).withName("sleepingtrait"));
 		

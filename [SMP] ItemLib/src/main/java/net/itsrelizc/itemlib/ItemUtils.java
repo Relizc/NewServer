@@ -136,7 +136,16 @@ public class ItemUtils {
 		
 	}
 	
-	public static RelizcItemStack castOrCreateItem(Player player, ItemStack item) {
+	/**
+	 * Casts a regular minecraft item to a RelizcItemStack, and create necessary NBT tags
+	 * if that item does not contain those tags, such as language, item id, and UUID for
+	 * unstackable items. The NBT generation process should ONLY happen on regular minecraft
+	 * items.
+	 * @param player
+	 * @param item
+	 * @return The inferred type (which extends RelizcItemStack), or RelizcItemStack object itself if it cannot be cast automatically
+	 */
+	public static <T extends RelizcItemStack> T castOrCreateItem(Player player, ItemStack item) {
 		Language lang = Language.ZH_CN;
 		if (player != null) lang = Profile.findByOwner(player).lang;
 		return castOrCreateItem(player, item, lang);
@@ -151,9 +160,9 @@ public class ItemUtils {
 	 * items.
 	 * @param player
 	 * @param item
-	 * @return
+	 * @return The inferred type (which extends RelizcItemStack), or RelizcItemStack object itself if it cannot be cast automatically
 	 */
-	public static RelizcItemStack castOrCreateItem(Player player, ItemStack item, Language lang) {
+	public static <T extends RelizcItemStack> T castOrCreateItem(Player player, ItemStack item, Language lang) {
 		
 		net.minecraft.world.item.ItemStack it = CraftItemStack.asNMSCopy(item);
 	
@@ -182,15 +191,19 @@ public class ItemUtils {
 			meta.setDisplayName(Quality.valueOf(it.getRarity()).getColor() + Locale.getMojang(lang, copy.getTranslationKey()));
 			copy.setItemMeta(meta);
 			
-			RelizcItemStack completed = null;
+			T completed = null;
 			
 			
 
 			
 			if (handler == null) {
 				renderNames(null, copy, player, lang);
+				try {
+					completed = (T) new RelizcItemStack(player, copy);
+				} catch (Exception e) {
+					return null;
+				}
 				
-				completed = new RelizcItemStack(player, copy);
 				ItemMeta meta2 = completed.getBukkitItem().getItemMeta();
 				List<String> l = meta2.getLore();
 				l.remove(l.size() - 1);
@@ -217,11 +230,11 @@ public class ItemUtils {
 				renderNames(annotation, copy, player, lang);
 				
 				try {
-					completed = handler.getDeclaredConstructor(Player.class, ItemStack.class).newInstance(player, copy);
+					completed = (T) handler.getDeclaredConstructor(Player.class, ItemStack.class).newInstance(player, copy);
 				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 						| InvocationTargetException | NoSuchMethodException | SecurityException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					return null;
 				}
 				
 				ItemMeta meta2 = completed.getBukkitItem().getItemMeta();	
@@ -250,7 +263,12 @@ public class ItemUtils {
 			
 			return completed;
 		} else {
-			return new RelizcItemStack(player, item);
+			try {
+				return (T) new RelizcItemStack(player, item);
+			} catch (Exception e) {
+				return null;
+			}
+			
 		}
 		
 	}
@@ -402,11 +420,21 @@ public class ItemUtils {
 		
 		
 	}
-
-	public static RelizcItemStack castOrCreateItem(ItemStack content) {
+	
+	/**
+	 * Casts a regular minecraft item to a RelizcItemStack, and create necessary NBT tags
+	 * if that item does not contain those tags, such as language, item id, and UUID for
+	 * unstackable items. The NBT generation process should ONLY happen on regular minecraft
+	 * items.
+	 * @param player
+	 * @param item
+	 * @return The inferred type (which extends RelizcItemStack), or RelizcItemStack object itself if it cannot be cast automatically
+	 */
+	public static <T extends RelizcItemStack> T castOrCreateItem(ItemStack content) {
 		return castOrCreateItem(null, content);
 	}
-
+	
+	
 	public static Class<? extends RelizcItemStack> getHandler(RelizcItemStack it) {
 		return getHandler(it.getID());
 	}

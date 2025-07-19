@@ -93,8 +93,14 @@ public class StringUtils {
 		else return "";
 	}
 	
-	public static String intToRoman(int num) {
-        if (num <= 0 || num > 3999) {
+	public static String intToTierCode(int num) {
+		
+		return "T" + num;
+        
+    }
+	
+	public static String intToRoman(int num) { // unused
+		if (num <= 0 || num > 3999) {
             throw new IllegalArgumentException("Input must be between 1 and 3999");
         }
 
@@ -112,7 +118,7 @@ public class StringUtils {
         }
 
         return result.toString();
-    }
+	}
 	
 	/**
 	 * Sorts an array by padding it with Minecraft color codes (§0-9a-f)
