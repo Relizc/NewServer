@@ -75,7 +75,7 @@ public class RelizcItemStack {
 	 */
 	public String getCustomName() {
 		
-		return this.getTagString("relizcCustomName");
+		return this.getTagString("CUSTOM_NAME");
 		
 	}
 	
