@@ -52,6 +52,8 @@ public class CommandGenerateItem extends RelizcCommand {
 						possible.add(meta.key() + "=double:");
 					}
 				}
+				possible.add("CUSTOM_NAME=str:\"\"");
+				possible.add("CUSTOM_NAME=str:\"");
 			}
 			
 			return TabCompleteInfo.presetOption(player, "Metadata Pair: <key>=<type(int/String/long/boolean)>:<value>", possible);
@@ -69,12 +71,20 @@ public class CommandGenerateItem extends RelizcCommand {
 		MetadataPair[] metas = new MetadataPair[size];
 		
 		for (int i = 1; i < args.length; i ++) {
+			
+			
+			
 			String[] arg = args[i].split("=");
 			String key = arg[0];
 			String[] afs = arg[1].split(":");
 			String type = afs[0];
 			String val = afs[1];
 			Object value = null;
+			
+			if (key.equals("CUSTOM_NAME")) {
+				metas[i - 1] = new MetadataPair(key, val.substring(1, val.length() - 1));
+				continue;
+			}
 			
 			if (type.equals("int")) value = Integer.valueOf(val);
 			else if (type.equals("long")) value = Long.valueOf(val);

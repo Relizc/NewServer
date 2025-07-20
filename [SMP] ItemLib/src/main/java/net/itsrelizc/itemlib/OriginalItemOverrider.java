@@ -8,13 +8,17 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
 
 import net.itsrelizc.menus.Menu2;
+import net.itsrelizc.nbt.NBT;
+import net.minecraft.nbt.CompoundTag;
 
 public class OriginalItemOverrider implements Listener {
 	
@@ -91,6 +95,31 @@ public class OriginalItemOverrider implements Listener {
 			RelizcItemStack stack = ItemUtils.castOrCreateItem((Player) event.getPlayer(), event.getPlayer().getInventory().getItem(i));
 			event.getPlayer().getInventory().setItem(i, stack.getBukkitItem());
 		}
+		
+	}
+	
+	@EventHandler(priority=EventPriority.HIGHEST, ignoreCancelled = true)
+	public void anvilCheck(PrepareAnvilEvent event) {
+		
+		////("opened" + event.getInventory().getSize());
+		
+		AnvilInventory inv = event.getInventory();
+        ItemStack result = event.getResult();
+        if (result == null) return;
+
+        String newName = inv.getRenameText();
+        
+        if (newName == null || newName.strip().trim().length() == 0) return;
+        
+        //Bukkit.broadcastMessage(newName);
+        
+        CompoundTag tag = NBT.getNBT(inv.getItem(0));
+        tag.putString("CUSTOM_NAME", newName);
+        ItemStack before = NBT.setCompound(inv.getItem(0), tag);
+        
+        RelizcItemStack copy = ItemUtils.castOrCreateItem(before);
+        event.setResult(copy.getBukkitItem());
+        
 		
 	}
 }

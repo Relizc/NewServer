@@ -151,7 +151,40 @@ public class ItemUtils {
 		return castOrCreateItem(player, item, lang);
 	}
 	
-	
+	private static void checkCustomNameAndSet(CompoundTag tag, ItemMeta meta, net.minecraft.world.item.ItemStack it, Language lang, ItemStack copy) {
+		
+		//Bukkit.broadcastMessage(tag.getString("CUSTOM_NAME"));
+		
+		if (tag.getString("CUSTOM_NAME") != null && tag.getString("CUSTOM_NAME").length() > 0) {
+			String name = tag.getString("CUSTOM_NAME")
+					.replace("&r","")
+					.replace("&o", "")
+					.replace("&0", "§0")
+					.replace("&1", "§1")
+					.replace("&2", "§2")
+					.replace("&3", "§3")
+					.replace("&4", "§4")
+					.replace("&5", "§5")
+					.replace("&6", "§6")
+					.replace("&7", "§7")
+					.replace("&8", "§8")
+					.replace("&9", "§9")
+					.replace("&a", "§a")
+					.replace("&b", "§b")
+					.replace("&c", "§c")
+					.replace("&d", "§d")
+					.replace("&e", "§e")
+					.replace("&f", "§f")
+					.replace("&k", "§k")
+					.replace("&l", "§l")
+					.replace("&m", "§m");
+			meta.setDisplayName("§r§o" + name);
+		} else {
+			String name = Quality.valueOf(it.getRarity()).getColor() + Locale.getMojang(lang, copy.getTranslationKey());
+			if (name.equals(meta.getDisplayName())) return;
+			meta.setDisplayName(name);
+		}
+	}
 	
 	/**
 	 * Casts a regular minecraft item to a RelizcItemStack, and create necessary NBT tags
@@ -165,11 +198,11 @@ public class ItemUtils {
 	public static <T extends RelizcItemStack> T castOrCreateItem(Player player, ItemStack item, Language lang) {
 		
 		net.minecraft.world.item.ItemStack it = CraftItemStack.asNMSCopy(item);
-	
+		CompoundTag tag = it.getOrCreateTag();
 		
 		//System.out.println(it.getOrCreateTag().getString("id"));
 		if (it.getOrCreateTag().getString("id").length() == 0) {
-			CompoundTag tag = it.getOrCreateTag();
+			
 			tag.putString("id", "MINECRAFT_" + item.getType().toString());
 			
 			tag.putString("lang", lang.toString());
@@ -189,34 +222,7 @@ public class ItemUtils {
 			
 			meta.addItemFlags(ItemFlag.values());
 			
-			if (tag.getString("CUSTOM_NAME") != null && tag.getString("CUSTOM_NAME").length() > 0) {
-				String name = tag.getString("CUSTOM_NAME")
-						.replace("&r","")
-						.replace("&o", "")
-						.replace("&0", "§0")
-						.replace("&1", "§0")
-						.replace("&2", "§0")
-						.replace("&3", "§0")
-						.replace("&4", "§0")
-						.replace("&5", "§0")
-						.replace("&6", "§0")
-						.replace("&7", "§0")
-						.replace("&8", "§0")
-						.replace("&9", "§0")
-						.replace("&a", "§0")
-						.replace("&b", "§0")
-						.replace("&c", "§0")
-						.replace("&d", "§0")
-						.replace("&e", "§0")
-						.replace("&f", "§0")
-						.replace("&k", "§0")
-						.replace("&l", "§0")
-						.replace("&m", "§0")
-						.replace("&&", "&");
-				meta.setDisplayName(name);
-			} else {
-				meta.setDisplayName(Quality.valueOf(it.getRarity()).getColor() + Locale.getMojang(lang, copy.getTranslationKey()));
-			}
+			checkCustomNameAndSet(tag, meta, it, lang, copy);
 			
 			
 			copy.setItemMeta(meta);
@@ -289,6 +295,8 @@ public class ItemUtils {
 				
 				meta2.setLore(l);
 				completed.getBukkitItem().setItemMeta(meta2);
+				
+				
 			}
 			
 			
@@ -296,6 +304,11 @@ public class ItemUtils {
 			
 			return completed;
 		} else {
+			ItemMeta meta = item.getItemMeta();
+			checkCustomNameAndSet(tag, meta, CraftItemStack.asNMSCopy(item), lang, item);
+			
+			Bukkit.broadcastMessage(meta.getDisplayName());
+			Bukkit.broadcastMessage(String.join("\n", meta.getLore()));
 			
 			String code = it.getOrCreateTag().getString("id");
 			Class<? extends RelizcItemStack> handle = ItemUtils.getHandler(code);
@@ -451,35 +464,7 @@ public class ItemUtils {
 		ItemMeta meta2 = stack.getBukkitItem().getItemMeta();
 		List<String> l = meta2.getLore();
 		
-		if (tag.getString("CUSTOM_NAME") != null && tag.getString("CUSTOM_NAME").length() > 0) {
-			String name = tag.getString("CUSTOM_NAME")
-					.replace("&r","")
-					.replace("&o", "")
-					.replace("&0", "§0")
-					.replace("&1", "§0")
-					.replace("&2", "§0")
-					.replace("&3", "§0")
-					.replace("&4", "§0")
-					.replace("&5", "§0")
-					.replace("&6", "§0")
-					.replace("&7", "§0")
-					.replace("&8", "§0")
-					.replace("&9", "§0")
-					.replace("&a", "§0")
-					.replace("&b", "§0")
-					.replace("&c", "§0")
-					.replace("&d", "§0")
-					.replace("&e", "§0")
-					.replace("&f", "§0")
-					.replace("&k", "§0")
-					.replace("&l", "§0")
-					.replace("&m", "§0")
-					.replace("&&", "&");
-			meta2.setDisplayName(name);
-			l.add(q.getColor() + stack.renderName());
-		} else {
-			meta2.setDisplayName(q.getColor() + stack.renderName());
-		}
+		checkCustomNameAndSet(tag, meta2, nms, Language.valueOf(lang), copy);
 		
 		List<String> rendered = stack.renderInternalLore();
 		rendered.forEach(s -> l.add(s));
