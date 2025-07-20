@@ -1,25 +1,16 @@
 package net.itsrelizc.health2.fletching;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import net.itsrelizc.health2.fletching.ArrowUtils.ArrowFletching;
-import net.itsrelizc.health2.fletching.ArrowUtils.ArrowPoint;
-import net.itsrelizc.health2.fletching.ArrowUtils.ArrowShaft;
-import net.itsrelizc.itemlib.RelizcItemStack;
-import net.itsrelizc.itemlib.RelizcNativeMinecraftItem;
-import net.itsrelizc.items.RelizcItemMeta;
-import net.itsrelizc.nbt.NBT.NBTTagType;
-import net.itsrelizc.players.locales.Locale;
+import net.itsrelizc.gunmod.items.armor.RelizcDamageable;
 import net.itsrelizc.players.locales.LocaleSession;
 import net.itsrelizc.string.StringUtils;
 
 
-public class RelizcNeoBow extends RelizcItemStack {
+public class RelizcNeoBow extends RelizcDamageable {
 
 	public RelizcNeoBow(Player owner, ItemStack it) {
 		super(owner, it);
@@ -56,6 +47,13 @@ public class RelizcNeoBow extends RelizcItemStack {
 	}
 	
 	@Override
+	public String[] getCopyMetadata() {
+		return new String[]{"LONG;force", "DOUBLE;accuracy"};
+	}
+	
+	
+	
+	@Override
 	public List<String> renderInternalLore() {
 	    // TODO: Add dynamic lore rendering logic
 		
@@ -65,7 +63,7 @@ public class RelizcNeoBow extends RelizcItemStack {
 		double accuracy = this.getTagDouble("accuracy");
 		
 		
-	    return StringUtils.fromArgs(loc.a("item.bow." + this.getID().toLowerCase() + ".description"), " ", 
+	    return StringUtils.fromArgs(loc.a("item.bow." + this.getID().toLowerCase() + ".description"), " ", renderDurability(), " ",
 	    		loc.a("item.bow.force").formatted(force),
 	    		loc.a("item.arrow.accuracy").formatted(accuracy));
 	}

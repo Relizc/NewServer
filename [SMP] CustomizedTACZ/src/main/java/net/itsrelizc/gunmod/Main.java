@@ -34,7 +34,7 @@ import net.itsrelizc.gunmod.deathutils.RelizcOverridedPlayerHead;
 import net.itsrelizc.gunmod.deathutils.RightClickBody;
 import net.itsrelizc.gunmod.items.RelizcItemMFCU;
 import net.itsrelizc.gunmod.items.RelizcItemSatellitePhone;
-import net.itsrelizc.gunmod.items.armor.RelizcNeoArmor;
+import net.itsrelizc.gunmod.items.armor.RelizcDamageable;
 import net.itsrelizc.gunmod.items.armor.RelizcOverridenLeatherHelmet;
 import net.itsrelizc.gunmod.npcs.SleepingTrait;
 import net.itsrelizc.health2.BedHealListener;
@@ -78,7 +78,7 @@ public class Main extends JavaPlugin implements Listener {
 		ItemUtils.register(RelizcSpectralArrow.class);
 		ItemUtils.register(RelizcTippedArrow.class);
 		
-		EventRegistery.register(new RelizcNeoArmor.RelizcNeoArmorDamageRepairListener());
+		EventRegistery.register(new RelizcDamageable.RelizcDamageableRepairListener());
 		ItemUtils.register(RelizcOverridenLeatherHelmet.class);
 		
 		try {
