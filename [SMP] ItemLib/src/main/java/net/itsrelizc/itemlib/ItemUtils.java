@@ -136,7 +136,16 @@ public class ItemUtils {
 		
 	}
 	
-	public static RelizcItemStack castOrCreateItem(Player player, ItemStack item) {
+	/**
+	 * Casts a regular minecraft item to a RelizcItemStack, and create necessary NBT tags
+	 * if that item does not contain those tags, such as language, item id, and UUID for
+	 * unstackable items. The NBT generation process should ONLY happen on regular minecraft
+	 * items.
+	 * @param player
+	 * @param item
+	 * @return The inferred type (which extends RelizcItemStack), or RelizcItemStack object itself if it cannot be cast automatically
+	 */
+	public static <T extends RelizcItemStack> T castOrCreateItem(Player player, ItemStack item) {
 		Language lang = Language.ZH_CN;
 		if (player != null) lang = Profile.findByOwner(player).lang;
 		return castOrCreateItem(player, item, lang);
@@ -151,9 +160,9 @@ public class ItemUtils {
 	 * items.
 	 * @param player
 	 * @param item
-	 * @return
+	 * @return The inferred type (which extends RelizcItemStack), or RelizcItemStack object itself if it cannot be cast automatically
 	 */
-	public static RelizcItemStack castOrCreateItem(Player player, ItemStack item, Language lang) {
+	public static <T extends RelizcItemStack> T castOrCreateItem(Player player, ItemStack item, Language lang) {
 		
 		net.minecraft.world.item.ItemStack it = CraftItemStack.asNMSCopy(item);
 	
@@ -179,20 +188,57 @@ public class ItemUtils {
 			ItemMeta meta = copy.getItemMeta();
 			
 			meta.addItemFlags(ItemFlag.values());
-			meta.setDisplayName(Quality.valueOf(it.getRarity()).getColor() + Locale.getMojang(lang, copy.getTranslationKey()));
+			
+			if (tag.getString("CUSTOM_NAME") != null && tag.getString("CUSTOM_NAME").length() > 0) {
+				String name = tag.getString("CUSTOM_NAME")
+						.replace("&r","")
+						.replace("&o", "")
+						.replace("&0", "§0")
+						.replace("&1", "§0")
+						.replace("&2", "§0")
+						.replace("&3", "§0")
+						.replace("&4", "§0")
+						.replace("&5", "§0")
+						.replace("&6", "§0")
+						.replace("&7", "§0")
+						.replace("&8", "§0")
+						.replace("&9", "§0")
+						.replace("&a", "§0")
+						.replace("&b", "§0")
+						.replace("&c", "§0")
+						.replace("&d", "§0")
+						.replace("&e", "§0")
+						.replace("&f", "§0")
+						.replace("&k", "§0")
+						.replace("&l", "§0")
+						.replace("&m", "§0")
+						.replace("&&", "&");
+				meta.setDisplayName(name);
+			} else {
+				meta.setDisplayName(Quality.valueOf(it.getRarity()).getColor() + Locale.getMojang(lang, copy.getTranslationKey()));
+			}
+			
+			
 			copy.setItemMeta(meta);
 			
-			RelizcItemStack completed = null;
+			T completed = null;
 			
 			
 
 			
 			if (handler == null) {
 				renderNames(null, copy, player, lang);
+				try {
+					completed = (T) new RelizcItemStack(player, copy);
+				} catch (Exception e) {
+					return null;
+				}
 				
-				completed = new RelizcItemStack(player, copy);
 				ItemMeta meta2 = completed.getBukkitItem().getItemMeta();
 				List<String> l = meta2.getLore();
+				if (tag.getString("CUSTOM_NAME") != null && tag.getString("CUSTOM_NAME").length() > 0) {
+					l.add(Quality.valueOf(it.getRarity()).getColor() + Locale.getMojang(lang, copy.getTranslationKey()));
+				}
 				l.remove(l.size() - 1);
 				meta2.setLore(l);
 				completed.getBukkitItem().setItemMeta(meta2);
@@ -217,11 +263,11 @@ public class ItemUtils {
 				renderNames(annotation, copy, player, lang);
 				
 				try {
-					completed = handler.getDeclaredConstructor(Player.class, ItemStack.class).newInstance(player, copy);
+					completed = (T) handler.getDeclaredConstructor(Player.class, ItemStack.class).newInstance(player, copy);
 				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 						| InvocationTargetException | NoSuchMethodException | SecurityException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					return null;
 				}
 				
 				ItemMeta meta2 = completed.getBukkitItem().getItemMeta();	
@@ -250,7 +296,24 @@ public class ItemUtils {
 			
 			return completed;
 		} else {
-			return new RelizcItemStack(player, item);
+			
+			String code = it.getOrCreateTag().getString("id");
+			Class<? extends RelizcItemStack> handle = ItemUtils.getHandler(code);
+			
+			if (handle == null) {
+				try {
+					return (T) new RelizcItemStack(player, item);
+				} catch (Exception e) {
+					return null;
+				}
+			} else {
+				try {
+					return (T) handle.getDeclaredConstructor(Player.class, ItemStack.class).newInstance(player, item);
+				} catch (Exception e) {
+					return null;
+				}
+			}
+			
 		}
 		
 	}
@@ -386,8 +449,38 @@ public class ItemUtils {
 			e.printStackTrace();
 		}
 		ItemMeta meta2 = stack.getBukkitItem().getItemMeta();
-		meta2.setDisplayName(q.getColor() + stack.renderName());
 		List<String> l = meta2.getLore();
+		
+		if (tag.getString("CUSTOM_NAME") != null && tag.getString("CUSTOM_NAME").length() > 0) {
+			String name = tag.getString("CUSTOM_NAME")
+					.replace("&r","")
+					.replace("&o", "")
+					.replace("&0", "§0")
+					.replace("&1", "§0")
+					.replace("&2", "§0")
+					.replace("&3", "§0")
+					.replace("&4", "§0")
+					.replace("&5", "§0")
+					.replace("&6", "§0")
+					.replace("&7", "§0")
+					.replace("&8", "§0")
+					.replace("&9", "§0")
+					.replace("&a", "§0")
+					.replace("&b", "§0")
+					.replace("&c", "§0")
+					.replace("&d", "§0")
+					.replace("&e", "§0")
+					.replace("&f", "§0")
+					.replace("&k", "§0")
+					.replace("&l", "§0")
+					.replace("&m", "§0")
+					.replace("&&", "&");
+			meta2.setDisplayName(name);
+			l.add(q.getColor() + stack.renderName());
+		} else {
+			meta2.setDisplayName(q.getColor() + stack.renderName());
+		}
+		
 		List<String> rendered = stack.renderInternalLore();
 		rendered.forEach(s -> l.add(s));
 		
@@ -402,11 +495,23 @@ public class ItemUtils {
 		
 		
 	}
-
-	public static RelizcItemStack castOrCreateItem(ItemStack content) {
+	
+	//public static 
+	
+	/**
+	 * Casts a regular minecraft item to a RelizcItemStack, and create necessary NBT tags
+	 * if that item does not contain those tags, such as language, item id, and UUID for
+	 * unstackable items. The NBT generation process should ONLY happen on regular minecraft
+	 * items.
+	 * @param player
+	 * @param item
+	 * @return The inferred type (which extends RelizcItemStack), or RelizcItemStack object itself if it cannot be cast automatically
+	 */
+	public static <T extends RelizcItemStack> T castOrCreateItem(ItemStack content) {
 		return castOrCreateItem(null, content);
 	}
-
+	
+	
 	public static Class<? extends RelizcItemStack> getHandler(RelizcItemStack it) {
 		return getHandler(it.getID());
 	}

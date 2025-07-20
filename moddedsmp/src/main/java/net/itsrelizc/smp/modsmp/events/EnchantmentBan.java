@@ -13,29 +13,29 @@ import org.jetbrains.annotations.NotNull;
 
 public class EnchantmentBan implements Listener {
 	
-	@EventHandler
-	public void craft(PrepareAnvilEvent event) {
-		
-		ItemStack it = event.getResult();
-		
-		ItemMeta im = it.getItemMeta();
-		
-		if (im == null) return;
-		
-		if (im.getEnchants().containsKey(Enchantment.MENDING)) {
-			im.removeEnchant(Enchantment.MENDING);
-			im.addEnchant(Enchantment.DURABILITY, 1, false);
-		}
-		
-		if (im.getEnchants().containsKey(Enchantment.DURABILITY)) {
-			im.removeEnchant(Enchantment.DURABILITY);
-			im.addEnchant(Enchantment.DURABILITY, 1, false);
-		}
-		
-		it.setItemMeta(im);
-		event.setResult(it);
-		
-	}
+	//@EventHandler
+//	public void craft(PrepareAnvilEvent event) {
+//		
+//		ItemStack it = event.getResult();
+//		
+//		ItemMeta im = it.getItemMeta();
+//		
+//		if (im == null) return;
+//		
+//		if (im.getEnchants().containsKey(Enchantment.MENDING)) {
+//			im.removeEnchant(Enchantment.MENDING);
+//			im.addEnchant(Enchantment.DURABILITY, 1, false);
+//		}
+//		
+//		if (im.getEnchants().containsKey(Enchantment.DURABILITY)) {
+//			im.removeEnchant(Enchantment.DURABILITY);
+//			im.addEnchant(Enchantment.DURABILITY, 1, false);
+//		}
+//		
+//		it.setItemMeta(im);
+//		event.setResult(it);
+//		
+//	}
 	
 	@EventHandler
 	public void enchant(PrepareItemEnchantEvent event) {

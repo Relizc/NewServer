@@ -69,6 +69,17 @@ public class RelizcItemStack {
 	}
 	
 	/**
+	 * Gets the custom name of this Relizc ItemStack. Note that this does not return the Bukkit's custom name.
+	 * 
+	 * @return The custom name of this item, or null if there is no name.
+	 */
+	public String getCustomName() {
+		
+		return this.getTagString("relizcCustomName");
+		
+	}
+	
+	/**
 	 * Gets the quality of this item.
 	 * @return The quality of this item
 	 */

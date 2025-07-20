@@ -10,6 +10,8 @@ import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
+import org.bukkit.event.inventory.PrepareGrindstoneEvent;
+import org.bukkit.event.inventory.PrepareSmithingEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -26,6 +28,34 @@ public class EnchantItemListener implements Listener {
 	
 	@EventHandler
 	public void onPrepareAnvil(PrepareAnvilEvent event) {
+	    ItemStack result = event.getResult();
+	    if (result != null && result.getEnchantments().size() > 0) {
+	        
+	    	if (!(event.getView().getPlayer() instanceof Player)) return;
+	    	Player player = (Player) event.getView().getPlayer();
+	    	
+	    	RelizcItemStack it = ItemUtils.castOrCreateItem(player, event.getResult());
+	    	event.setResult(it.getBukkitItem());
+	    	
+	    }
+	}
+	
+	@EventHandler
+	public void onPrepareAnvil(PrepareGrindstoneEvent event) {
+	    ItemStack result = event.getResult();
+	    if (result != null && result.getEnchantments().size() > 0) {
+	        
+	    	if (!(event.getView().getPlayer() instanceof Player)) return;
+	    	Player player = (Player) event.getView().getPlayer();
+	    	
+	    	RelizcItemStack it = ItemUtils.castOrCreateItem(player, event.getResult());
+	    	event.setResult(it.getBukkitItem());
+	    	
+	    }
+	}
+	
+	@EventHandler
+	public void onPrepareAnvil(PrepareSmithingEvent event) {
 	    ItemStack result = event.getResult();
 	    if (result != null && result.getEnchantments().size() > 0) {
 	        
