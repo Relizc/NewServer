@@ -125,7 +125,7 @@ public class SMPScoreboard extends RelizcScoreboard {
 			
 		} else if (page == Pages.HEALTH) {
 			Body body = Body.parts.get(player.getUniqueId().toString());
-			addLine(3, "  " + Profile.coloredName(player) + " §8- §a%d§8/§7%d §c❤".formatted(body.getHealth(),body.getMaxHealth()));
+			addLine(3, " §a%d§8/§7%d §c❤".formatted(body.getHealth(),body.getMaxHealth()));
 			addLine(4, " ");
 			for (int i = 5; i < 7 + 5; i ++) {
 				addLine(i, body.convert(i - 5).getCriticalColor(player));

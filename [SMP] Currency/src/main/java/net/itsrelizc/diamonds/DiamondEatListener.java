@@ -13,6 +13,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.meta.tags.ItemTagType;
 
 import net.itsrelizc.events.EventRegistery;
+import net.itsrelizc.itemlib.ItemUtils;
+import net.itsrelizc.itemlib.RelizcItemStack;
 import net.itsrelizc.menus.ItemGenerator;
 
 public class DiamondEatListener implements Listener {
@@ -47,9 +49,11 @@ public class DiamondEatListener implements Listener {
 		
 		if (mat == Material.POTION) {
 			
-			Long value = event.getItem().getItemMeta().getCustomTagContainer().getCustomTag(new NamespacedKey(EventRegistery.main, "diamondValue"), ItemTagType.LONG);
+			RelizcItemStack jar = ItemUtils.castOrCreateItem(event.getItem());
 			
-			if (value == null) return;
+			if (!(jar instanceof RelizcItemDiamondJar)) return;
+			
+			long value = jar.getTagLong("VALUE");
 			
 			DiamondPurse.addPurse(event.getPlayer(), value);
 			return;

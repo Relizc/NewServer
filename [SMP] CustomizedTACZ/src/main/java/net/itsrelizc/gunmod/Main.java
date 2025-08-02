@@ -39,6 +39,7 @@ import net.itsrelizc.gunmod.items.armor.RelizcOverridenLeatherHelmet;
 import net.itsrelizc.gunmod.npcs.SleepingTrait;
 import net.itsrelizc.health2.BedHealListener;
 import net.itsrelizc.health2.Body;
+import net.itsrelizc.health2.BreakableLimb;
 import net.itsrelizc.health2.ballistics.FragUtils;
 import net.itsrelizc.health2.fletching.ArrowUtils;
 import net.itsrelizc.health2.fletching.RelizcNeoArrow;
@@ -49,6 +50,7 @@ import net.itsrelizc.health2.fletching.RelizcTippedArrow;
 import net.itsrelizc.health2.penetration.ArrowHitListeners;
 import net.itsrelizc.itemlib.ItemUtils;
 import net.itsrelizc.players.Grouping;
+import net.itsrelizc.players.web.Authenticator;
 
 public class Main extends JavaPlugin implements Listener {
 	
@@ -66,6 +68,8 @@ public class Main extends JavaPlugin implements Listener {
 		EventRegistery.register(new ArrowHitListeners());
 		EventRegistery.register(new BedHealListener());
 		EventRegistery.register(new PlayerGhostOutsideBoundChecker());
+		EventRegistery.register(new BreakableLimb.BreakableLimbRepairListener());
+		EventRegistery.register(new Authenticator.AuthenticatorListener());
 		
 		DeathUtils.init();
 		

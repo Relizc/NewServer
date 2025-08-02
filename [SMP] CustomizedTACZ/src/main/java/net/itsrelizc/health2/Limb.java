@@ -27,7 +27,7 @@ public class Limb {
 	private List<Effect> effects;
 	
 	private DamageLogs logs;
-	private LivingEntity owner;
+	protected LivingEntity owner;
 
 	public Limb(LivingEntity entity, long health, long maxhealth, String name) {
 		this.health = health;
@@ -57,13 +57,13 @@ public class Limb {
 		
 		String color = "§a";
 		String icon = " ✔ ";
-		String message = "§l" + Locale.get(player, "combat.limb." + this.name.toLowerCase() + ".name") + "§r " + color + Locale.get(player, "combat.healthy") + " §7(§a%d §c❤§7)".formatted(this.health, this.maxhealth);;
+		String message = "§l" + Locale.get(player, "combat.limb." + this.name.toLowerCase() + ".name") + " §7(§a%d §c❤§7)".formatted(this.health, this.maxhealth);;
 		
 		if (this.health != this.maxhealth ) {
 			
 			color = "§e";
 			icon = " !!  ";
-			message = "§l" + Locale.get(player, "combat.limb." + this.name.toLowerCase() + ".name") + "§r " + color  + Locale.get(player, "combat.injured") + " §7(§e%d §c❤§7)".formatted(this.health, this.maxhealth);
+			message = "§l" + Locale.get(player, "combat.limb." + this.name.toLowerCase() + ".name") + " §7(§e%d §c❤§7)".formatted(this.health, this.maxhealth);
 			
 		}
 		
@@ -72,7 +72,7 @@ public class Limb {
 			
 			color = "§6";
 			icon = " !!  ";
-			message = "§l" + Locale.get(player, "combat.limb." + this.name.toLowerCase() + ".name") + "§r "  + color + Locale.get(player, "combat.injured") + " §7(§6%d §c❤§7)".formatted(this.health, this.maxhealth);
+			message = "§l" + Locale.get(player, "combat.limb." + this.name.toLowerCase() + ".name") + " §7(§6%d §c❤§7)".formatted(this.health, this.maxhealth);
 			
 		}
 		
@@ -80,14 +80,14 @@ public class Limb {
 			
 			color = "§c";
 			icon = " !!  ";
-			message = "§l" + Locale.get(player, "combat.limb." + this.name.toLowerCase() + ".name") + "§r " + color  + Locale.get(player, "combat.injured") + " §7(§c%d §c❤§7)".formatted(this.health, this.maxhealth);
+			message = "§l" + Locale.get(player, "combat.limb." + this.name.toLowerCase() + ".name") + " §7(§c%d §c❤§7)".formatted(this.health, this.maxhealth);
 			
 		}
 		
 		if (this.health == 0) { //§8/§7%d
 			color = "§c";
 			icon = " ✖ ";
-			message = "§l" + Locale.get(player, "combat.limb." + this.name.toLowerCase() + ".name") + "§r "  + color + Locale.get(player, "combat.heavyinjured")  + " §7(§c%d §c❤§7)".formatted(this.health, this.maxhealth);
+			message = "§l" + Locale.get(player, "combat.limb." + this.name.toLowerCase() + ".name") + " §7(§c%d §c❤§7)".formatted(this.health, this.maxhealth);
 		}
 		
 		
@@ -168,6 +168,10 @@ public class Limb {
 	public void reset() {
 		this.logs.clear();
 		this.health = this.maxhealth;
+	}
+	
+	public String getLocaleId() {
+		return "combat.limb." + this.getName() + ".name";
 	}
 
 	public long damage(long amount, String damageCause, Limb limb) {

@@ -151,7 +151,7 @@ public class ItemUtils {
 		return castOrCreateItem(player, item, lang);
 	}
 	
-	private static void checkCustomNameAndSet(CompoundTag tag, ItemMeta meta, net.minecraft.world.item.ItemStack it, Language lang, ItemStack copy) {
+	private static ItemMeta checkCustomNameAndSet(CompoundTag tag, ItemMeta meta, net.minecraft.world.item.ItemStack it, Language lang, ItemStack copy, String overlap, RelizcItem handle) {
 		
 		//Bukkit.broadcastMessage(tag.getString("CUSTOM_NAME"));
 		
@@ -179,11 +179,17 @@ public class ItemUtils {
 					.replace("&l", "§l")
 					.replace("&m", "§m");
 			meta.setDisplayName("§r§o" + name);
+		} else if (overlap != null && handle != null) {
+			meta.setDisplayName("§r" + handle.quality().getColor() + overlap);
 		} else {
 			String name = Quality.valueOf(it.getRarity()).getColor() + Locale.getMojang(lang, copy.getTranslationKey());
-			if (name.equals(meta.getDisplayName())) return;
+			if (name.equals(meta.getDisplayName())) return meta;
 			meta.setDisplayName(name);
 		}
+		
+		return meta;
+		
+		//Bukkit.broadcastMessage(meta.getDisplayName());
 	}
 	
 	/**
@@ -222,10 +228,7 @@ public class ItemUtils {
 			
 			meta.addItemFlags(ItemFlag.values());
 			
-			checkCustomNameAndSet(tag, meta, it, lang, copy);
 			
-			
-			copy.setItemMeta(meta);
 			
 			T completed = null;
 			
@@ -233,6 +236,10 @@ public class ItemUtils {
 
 			
 			if (handler == null) {
+				
+				checkCustomNameAndSet(tag, meta, it, lang, copy, null, null);
+				copy.setItemMeta(meta);
+				
 				renderNames(null, copy, player, lang);
 				try {
 					completed = (T) new RelizcItemStack(player, copy);
@@ -252,6 +259,10 @@ public class ItemUtils {
 			} else {
 				RelizcItem annotation = handler.getAnnotation(RelizcItem.class);
 				RelizcItemMeta[] metas = handler.getAnnotationsByType(RelizcItemMeta.class);
+				
+				checkCustomNameAndSet(tag, meta, it, lang, copy, null, annotation);
+				copy.setItemMeta(meta);
+				
 				net.minecraft.world.item.ItemStack it2 = CraftItemStack.asNMSCopy(copy);
 				tag = it2.getOrCreateTag();
 				for (RelizcItemMeta m : metas) {
@@ -299,33 +310,37 @@ public class ItemUtils {
 				
 			}
 			
-			
-			
-			
 			return completed;
 		} else {
-			ItemMeta meta = item.getItemMeta();
-			checkCustomNameAndSet(tag, meta, CraftItemStack.asNMSCopy(item), lang, item);
-			
-			Bukkit.broadcastMessage(meta.getDisplayName());
-			Bukkit.broadcastMessage(String.join("\n", meta.getLore()));
+			ItemMeta meta = item.getItemMeta();	
 			
 			String code = it.getOrCreateTag().getString("id");
 			Class<? extends RelizcItemStack> handle = ItemUtils.getHandler(code);
 			
+			
+			T basic = null;
+			
+			ItemMeta meta55;
 			if (handle == null) {
 				try {
-					return (T) new RelizcItemStack(player, item);
+					basic = (T) new RelizcItemStack(player, item);
 				} catch (Exception e) {
-					return null;
+					
 				}
+				meta55 = checkCustomNameAndSet(tag, meta, CraftItemStack.asNMSCopy(item), lang, item, basic.renderName(), null);
 			} else {
 				try {
-					return (T) handle.getDeclaredConstructor(Player.class, ItemStack.class).newInstance(player, item);
+					basic = (T) handle.getDeclaredConstructor(Player.class, ItemStack.class).newInstance(player, item);
 				} catch (Exception e) {
-					return null;
+					
 				}
+				RelizcItem annotation = handle.getAnnotation(RelizcItem.class);
+				meta55 = checkCustomNameAndSet(tag, meta, CraftItemStack.asNMSCopy(item), lang, item, basic.renderName(), annotation);
 			}
+
+			basic.getBukkitItem().setItemMeta(meta55);
+			
+			return basic;
 			
 		}
 		
@@ -464,7 +479,7 @@ public class ItemUtils {
 		ItemMeta meta2 = stack.getBukkitItem().getItemMeta();
 		List<String> l = meta2.getLore();
 		
-		checkCustomNameAndSet(tag, meta2, nms, Language.valueOf(lang), copy);
+		checkCustomNameAndSet(tag, meta2, nms, Language.valueOf(lang), copy, stack.renderName(), annotation);
 		
 		List<String> rendered = stack.renderInternalLore();
 		rendered.forEach(s -> l.add(s));

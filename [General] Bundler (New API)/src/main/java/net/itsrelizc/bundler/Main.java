@@ -25,6 +25,7 @@ import net.itsrelizc.players.Grouping;
 import net.itsrelizc.players.locales.CommandReloadLocale;
 import net.itsrelizc.players.locales.LangSelector;
 import net.itsrelizc.players.locales.Locale;
+import net.itsrelizc.players.web.Authenticator;
 import net.itsrelizc.string.StringUtils;
 import net.itsrelizc.tablist.TabListUtils;
 
@@ -36,6 +37,8 @@ public class Main extends JavaPlugin {
 	public void onLoad() {
 		JSON.initializeDatabasePath();
 		EventRegistery.main = this;
+		
+		Authenticator.init();
 	}
 	
 	private final String url = "http://localhost:5000/keepalive";

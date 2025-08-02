@@ -105,11 +105,11 @@ public class Body {
 	public Body ( LivingEntity entity ) {
 		head = new Limb(entity, 30, 30, "head"); 
 		chest = new Limb(entity, 60, 60, "chest");
-		leftArm = new Limb(entity, 80, 80, "leftArm");
-		rightArm = new Limb(entity, 80, 80, "rightArm");
+		leftArm = new BreakableLimb(entity, 80, 80, "leftArm");
+		rightArm = new BreakableLimb(entity, 80, 80, "rightArm");
 		abs = new Limb(entity, 40, 40, "abs");
-		leftLegs = new Limb(entity, 60, 60, "leftLegs");
-		rightLegs = new Limb(entity, 60, 60, "rightLegs");
+		leftLegs = new BreakableLimb(entity, 60, 60, "leftLegs");
+		rightLegs = new BreakableLimb(entity, 60, 60, "rightLegs");
 		
 		this.owner = entity;
 		
@@ -266,7 +266,7 @@ public class Body {
 
 	}
 	
-	private void updateLegStatus() {
+	public void updateLegStatus() {
 		if (owner instanceof Player) {
 			int res = 0;
 			if (convert(5).getHealth() <= 0) {

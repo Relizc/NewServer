@@ -331,7 +331,7 @@ public class RelizcDamageable extends RelizcItemStack {
 		CompoundTag tag = NBT.getNBT(stack);
 		
 		int currentMax = NBT.getInteger(tag, "MAX_DURABILITY");
-		currentMax -= (amount / 2);
+		//currentMax -= (amount / 2);
 		int newDurability = NBT.getInteger(tag, "DURABILITY") + amount;
 		
 		newDurability = Math.min(currentMax, newDurability);
@@ -379,7 +379,7 @@ public class RelizcDamageable extends RelizcItemStack {
 		
 		Damageable dmg = (Damageable) stack.getItemMeta();
 		
-		dmg.setDamage(damage);
+		dmg.setDamage(damage); 	
 		
 		stack.setItemMeta(dmg);
 		
