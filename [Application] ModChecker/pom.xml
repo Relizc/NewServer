@@ -52,7 +52,7 @@
                     </goals>
                     <configuration>
                         <target>
-                            <move file="target/modchecker-1.0.0.jar" tofile="C:/Users/relizc/Desktop/Modding/mod/run/mods/Enigma.jar"/>
+                            <move file="target/modchecker-1.0.0.jar" tofile="C:/Users/relizc/Desktop/Modding/mod/run/mods/ModChecker.jar"/>
                         </target>
                     </configuration>
                 </execution>

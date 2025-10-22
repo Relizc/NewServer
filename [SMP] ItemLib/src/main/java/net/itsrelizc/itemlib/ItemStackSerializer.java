@@ -1,4 +1,4 @@
-package net.itsrelizc.smp.insurance;
+package net.itsrelizc.itemlib;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

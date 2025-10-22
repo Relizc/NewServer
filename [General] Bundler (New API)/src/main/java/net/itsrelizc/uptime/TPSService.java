@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 
 public class TPSService {
 	
-	private static String str = "§8[刻速: %s%.2f§8] [刻延迟: %s (%s%s§8)] [客户端延迟: %dms]\n[实体数量: %s%d§8/%s%d§8/%s%d§8]";
+	private static String str = "§8[刻速: %s%.2f§8] [刻延迟: %s (%s%s§8)] [客户端延迟: %dms]";
 	
 	private static boolean ok = false;
 	private static String n;
@@ -79,11 +79,7 @@ public class TPSService {
 					eval(t), t,
 					TPSUtils.getDelayAsFormattedString(),
 					eval2(TPSUtils.getDelayYield()), TPSUtils.getDelayYieldAsFormattedString(),
-					player.getPing(),
-					
-					evalEnts(a), a,
-					evalEnts(b), b,
-					evalEnts(c), c
+					player.getPing()
 				);
 		
 		

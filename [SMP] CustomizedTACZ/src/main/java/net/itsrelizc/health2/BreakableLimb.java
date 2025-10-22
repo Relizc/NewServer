@@ -126,6 +126,17 @@ public class BreakableLimb extends Limb {
 		Body body = Body.parts.get(owner.getUniqueId().toString());
 		LivingEntity player = this.owner;
 		
+		if (body.status.equals("heal")) {
+			
+			String action = Locale.a((Player) player, "damage.heal.cancelled");
+			((Player) player).spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(action));
+			
+			body.status = "normal";
+		}
+		
+		
+		
+		body.status = "heal";
 		
 		
 		AttributeInstance attr = player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);

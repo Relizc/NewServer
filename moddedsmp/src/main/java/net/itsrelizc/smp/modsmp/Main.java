@@ -43,9 +43,9 @@ public class Main extends JavaPlugin {
 		
 		Bukkit.getPluginManager().registerEvents(new Shop(), this);
 		
-		this.getCommand("tpa").setExecutor(new TPACommand());
-		this.getCommand("tpy").setExecutor(new TPAccept());
-		this.getCommand("tpn").setExecutor(new TPDeny());	
+		//this.getCommand("tpa").setExecutor(new TPACommand());
+		//this.getCommand("tpy").setExecutor(new TPAccept());
+		//this.getCommand("tpn").setExecutor(new TPDeny());	
 		
 		this.getCommand("testbukkitpleaseignore").setExecutor(new TestItemGet());
 		
@@ -81,7 +81,7 @@ public class Main extends JavaPlugin {
 					} catch (Exception e) {
 						System.out.println("Footer Error " + e);
 					}
-					TabListUtils.updateFooter(p, String.format(Locale.get(p, "general.tablist.diamondsleft"), (float) DiamondCounter.remaining, DiamondPurse.getPurse(p), DiamondPurse.getBloodSugar(p)) + TPSService.getTablistDisplayInfo(p));
+					TabListUtils.updateFooter(p, "\n" + TPSService.getTablistDisplayInfo(p));
 
 //					TabListUtils.updateFooter(p, String.format(Locale.get(p, "general.tablist.diamondsleft"), (float) DiamondCounter.remaining, DiamondPurse.getPurse(p)) + "[Server Insights unavaliable]");
 				}

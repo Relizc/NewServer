@@ -80,6 +80,8 @@ public class Body {
 	private boolean[] isDisplaying = {false, false, false, false, false, false, false};
 	
 	private boolean showing = false;
+
+	public String status;
 	
 	public long getMaxHealth() {
 		return maxTotalHealth;
@@ -116,6 +118,8 @@ public class Body {
 		for (int i = 0; i < 7; i ++) {
 			maxTotalHealth += convert(i).getMaxHealth();
 		}
+		
+		status = "normal";
 	}
 	
 	public Limb convert(int partId) {

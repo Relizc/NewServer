@@ -15,6 +15,7 @@ import org.json.simple.JSONObject;
 
 import net.itsrelizc.bundler.JSON;
 import net.itsrelizc.commands.RelizcCommand;
+import net.itsrelizc.itemlib.ItemStackSerializer;
 
 public class PlayerStashManager {
 	

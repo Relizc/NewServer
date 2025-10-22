@@ -1,5 +1,8 @@
 package net.itsrelizc.players.locales;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 
 import org.bukkit.entity.Player;
@@ -49,6 +52,44 @@ public class Locale {
 		}
 		
 	}
+	
+	/*
+	 * Converts a long epoch millisecond to the language's human readable format.
+	 */
+	public static String convertDate(long epochMillis, Language lang) {
+        // Convert epoch to Instant
+        Instant instant = Instant.ofEpochMilli(epochMillis);
+
+        // Map your Language enum to Java Locale
+        java.util.Locale locale = getLocale(lang);
+
+        // Create a formatter with locale
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+                .withLocale(locale)
+                .withZone(ZoneId.systemDefault());
+
+        return formatter.format(instant);
+    }
+
+    private static java.util.Locale getLocale(Language lang) {
+        switch (lang) {
+            case EN_US:
+                return java.util.Locale.US;
+            case ZH_CN:
+            case ZH_CN_MOJANG:
+                return java.util.Locale.SIMPLIFIED_CHINESE;
+            case ZH_TW:
+                return java.util.Locale.TRADITIONAL_CHINESE;
+            case JA_JP:
+                return java.util.Locale.JAPAN;
+            case KO_KR:
+                return java.util.Locale.KOREA;
+            case ES_ES:
+                return new java.util.Locale("es", "ES");
+            default:
+                return java.util.Locale.getDefault();
+        }
+    }
 	
 	public static HashMap<String, HashMap<String, String>> locales = new HashMap<String, HashMap<String, String>>();
 	
