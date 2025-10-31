@@ -4,8 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -14,7 +17,11 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
+import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.gunmod.deathutils.DeathUtils;
 import net.itsrelizc.health2.Limb.RelizcDamageCause;
 import net.itsrelizc.health2.ballistics.Collisions.BodyPart;
@@ -107,11 +114,11 @@ public class Body {
 	public Body ( LivingEntity entity ) {
 		head = new Limb(entity, 30, 30, "head"); 
 		chest = new Limb(entity, 60, 60, "chest");
-		leftArm = new BreakableLimb(entity, 80, 80, "leftArm");
-		rightArm = new BreakableLimb(entity, 80, 80, "rightArm");
+		leftArm = new Limb(entity, 80, 80, "leftArm");
+		rightArm = new Limb(entity, 80, 80, "rightArm");
 		abs = new Limb(entity, 40, 40, "abs");
-		leftLegs = new BreakableLimb(entity, 60, 60, "leftLegs");
-		rightLegs = new BreakableLimb(entity, 60, 60, "rightLegs");
+		leftLegs = new Limb(entity, 60, 60, "leftLegs");
+		rightLegs = new Limb(entity, 60, 60, "rightLegs");
 		
 		this.owner = entity;
 		
@@ -184,7 +191,9 @@ public class Body {
 	 */
 	public void damage(int partId, long amount, String damageCause, Limb from, LivingEntity killer) {
 		
-		////(" " + amount);
+		////(" " + amount);\
+		
+		if (this.invincible) return;
 		
 		
 		if (owner instanceof Player) {
@@ -259,10 +268,110 @@ public class Body {
 		//this.printStatus();
 	}
 	
+	private static boolean tryPopTotem(Player player) {
+        ItemStack mainHand = player.getInventory().getItemInMainHand();
+        ItemStack offHand = player.getInventory().getItemInOffHand();
+
+        // Check main hand first
+        if (isTotem(mainHand)) {
+            consumeTotem(player, EquipmentSlot.HAND);
+            triggerTotemEffects(player);
+            return true;
+        }
+
+        // Then check offhand
+        if (isTotem(offHand)) {
+            consumeTotem(player, EquipmentSlot.OFF_HAND);
+            triggerTotemEffects(player);
+            return true;
+        }
+
+        return false; // No totem found
+    }
+	
+	private static boolean isTotem(ItemStack item) {
+        return item != null && item.getType() == Material.TOTEM_OF_UNDYING;
+    }
+
+    private static void consumeTotem(Player player, EquipmentSlot slot) {
+        ItemStack item = (slot == EquipmentSlot.HAND)
+                ? player.getInventory().getItemInMainHand()
+                : player.getInventory().getItemInOffHand();
+
+        if (item != null && item.getType() == Material.TOTEM_OF_UNDYING) {
+            int newAmount = item.getAmount() - 1;
+            if (newAmount <= 0) {
+                item.setType(Material.AIR);
+            } else {
+                item.setAmount(newAmount);
+            }
+
+            // Update inventory to reflect the change
+            if (slot == EquipmentSlot.HAND) {
+                player.getInventory().setItemInMainHand(item);
+            } else {
+                player.getInventory().setItemInOffHand(item);
+            }
+        }
+    }
+    
+    public boolean invincible = false;
+
+    private static void triggerTotemEffects(Player player) {
+        World world = player.getWorld();
+        Location loc = player.getLocation();
+
+        // Play sound and particles
+        world.playSound(loc, Sound.ITEM_TOTEM_USE, 1.0f, 1.0f);
+        world.spawnParticle(Particle.TOTEM, loc.add(0, 1, 0), 100, 0.5, 1, 0.5, 0.1);
+        
+        Body body = Body.parts.get(player.getUniqueId().toString());
+        if (body == null) return;
+        body.healWithPriority(41000);
+        body.invincible = true;
+
+        // Apply effects similar to vanilla
+        player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 60 * 20, 1)); // 45s Regen II
+        player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 60 * 20, 1)); // 1 min strength 2
+        player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 40 * 20, 0)); // 1 min strength 2
+        player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 60 * 20, 0)); // 1 min strength 2
+        
+        new BukkitRunnable() {
+
+			@Override
+			public void run() {
+				player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 15 * 20, 0)); // 1 min strength 2
+				player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 5 * 20, 0)); // 1 min strength 2
+				player.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 145 * 20, 0)); // 1 min strength 2
+				player.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 5 * 20, 0)); // 1 min strength 2
+			}
+        	
+        }.runTaskLater(EventRegistery.main, 60 * 20l);
+        new BukkitRunnable() {
+
+			@Override
+			public void run() {
+				body.invincible = false;
+			}
+        	
+        }.runTaskLater(EventRegistery.main, 5l);
+    }
+	
 	private void death(String damageCause, LivingEntity killer) {
+		
+		
 		
 		//this.reset();
 		if (owner instanceof Player) {
+			
+			if (tryPopTotem((Player) this.owner)) {
+				
+				
+				
+				((Player) this.owner).sendMessage(Locale.a((Player) this.owner, "death.totem"));
+				return;
+			}
+			
 			DeathUtils.addPlayer((Player) owner, damageCause, killer);
 		} else {
 			owner.setHealth(0);
@@ -272,15 +381,16 @@ public class Body {
 	
 	public void updateLegStatus() {
 		if (owner instanceof Player) {
-			int res = 0;
-			if (convert(5).getHealth() <= 0) {
-				res ++;
-			}
-			if (convert(6).getHealth() <= 0) {
-				res ++;
-			}
-			Player player = (Player) owner;
-			player.setWalkSpeed(0.2f - (0.05f * res));
+			return;
+//			int res = 0;
+//			if (convert(5).getHealth() <= 0) {
+//				res ++;
+//			}
+//			if (convert(6).getHealth() <= 0) {
+//				res ++;
+//			}
+//			Player player = (Player) owner;
+//			player.setWalkSpeed(0.2f - (0.05f * res));
 		}
 	}
 

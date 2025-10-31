@@ -96,7 +96,7 @@ public class Main extends JavaPlugin {
 		EventRegistery.register(new EnchantmentBan());
 		EventRegistery.register(new NiceUtilities());
 		EventRegistery.register(new SMPScoreboardListener());	
-		NiceUtilities.startSendingTips();
+		//NiceUtilities.startSendingTips();
 //		EventRegistery.register(new We());
 		
 	}

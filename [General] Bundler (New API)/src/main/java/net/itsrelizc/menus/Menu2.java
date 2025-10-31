@@ -23,6 +23,8 @@ public class Menu2 implements Listener, RelizcInteractiveMenu {
 	
 	public static boolean isDuped(Player player, ItemStack it) {
 		
+		if (it == null || player == null) return false;
+		
 		CompoundTag tag = NBT.getNBT(it);
 		if (tag == null) return false;
 		if (!tag.contains("generatedMenu")) return false;

@@ -11,11 +11,13 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import net.itsrelizc.bundler.Main;
 import net.itsrelizc.diamonds.DiamondPurse;
 import net.itsrelizc.events.EventRegistery;
+import net.itsrelizc.itemlib.ItemUtils;
 import net.itsrelizc.menus.ItemGenerator;
 import net.itsrelizc.menus.MenuTemplate2;
 import net.itsrelizc.players.Profile.NewPlayerJoinedEvent;
@@ -103,6 +105,8 @@ public class LoginLogoutHandler implements Listener {
 	@EventHandler
 	public void playerjoin(PlayerJoinEvent event) {
 		
+		event.setJoinMessage(null);
+		
 		event.getPlayer().sendMessage(Locale.get(event.getPlayer(), "smp.login.welcome"));
 		
 //		TextComponent x = new TextComponent(Locale.get(event.getPlayer(), "smp.login.serverstatus"));
@@ -139,24 +143,37 @@ public class LoginLogoutHandler implements Listener {
 				
 				event.getPlayer().playSound(event.getPlayer(), Sound.ENTITY_VILLAGER_YES, 1f, 1f);
 				
-				String content = " §7" + Main.getVersion() + " §a更新日志 §8(2025/7/17)";
-				content += "\n §8- §r修复了部分箭矢显示失常的情况";
-				content += "\n §8- §r修复了服务器间歇性卡顿的情况";
-				content += "\n §8- §r修复了部分箭矢造成神秘伤害的情况";
-				content += "\n §8- §r修复了经验系统失常的情况";
-				content += "\n §8- §r修复了附魔书不显示附魔的问题";
-				content += "\n §8- §r修复了通过滥用死亡视角探索地图的问题";
-				content += "\n §8- §r添加了踢出闲置玩家的功能";
-				content += "\n §8- §r添加了记录游戏时长功能";
+				String content = " §7" + Main.getVersion() + " §a更新日志 §8(2025/11/1)";
+				content += "\n §8- §r暂时移除血量系统";
+				content += "\n §8- §r恢复地皮系统";
+				content += "\n §8- §r恢复地皮系统";
+				content += "\n §8- §r提升了 ";
 				
-				content += "\n §8- §r添加了§c反作弊§r §7§o(例如反矿物透视)";
-				content += "\n §8- §r重新添加了§b付款 §7(/pay) §r与§b吐出钻石 §7(/spit) §r的功能";
-				content += "\n §7 ? 若想获得物理钻石, 可以尝试§c摧毁§7吐出来的§b钻石瓶§7!";
+				String content2 = " §r的技能效果";
+				content2 += "\n §8- §r唤魔者不再掉落 ";
 				
-				event.getPlayer().sendMessage("\n\n§e§m--------------------------------§r\n" + content + "\n§e§m--------------------------------");
+				TextComponent c = new TextComponent(content);
+				TextComponent d = new TextComponent(content2);
+				TextComponent e = new TextComponent("§e[不死图腾]§r");
+				
+				ItemStack it = ItemUtils.castOrCreateItem(event.getPlayer(), new ItemStack(Material.TOTEM_OF_UNDYING, 1)).getBukkitItem();
+				String build = it.getItemMeta().getDisplayName() + "\n";
+				build += String.join("\n", it.getItemMeta().getLore());
+				StringUtils.attachHover(e, build);
+				
+				TextComponent a = new TextComponent("\n\n§e§m--------------------------------§r\n");
+				TextComponent b = new TextComponent("\n§e§m--------------------------------");
+				
+				a.addExtra(c);
+				a.addExtra(e);
+				a.addExtra(d);
+				a.addExtra(e);
+				a.addExtra(b);
+				
+				event.getPlayer().spigot().sendMessage(a);
 			}
 			
-		}.runTaskLater(EventRegistery.main, 80l);
+		}.runTaskLater(EventRegistery.main, 40l);
 		
 		
 	}

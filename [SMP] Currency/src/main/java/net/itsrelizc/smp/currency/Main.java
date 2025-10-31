@@ -7,7 +7,9 @@ import net.itsrelizc.diamonds.DiamondPurse;
 import net.itsrelizc.diamonds.RelizcItemDiamondJar;
 import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.itemlib.ItemUtils;
+import net.itsrelizc.messaging.LoginMessageAlert;
 import net.itsrelizc.messaging.MessagesCommand;
+import net.itsrelizc.messaging.PatchDiamondPurseRefund;
 import net.itsrelizc.messaging.TreatCommand;
 import net.itsrelizc.quests.QuestListener;
 import net.itsrelizc.quests.QuestNewArrival;
@@ -34,7 +36,8 @@ public class Main extends JavaPlugin {
 		//EventRegistery.register(new DiamondEatListener());
 		EventRegistery.register(new QuestListener());
 		EventRegistery.register(new LevelListeners());
-		
+		EventRegistery.register(new PatchDiamondPurseRefund());	
+		EventRegistery.register(new LoginMessageAlert());
 		EventRegistery.register(new QuestNewArrival.Listeners());
 		
 		QuestUtils.registerQuest(QuestNewArrival.INSTANCE);

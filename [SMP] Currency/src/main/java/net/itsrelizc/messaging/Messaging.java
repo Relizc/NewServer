@@ -30,6 +30,11 @@ import net.md_5.bungee.api.chat.TextComponent;
 public class Messaging {
 
     private static final String MESSAGE_DIR = "messages/";
+    
+    public static final String GENERAL = "general";
+    public static final String TRADES = "trades";
+    public static final String SOCIAL = "social";
+    public static final String SECURITY = "security";
 
     // Inner message object abstraction
     public static class Message {
@@ -257,8 +262,8 @@ public class Messaging {
         if (player.isOnline()) {
         	player.playSound(player, Sound.BLOCK_NOTE_BLOCK_BELL, 1f, 0.890899f);
         	
-        	TextComponent comp = new TextComponent("§e📧 §7您收到了一条消息");
-        	player.sendMessage("");
+        	TextComponent comp = new TextComponent(Locale.a(player, "messages.new"));
+        	player.spigot().sendMessage(comp);
         }
         
     }

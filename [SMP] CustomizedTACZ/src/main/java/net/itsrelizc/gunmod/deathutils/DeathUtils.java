@@ -4,13 +4,17 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -218,6 +222,8 @@ public class DeathUtils {
 		npc.data().set("name", player.getName());
 	}
 	
+	private static HashMap<String, Location> deathlocations = new HashMap<String, Location>();
+	
 	public static void addPlayer(Player player, String damageCause, LivingEntity killer) {
 		
 		////("added " + player);
@@ -245,6 +251,7 @@ public class DeathUtils {
 			
 		}
 		deadppl.add(player.getUniqueId().toString());
+		deathlocations.put(player.getUniqueId().toString(), player.getLocation());
 		
 		player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, false, false));
 		player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 1, false, false));
@@ -326,19 +333,60 @@ public class DeathUtils {
 		player.setCanPickupItems(true);
 		player.getInventory().clear();
 		
-		Location bed = player.getBedSpawnLocation();
-		if (bed == null) {
-			bed = Bukkit.getWorld("world").getSpawnLocation();
-			player.sendMessage(Locale.a(player, "death.nobed"));
-		}
+		
+		Location loc = findRandomSpawnableLocation(player, deathlocations.get(player.getUniqueId().toString()));
+		player.teleport(loc);
+		
+		
+		
 //		player.teleport(bed);
-		CustomPlayerTeleportEvent.teleport(player, bed);
+		//CustomPlayerTeleportEvent.teleport(player, bed);
 		player.setFallDistance(0);
 		body.refreshHealthDisplay();
 		
 		PlayerGhostEvent event = new PlayerGhostEvent(player, null, false, null);
 		Bukkit.getPluginManager().callEvent(event);
 	}
+	
+	private static final int MAX_RADIUS = 64;
+
+    public static Location findRandomSpawnableLocation(Player player, Location center) {
+        World world = center.getWorld();
+        Random random = new Random();
+
+        for (int i = 0; i < 200; i++) { // Try up to 200 random positions
+            int dx = random.nextInt(MAX_RADIUS * 2) - MAX_RADIUS;
+            int dz = random.nextInt(MAX_RADIUS * 2) - MAX_RADIUS;
+
+            int x = center.getBlockX() + dx;
+            int z = center.getBlockZ() + dz;
+
+            int y = world.getHighestBlockYAt(x, z); // get surface height
+            if (y < world.getSeaLevel()) continue; // skip below sea level
+
+            Block block = world.getBlockAt(x, y - 1, z); // block below surface
+            if (block.getType().isSolid()) {
+                Location spawnLoc = new Location(world, x + 0.5, y + 1, z + 0.5);
+                // ensure it's not inside a liquid or unsafe block
+                Material above = world.getBlockAt(x, y + 1, z).getType();
+                Material above2 = world.getBlockAt(x, y + 2, z).getType();
+                if ((above == Material.AIR || above == Material.CAVE_AIR) && (above2 == Material.AIR || above2 == Material.CAVE_AIR)) {
+                	player.sendMessage(Locale.a(player, "death.spawnnear"));
+                    return spawnLoc;
+                }
+            }
+        }
+
+        // Fallback: player bed spawn or world spawn
+        Location bed = player.getBedSpawnLocation();
+        if (bed != null) {
+        	player.sendMessage(Locale.a(player, "death.noloc"));
+        	return bed;
+        }
+        
+        player.sendMessage(Locale.a(player, "death.nobed"));
+        return world.getSpawnLocation();
+    }
 
 	public static void addPlayer(Player owner) {
 		addPlayer(owner, "damage.kill");

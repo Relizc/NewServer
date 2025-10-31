@@ -149,8 +149,8 @@ public class Limb {
 	 */
 	public long heal(long amount) {
 		
-		if (this.health <= 0) return amount;
-		if (amount == 0) return 0;
+		//if (this.health <= 0) return amount;
+		//if (amount == 0) return 0;
 		
 		long val = -Math.min(this.maxhealth - this.health, amount);
 		

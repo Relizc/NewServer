@@ -36,6 +36,7 @@ import net.itsrelizc.gunmod.items.RelizcItemMFCU;
 import net.itsrelizc.gunmod.items.RelizcItemSatellitePhone;
 import net.itsrelizc.gunmod.items.armor.RelizcDamageable;
 import net.itsrelizc.gunmod.items.armor.RelizcOverridenLeatherHelmet;
+import net.itsrelizc.gunmod.items.armor.RelizcOverridenTotem;
 import net.itsrelizc.gunmod.npcs.SleepingTrait;
 import net.itsrelizc.health2.BedHealListener;
 import net.itsrelizc.health2.Body;
@@ -64,12 +65,13 @@ public class Main extends JavaPlugin implements Listener {
 		EventRegistery.register(this);
 		EventRegistery.register(new RightClickBody());
 		EventRegistery.register(new DeathSummaryScreen.DeathSummaryListeners());
-		EventRegistery.register(new LegBrokenJumpListeners());
+		//EventRegistery.register(new LegBrokenJumpListeners());
 		EventRegistery.register(new ArrowHitListeners());
 		EventRegistery.register(new BedHealListener());
 		EventRegistery.register(new PlayerGhostOutsideBoundChecker());
 		EventRegistery.register(new BreakableLimb.BreakableLimbRepairListener());
 		EventRegistery.register(new Authenticator.AuthenticatorListener());
+		EventRegistery.register(new RelizcOverridenTotem.NoTotemDropListener());
 		
 		DeathUtils.init();
 		
@@ -81,6 +83,7 @@ public class Main extends JavaPlugin implements Listener {
 		ItemUtils.register(RelizcItemSatellitePhone.class);
 		ItemUtils.register(RelizcSpectralArrow.class);
 		ItemUtils.register(RelizcTippedArrow.class);
+		ItemUtils.register(RelizcOverridenTotem.class);
 		
 		EventRegistery.register(new RelizcDamageable.RelizcDamageableRepairListener());
 		ItemUtils.register(RelizcOverridenLeatherHelmet.class);
@@ -141,22 +144,22 @@ public class Main extends JavaPlugin implements Listener {
         body.damageAverage(actual, name, damager);
     }
 	
-	@EventHandler
-	public void onFireworkExplode(FireworkExplodeEvent event) {
-	    Firework firework = event.getEntity();
-	    
-	    // You can get the shooter (if set earlier)
-//	    if (firework.getShooter() instanceof Player) {
-//	        Player shooter = (Player) firework.getShooter();
-//	        //shooter.sendMessage("Your firework has exploded!");
-//	    }
-	    FragUtils.spawnFragmentsRandomly(event.getEntity().getLocation(), 10, 8);
-	    TNTPrimed tnt = event.getEntity().getLocation().getWorld().spawn(event.getEntity().getLocation(), TNTPrimed.class);
-	    tnt.setFuseTicks(0); // Explode immediately
-
-	    // Debug
-	    //System.out.println("Firework exploded at " + firework.getLocation());
-	}
+//	@EventHandler
+//	public void onFireworkExplode(FireworkExplodeEvent event) {
+//	    Firework firework = event.getEntity();
+//	    
+//	    // You can get the shooter (if set earlier)
+////	    if (firework.getShooter() instanceof Player) {
+////	        Player shooter = (Player) firework.getShooter();
+////	        //shooter.sendMessage("Your firework has exploded!");
+////	    }
+//	    FragUtils.spawnFragmentsRandomly(event.getEntity().getLocation(), 10, 8);
+//	    TNTPrimed tnt = event.getEntity().getLocation().getWorld().spawn(event.getEntity().getLocation(), TNTPrimed.class);
+//	    tnt.setFuseTicks(0); // Explode immediately
+//
+//	    // Debug
+//	    //System.out.println("Firework exploded at " + firework.getLocation());
+//	}
 	
 	@EventHandler
 	public void onShoot(EntityShootBowEvent event) {
