@@ -63,10 +63,16 @@
 		        <id>jitpack.io</id>
 		        <url>https://jitpack.io</url>
 		    </repository>
+		    
 		    <repository>
 	        <id>elmakers</id>
 	        <url>https://maven.elmakers.com/repository/</url>
 	    </repository>
+	    
+	    <repository>
+        <id>papermc</id>
+        <url>https://repo.papermc.io/repository/maven-public/</url>
+    </repository>
    	</repositories>
    <dependencies>
 	   
@@ -102,6 +108,21 @@
            <classifier>remapped-mojang</classifier>
        	</dependency>
        	
+       	
+       	<dependency>
+		    <groupId>org.junit.jupiter</groupId>
+		    <artifactId>junit-jupiter</artifactId>
+		    <version>5.11.0</version>
+		    <scope>test</scope>
+		  </dependency>
+		
+		  <!-- MockBukkit, targeting your Minecraft version -->
+		  <dependency>
+		    <groupId>org.mockbukkit.mockbukkit</groupId>
+		    <artifactId>mockbukkit-v1.21</artifactId>  <!-- adjust version to your MC version -->
+		    <version>4.0.0</version>  <!-- or latest stable -->
+		    <scope>test</scope>
+		  </dependency>
        	
 
 		<dependency>
