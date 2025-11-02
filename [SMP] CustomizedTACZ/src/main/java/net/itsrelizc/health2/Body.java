@@ -260,11 +260,15 @@ public class Body {
 		
 		
 		
-		if (convert(0).getHealth() <= 0 || convert(1).getHealth() <= 0) {
+//		if (convert(0).getHealth() <= 0 || convert(1).getHealth() <= 0) {
+//			convert(partId).setLatestRecordAsLethal();
+//			death(damageCause, killer);
+//		}
+		
+		if (this.getHealth() <=0) {
 			convert(partId).setLatestRecordAsLethal();
 			death(damageCause, killer);
 		}
-		
 		//this.printStatus();
 	}
 	

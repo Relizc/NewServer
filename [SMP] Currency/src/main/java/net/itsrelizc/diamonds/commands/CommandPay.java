@@ -34,7 +34,6 @@ public class CommandPay extends RelizcCommand {
 	
 	public CommandPay() {
 		super("pay", "lets u to pay someone");
-		this.setRelizcOp(false);
 		
 		// TODO Auto-generated constructor stub
 	}
