@@ -18,13 +18,15 @@ public class QuestUtils {
 	
 	private static Map<String, Quest> HANDLERS = new HashMap<String, Quest>();
 	
+	public static Map<String, Quest> getHandler() {return HANDLERS;}
+	
 	public static class PlayerNewQuestStarted extends Event {
 	    private static final HandlerList HANDLERS = new HandlerList();
 	    private Player player;
-		private QuestNewArrival quest;
+		private Quest quest;
 
 
-	    public PlayerNewQuestStarted(Player player, QuestNewArrival instance) {
+	    public PlayerNewQuestStarted(Player player, Quest instance) {
 	        this.player = player;
 	        this.quest = instance;
 	    }
@@ -33,7 +35,7 @@ public class QuestUtils {
 	        return player;
 	    }
 	    
-	    public QuestNewArrival getQuest() {
+	    public Quest getQuest() {
 	    	return this.quest;
 	    }
 
@@ -74,7 +76,7 @@ public class QuestUtils {
 		HANDLERS.put(quest.ID, quest);
 	}
 	
-	public static void startQuest(Player player, QuestNewArrival instance) {
+	public static void startQuest(Player player, Quest instance) {
 
 		Profile profile = Profile.findByOwner(player);
 		

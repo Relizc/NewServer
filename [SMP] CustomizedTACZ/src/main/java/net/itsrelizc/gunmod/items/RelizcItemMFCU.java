@@ -16,7 +16,7 @@ import net.itsrelizc.players.locales.Locale;
 import net.itsrelizc.players.locales.Locale.Language;
 import net.itsrelizc.string.StringUtils;
 
-@RelizcItem(id="MFCU", material=Material.PLAYER_HEAD, stackable=true, quality=Quality.EPIC, category="INGREDIENTS", placeable=false)
+@RelizcItem(id="MFCU", material=Material.PLAYER_HEAD, stackable=false, quality=Quality.EPIC, category="INGREDIENTS", placeable=false)
 public class RelizcItemMFCU extends RelizcItemStack {
 	
 	public RelizcItemMFCU(Player owner, ItemStack it) {

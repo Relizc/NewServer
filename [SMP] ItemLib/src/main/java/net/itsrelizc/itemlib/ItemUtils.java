@@ -408,7 +408,8 @@ public class ItemUtils {
 		CompoundTag tag = nms.getOrCreateTag();
 		
 		UUID unique = UUID.randomUUID();
-		if (mat.getMaxStackSize() == 1) {
+		if (mat.getMaxStackSize() == 1 && !annotation.stackable()) {
+			System.out.println("Unique");
 			tag.putUUID("uid", unique);
 		}
 		tag.putString("id", id);

@@ -5,15 +5,9 @@
   	<version>1.5.0</version>
    	<build>
       <plugins>
-          <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-compiler-plugin</artifactId>
-              <configuration>
-                  <source>1.8</source>
-                  <target>1.8</target>
-              </configuration>
-          </plugin>
-          <plugin>
+          
+          
+           <plugin>
 		    <groupId>net.md-5</groupId>
 		    <artifactId>specialsource-maven-plugin</artifactId>
 		    <version>1.2.3</version>
@@ -30,7 +24,6 @@
 		                <remappedDependencies>org.spigotmc:spigot:1.20.1-R0.1-SNAPSHOT:jar:remapped-mojang</remappedDependencies>
 		                <remappedArtifactAttached>true</remappedArtifactAttached>
 		                <remappedClassifierName>remapped-obf</remappedClassifierName>
-		                <remappedArtifactInstall>true</remappedArtifactInstall>
 		            </configuration>
 		        </execution>
 		        <execution>
@@ -48,6 +41,15 @@
 		        </execution>
 		    </executions>
 		</plugin>
+		
+		<plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <configuration>
+                  <source>1.8</source>
+                  <target>1.8</target>
+              </configuration>
+          </plugin>
       </plugins>
    </build>
 	<repositories>
@@ -63,42 +65,24 @@
 		        <id>jitpack.io</id>
 		        <url>https://jitpack.io</url>
 		    </repository>
-		    
 		    <repository>
-	        <id>elmakers</id>
-	        <url>https://maven.elmakers.com/repository/</url>
-	    </repository>
-	    
-	    <repository>
-        <id>papermc</id>
-        <url>https://repo.papermc.io/repository/maven-public/</url>
-    </repository>
+	            <id>mohistmc</id>
+	            <url>https://maven.mohistmc.com/</url>
+	        </repository>
+				 <repository>
+		        <id>alvinb-repo</id>
+		        <url>http://repo.bringholm.com/</url>
+		    </repository>
+		    <repository>
+		        <id>elmakers</id>
+		        <url>https://maven.elmakers.com/repository/</url>
+		    </repository>
+		    <repository>
+		        <id>citizens-repo</id>
+		        <url>https://maven.citizensnpcs.co/repo</url>
+		    </repository>
    	</repositories>
    <dependencies>
-	   
-	   
-		<dependency>
-			<groupId>net.itsrelizc</groupId>
-			<artifactId>newbundler</artifactId>
-			<version>1.0.0</version>
-			<classifier>unmapped</classifier>
-			
-		</dependency>
-
-		<dependency>
-			<groupId>net.itsrelizc.smp</groupId>
-			<artifactId>modsmp</artifactId>
-			<version>1.5.0</version>
-		</dependency>
-	   
-		<dependency>
-           <groupId>org.spigotmc</groupId>
-           <artifactId>spigot-api</artifactId>
-           <version>1.20.1-R0.1-SNAPSHOT</version><!--change this value depending on the version or use LATEST-->
-           <type>jar</type>
-           <scope>provided</scope>
-       	</dependency>
-		
 		<dependency>
            <groupId>org.spigotmc</groupId>
            <artifactId>spigot</artifactId>
@@ -107,28 +91,10 @@
            <scope>provided</scope>
            <classifier>remapped-mojang</classifier>
        	</dependency>
-       	
-       	
-       	<dependency>
-		    <groupId>org.junit.jupiter</groupId>
-		    <artifactId>junit-jupiter</artifactId>
-		    <version>5.11.0</version>
-		    <scope>test</scope>
-		  </dependency>
-		
-		  <!-- MockBukkit, targeting your Minecraft version -->
-		  <dependency>
-		    <groupId>org.mockbukkit.mockbukkit</groupId>
-		    <artifactId>mockbukkit-v1.21</artifactId>  <!-- adjust version to your MC version -->
-		    <version>4.0.0</version>  <!-- or latest stable -->
-		    <scope>test</scope>
-		  </dependency>
-       	
-
 		<dependency>
     		<groupId>com.comphenix.protocol</groupId>
     		<artifactId>ProtocolLib</artifactId>
-    		<version>5.3.0</version>
+    		<version>4.8.0</version>
 			<type>jar</type>
            	<scope>provided</scope>
   		</dependency>
@@ -139,8 +105,38 @@
 		    <scope>provided</scope>
 		</dependency>
 		
+		<dependency>
+            <groupId>com.mohistmc</groupId>
+            <artifactId>mohistdev</artifactId>
+            <version>1.20.1</version>
+        </dependency>
+
+		<dependency>
+			<groupId>net.itsrelizc</groupId>
+			<artifactId>newbundler</artifactId>
+			<version>1.0.0</version>
+			<classifier>unmapped</classifier>
+		</dependency>
 		
-		
+		<dependency>
+        <groupId>net.citizensnpcs</groupId>
+        <artifactId>citizens-main</artifactId>
+        <version>2.0.35-SNAPSHOT</version>
+        <type>jar</type>
+        <scope>provided</scope>
+        <exclusions>
+            <exclusion>
+                <groupId>*</groupId>
+                <artifactId>*</artifactId>
+            </exclusion>
+        </exclusions>
+    </dependency>
+
+		<dependency>
+			<groupId>net.itsrelizc.smp</groupId>
+			<artifactId>itemlib</artifactId>
+			<version>1.0.0</version>
+		</dependency>
    </dependencies>
 
 </project>

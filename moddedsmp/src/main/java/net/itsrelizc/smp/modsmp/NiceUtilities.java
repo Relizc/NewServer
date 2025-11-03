@@ -63,13 +63,7 @@ public class NiceUtilities implements Listener {
 		
 	}
 	
-	@EventHandler
-    public void onPlayerPortal(PlayerPortalEvent event) {
-        if (event.getTo() != null && event.getTo().getWorld().getEnvironment() == Environment.THE_END) {
-            event.setCancelled(true);
-//            event.getPlayer().sendMessage("§cYou are not allowed to enter The End.");
-        }
-    }
+	
 
 	
 	@EventHandler

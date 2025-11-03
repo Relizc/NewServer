@@ -199,6 +199,7 @@ public class DeathListeners implements Listener {
 	@EventHandler(priority=EventPriority.LOWEST)
 	public void newguy(NewPlayerJoinedEvent event) {
 		event.getProfile().setMetadata("freeRevives", 15l);
+		event.getProfile().save();
 	}
 	
 	@EventHandler(priority=EventPriority.HIGHEST)

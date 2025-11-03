@@ -200,7 +200,14 @@ public class Main extends JavaPlugin implements Listener {
 	}
 	
 	
-	
+	@EventHandler(priority=EventPriority.HIGHEST, ignoreCancelled=true)
+	public void damage1(EntityDamageByEntityEvent event) {
+		
+		
+		// gun damage
+		Bukkit.broadcastMessage(event.getCause().toString());		
+		Bukkit.broadcastMessage(event.getDamager().getType().toString());	
+	}
 	
 	
 //	@EventHandler
