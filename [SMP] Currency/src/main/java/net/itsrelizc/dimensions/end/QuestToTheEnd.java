@@ -13,6 +13,8 @@ import net.itsrelizc.itemlib.ItemUtils;
 import net.itsrelizc.players.locales.Locale;
 import net.itsrelizc.quests.Quest;
 import net.itsrelizc.quests.QuestUtils;
+import net.itsrelizc.quests.Quest.QuestReward;
+import net.md_5.bungee.api.chat.TextComponent;
 
 public class QuestToTheEnd extends Quest {
 	
@@ -71,9 +73,58 @@ public class QuestToTheEnd extends Quest {
 		public void complete(Player player) {
 			super.complete(player);
 			
-			QuestUtils.setActiveQuestObjectiveMetadata(player, this, true);
+			//System.out.println("Brown complete");
 			
+			QuestUtils.setActiveQuestObjectiveMetadata(player, this, true);
 			//QuestUtils.setActiveQuestObjective(player, parent.OBJECTIVES[1], false);
+			
+			new BukkitRunnable() {
+
+				@Override
+				public void run() {
+					QuestUtils.completeQuest(player, QuestToTheEnd.INSTANCE);
+				}
+				
+			}.runTaskLater(EventRegistery.main, 40L);
+		}
+		
+	}
+	
+//	private static class QuestBuyTicketFromBrown extends QuestObjective {
+//
+//
+//		public QuestBuyTicketFromBrown(Quest parent) {
+//			super("BROWN_BUY_TICKET", false, true, parent);
+//			
+//		}
+//		
+//		@Override
+//		public String toString(Player player) {
+//			
+//			boolean claimed = (boolean) INSTANCE.getObjectiveValue(player, getID());
+//			
+//			String mark;
+//			if (claimed) {
+//				mark = "§a" + Locale.a(player, "quest.complete");
+//;			} else {
+//				mark = "§c" + Locale.a(player, "quest.incomplete");
+//			}
+//			
+//			return Locale.a(player, "quest.BROWN_BUY_TICKET.objective.find").formatted(mark);
+//			
+//		}
+//		
+//		@Override
+//		public String getDescription(Player player) {
+//			return Locale.a(player, "quest.BROWN_BUY_TICKET.objective.find_neutral");
+//		}
+//		
+//		@Override
+//		public void complete(Player player) {
+//			super.complete(player);
+//			
+//			QuestUtils.setActiveQuestObjectiveMetadata(player, this, true);
+//			QuestUtils.setActiveQuestObjective(player, parent.OBJECTIVES[1], false);
 //			
 //			new BukkitRunnable() {
 //
@@ -84,6 +135,20 @@ public class QuestToTheEnd extends Quest {
 //				}
 //				
 //			}.runTaskLater(EventRegistery.main, 40L);
+//		}
+//		
+//	}
+	
+	public static class QuestRewardAccess extends QuestReward {
+		public QuestRewardAccess() {
+			
+			super("ACCESS_END", true);
+			// TODO Auto-generated constructor stub
+		}
+		
+		@Override
+		public TextComponent toString(Player player) {
+			return new TextComponent("  " + Locale.a(player, "quest.TO_THE_END.rewards.toend"));
 		}
 		
 	}
@@ -98,10 +163,11 @@ public class QuestToTheEnd extends Quest {
 		this.DESCRIPTION = "quest.TO_THE_END.description";
 		this.DISPLAY_NAME = "quest.TO_THE_END.name";
 		this.OBJECTIVES = new QuestObjective[]{
-				new QuestFindBrown(this),
+				new QuestFindBrown(this)
 		};
 		this.REWARDS = new QuestReward[] {
-				new QuestRewardItem(it)
+				new QuestRewardItem(it),
+				new QuestRewardAccess()
 		};
 	}
 

@@ -21,6 +21,7 @@ import net.itsrelizc.quests.Quest.PlayerQuestObjectiveStartedEvent;
 import net.itsrelizc.quests.Quest.QuestObjective;
 import net.itsrelizc.quests.Quest.QuestReward;
 import net.itsrelizc.quests.QuestUtils.PlayerNewQuestStarted;
+import net.itsrelizc.quests.QuestUtils.PlayerQuestCompletedEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 
 public class QuestListener implements Listener {
@@ -104,6 +105,49 @@ public class QuestListener implements Listener {
 				a.addExtra(objectives.toString(event.getPlayer()));
 				event.getPlayer().spigot().sendMessage(a);
 			}
+		}
+		
+		event.getPlayer().sendMessage("§e§m--------------------------------");
+
+		
+		
+	}
+	
+	
+	@EventHandler
+	public void start(PlayerQuestCompletedEvent event) {
+		
+
+			
+		Song song = NBSDecoder.parse(new File(JSON.PREFIX + "sounds/quest_completed.nbs")); // Preloaded song
+		// Create RadioSongPlayer.
+		RadioSongPlayer rsp = new RadioSongPlayer(song);
+		// Add player to SongPlayer so he will hear the song.
+		rsp.addPlayer(event.getPlayer());
+		// Start RadioSongPlayer playback
+		rsp.setPlaying(true);
+		
+		String message = "\n \n \n" +
+				"§e§m--------------------------------§r\n" +
+				" §6§l" + Locale.a(event.getPlayer(), "quest.complete.whole") + "§r §8- §f" + Locale.a(event.getPlayer(), event.getQuest().DISPLAY_NAME) + "\n" +
+				"  §7§o" + Locale.a(event.getPlayer(), event.getQuest().DESCRIPTION) + "\n ";
+		
+		message += "\n";
+		
+		message += " §6§l" + Locale.a(event.getPlayer(), "quest.rewards") + "\n";
+		
+		event.getPlayer().sendMessage(message);
+		
+		if (event.getQuest().REWARDS == null || event.getQuest().REWARDS.length == 0) {
+			event.getPlayer().sendMessage(" §7§o" + Locale.a(event.getPlayer(), "quest.rewards.none"));
+		} else {
+			for (QuestReward objectives : event.getQuest().REWARDS) {
+				TextComponent a = new TextComponent("§e");
+				a.addExtra(objectives.toString(event.getPlayer()));
+				event.getPlayer().spigot().sendMessage(a);
+			}
+			
+			event.getPlayer().sendMessage("\n " + Locale.a(event.getPlayer(), "quest.rewards.mail") + "\n");
 		}
 		
 		event.getPlayer().sendMessage("§e§m--------------------------------");

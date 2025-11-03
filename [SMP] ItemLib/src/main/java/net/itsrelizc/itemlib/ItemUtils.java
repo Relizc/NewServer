@@ -9,14 +9,13 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.CreativeCategory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import net.itsrelizc.items.RelizcItemMeta;
@@ -495,6 +494,46 @@ public class ItemUtils {
 		
 		
 		
+	}
+	
+	
+	
+	public static boolean removeIfPossible(Player player, Material material, int amount) {
+	    PlayerInventory inv = player.getInventory();
+	    int total = 0;
+
+	    // Count total amount
+	    for (ItemStack item : inv.getContents()) {
+	        if (item != null && item.getType() == material) {
+	            total += item.getAmount();
+	        }
+	    }
+
+	    // Not enough items
+	    if (total < amount) {
+	        return false;
+	    }
+
+	    // Remove items
+	    int toRemove = amount;
+	    for (int i = 0; i < inv.getSize(); i++) {
+	        ItemStack item = inv.getItem(i);
+	        if (item == null || item.getType() != material) continue;
+
+	        int itemAmount = item.getAmount();
+	        if (itemAmount <= toRemove) {
+	            inv.clear(i);
+	            toRemove -= itemAmount;
+	        } else {
+	            item.setAmount(itemAmount - toRemove);
+	            inv.setItem(i, item);
+	            break;
+	        }
+
+	        if (toRemove <= 0) break;
+	    }
+
+	    return true;
 	}
 	
 	//public static 

@@ -238,5 +238,9 @@ public class Quest {
 	public String DESCRIPTION = null;
 	public QuestObjective[] OBJECTIVES = null;
 	public QuestReward[] REWARDS = null;
+	
+	public void complete(Player player) {
+		
+	}
 
 }

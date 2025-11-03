@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -21,11 +22,13 @@ import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.itsrelizc.events.EventRegistery;
+import net.itsrelizc.itemlib.ItemUtils;
 import net.itsrelizc.npc.LookAtPlayerTask;
 import net.itsrelizc.npc.NPCDialogueSession;
 import net.itsrelizc.npc.NPCDialogueSessionHandler;
 import net.itsrelizc.npc.RelizcNPC;
 import net.itsrelizc.players.locales.Locale;
+import net.itsrelizc.quests.QuestUtils;
 
 public class NPCProfBrown extends RelizcNPC {
 	
@@ -128,6 +131,8 @@ public class NPCProfBrown extends RelizcNPC {
 			String[] dialogue3 = Locale.a(getPlayer(), "npc.brown.dialogue3").split("\n");
 			
 			String[] dialogue_end = Locale.a(getPlayer(), "npc.brown.dialogue_end").split("\n");
+			String[] dialogue_toopoor = Locale.a(getPlayer(), "npc.brown.toopoor").split("\n");
+			String[] dialogue_notpoor = Locale.a(getPlayer(), "npc.brown.notpoor").split("\n");
 			
 			//this.waitForResponse(getPlayer(), Arrays.asList(new Response("ask_0", "npc.brown.ask0.ask0")), 20);
 			
@@ -154,9 +159,25 @@ public class NPCProfBrown extends RelizcNPC {
 				
 			} else if (index >= 45 && index <= (45 + dialogue_end.length - 1) + 1) {
 				if (index == (45 + dialogue_end.length - 1) + 1) {
-					this.waitForResponse(getPlayer(), Arrays.asList(new Response("1.1", "npc.brown.ask1.1"), new Response("1.2", "npc.general.ask1.2"), new Response("end", "npc.general.goodbye")), 20);
+					this.waitForResponse(getPlayer(), Arrays.asList(new Response("1.1", "npc.brown.ask1.1"), new Response("1.2", "npc.brown.ask1.2"), new Response("end", "npc.general.goodbye")), 20);
 				} else {
 					this.getNPC().sayDialoguePrivateChat(getPlayer(), dialogue_end[index - 45]);
+				}
+				
+			} else if (index >= 57 && index <= (57 + dialogue_toopoor.length - 1) + 1) {
+				if (index == (57 + dialogue_toopoor.length - 1) + 1) {
+					this.endSession();
+					QuestToTheEnd.INSTANCE.OBJECTIVES[0].complete(getPlayer());
+				} else {
+					this.getNPC().sayDialoguePrivateChat(getPlayer(), dialogue_toopoor[index - 57]);
+				}
+				
+			} else if (index >= 64 && index <= (64 + dialogue_notpoor.length - 1) + 1) {
+				if (index == (64 + dialogue_notpoor.length - 1) + 1) {
+					this.endSession();
+					QuestToTheEnd.INSTANCE.OBJECTIVES[0].complete(getPlayer());
+				} else {
+					this.getNPC().sayDialoguePrivateChat(getPlayer(), dialogue_notpoor[index - 64]);
 				}
 				
 			}
@@ -196,6 +217,15 @@ public class NPCProfBrown extends RelizcNPC {
 				this.startTalking(45, 56);
 			} else if (params.equals("end")) {
 				this.startTalking(256, 257);
+			} else if (params.equals("1.1")) {
+				boolean takeaway = ItemUtils.removeIfPossible(sender, Material.DIAMOND, 64);
+				if (!takeaway) {
+					this.startTalking(57, 64); // 57-63 (+1exit)
+				} else { // dialogue_notpoor
+					this.startTalking(64, 73); // 64-71 (+1exit)
+				}
+			} else if (params.equals("1.2")) {
+				this.startTalking(60, 64); // 60-62
 			}
 		}
 	}
@@ -206,8 +236,20 @@ public class NPCProfBrown extends RelizcNPC {
 		
 		if (handler.hasSession(player)) return;
 		
-		BrownishNPCDialogueSession session = handler.getSession(player, 5);
-		session.startTalking(0, 4); // starts at 0, ends at 3
+		if (QuestUtils.getActiveQuest(player) != null && QuestUtils.getActiveQuest(player).ID.equals("TO_THE_END")) {
+			BrownishNPCDialogueSession session = handler.getSession(player, 5);
+			session.startTalking(0, 4); // starts at 0, ends at 3
+		} else {
+			if (QuestUtils.isQuestCompleted(player, QuestToTheEnd.INSTANCE)) {
+				// open menu
+				player.playSound(lookloc, Sound.ENTITY_VILLAGER_YES, 0.5f, 1f);
+			} else {
+				BrownishNPCDialogueSession session = handler.getSession(player, 5);
+				session.startTalking(256, 257); // starts at 0, ends at 3
+			}
+			
+			
+		}
 	}
 
 }

@@ -4,15 +4,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.json.simple.JSONObject;
 
+import net.itsrelizc.dimensions.end.QuestToTheEnd;
+import net.itsrelizc.events.EventRegistery;
+import net.itsrelizc.messaging.Messaging;
 import net.itsrelizc.players.Profile;
 import net.itsrelizc.quests.Quest.QuestObjective;
+import net.itsrelizc.quests.Quest.QuestReward;
+import net.itsrelizc.quests.Quest.QuestRewardItem;
 
 public class QuestUtils {
 	
@@ -60,6 +68,35 @@ public class QuestUtils {
 
 	    public Player getPlayer() {
 	        return player;
+	    }
+
+	    @Override
+	    public HandlerList getHandlers() {
+	        return HANDLERS;
+	    }
+
+	    public static HandlerList getHandlerList() {
+	        return HANDLERS;
+	    }
+	}
+	
+	public static class PlayerQuestCompletedEvent extends Event {
+	    private static final HandlerList HANDLERS = new HandlerList();
+	    private Player player;
+		private Quest quest;
+
+
+	    public PlayerQuestCompletedEvent(Player player, Quest instance) {
+	        this.player = player;
+	        this.quest = instance;
+	    }
+
+	    public Player getPlayer() {
+	        return player;
+	    }
+	    
+	    public Quest getQuest() {
+	    	return this.quest;
 	    }
 
 	    @Override
@@ -133,9 +170,15 @@ public class QuestUtils {
 
 		Profile profile = Profile.findByOwner(player);
 		
+		if (instance == null) {
+			profile.setMetadata("activeQuest", null);
+		} else {
+			profile.setMetadata("activeQuest", instance.ID);
+		}
+		
 //			profile.setMetadata("ques", profile);
 		
-		profile.setMetadata("activeQuest", instance.ID);
+		
 		
 		PlayerQuestStatusChangedEvent event2 = new PlayerQuestStatusChangedEvent(player);
 		Bukkit.getPluginManager().callEvent(event2);
@@ -180,6 +223,59 @@ public class QuestUtils {
 	public static void questStatusChanged(Player player) {
 		PlayerQuestStatusChangedEvent event2 = new PlayerQuestStatusChangedEvent(player);
 		Bukkit.getPluginManager().callEvent(event2);
+	}
+
+	public static void completeQuest(Player player, Quest instance) {
+		
+		Profile profile = Profile.findByOwner(player);
+		JSONObject completed = (JSONObject) profile.getMetadata("quest." + instance.ID);
+		completed.put("_COMPLETED", true);
+		profile.setMetadata("quest." + instance.ID, completed);
+		
+		setActiveQuest(player, null);
+		instance.complete(player);
+		PlayerQuestCompletedEvent event = new PlayerQuestCompletedEvent(player, instance);
+		Bukkit.getPluginManager().callEvent(event);
+		
+		ArrayList<ItemStack> rewards = new ArrayList<ItemStack>();
+		
+		for (QuestReward reward : instance.REWARDS) {
+			if (reward instanceof QuestRewardItem) {
+				QuestRewardItem r = (QuestRewardItem) reward;
+				
+				rewards.add((ItemStack) r.getValue());
+			}
+		}
+		
+		new BukkitRunnable() {
+
+			@Override
+			public void run() {
+				Messaging.Message msg = new Messaging.Message(
+					    Messaging.generateId(),
+					    "general",
+					    "§§quest.deliver",
+					    "§§quest.completed.rewards.title",
+					    "§§quest.completed.rewards.description", System.currentTimeMillis(),
+					    rewards, false, false
+					);
+				
+				Messaging.addMessage(player, msg);
+			}
+			
+		}.runTaskLater(EventRegistery.main, new Random().nextLong(20 * 5) + 20 * 5);
+	}
+
+	public static boolean isQuestCompleted(Player player, QuestToTheEnd instance) {
+		Profile profile = Profile.findByOwner(player);
+		
+		if (profile == null) return false;
+		
+		JSONObject completed = (JSONObject) profile.getMetadata("quest." + instance.ID);
+		
+		if (completed == null) return false;
+		
+		return (boolean) completed.getOrDefault("_COMPLETED", false);
 	}
 
 }

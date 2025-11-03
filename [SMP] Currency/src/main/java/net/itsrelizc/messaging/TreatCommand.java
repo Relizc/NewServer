@@ -34,28 +34,29 @@ public class TreatCommand extends RelizcCommand {
 	@Override
 	public boolean onPlayerExecute(Player player, String[] ntargs) {
 		
-		player.sendMessage(Locale.a(player, "treat.message"));
-		player.playSound(player, Sound.ENTITY_VILLAGER_NO, 1f, 2f);
-		
-		new BukkitRunnable() {
-
-			@Override
-			public void run() {
-				Messaging.Message msg = new Messaging.Message(
-					    Messaging.generateId(),
-					    "general",
-					    "???",
-					    "§§treat.mail.title",
-					    "§§treat.mail.message", System.currentTimeMillis(),
-					    generateRandomItems(), false, false
-					);
-				
-				Messaging.addMessage(player, msg);
-			}
-			
-		}.runTaskLater(EventRegistery.main, 20 + new Random().nextLong(20 * 3));
-		
-		
+//		player.sendMessage(Locale.a(player, "treat.message"));
+//		player.playSound(player, Sound.ENTITY_VILLAGER_NO, 1f, 2f);
+//		
+//		new BukkitRunnable() {
+//
+//			@Override
+//			public void run() {
+//				Messaging.Message msg = new Messaging.Message(
+//					    Messaging.generateId(),
+//					    "general",
+//					    "???",
+//					    "§§treat.mail.title",
+//					    "§§treat.mail.message", System.currentTimeMillis(),
+//					    generateRandomItems(), false, false
+//					);
+//				
+//				Messaging.addMessage(player, msg);
+//			}
+//			
+//		}.runTaskLater(EventRegistery.main, 20 + new Random().nextLong(20 * 3));
+//		
+//		
+//		return true;
 		return true;
 	}
 	
