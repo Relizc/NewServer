@@ -12,7 +12,7 @@ public class MessagesCommand extends RelizcCommand {
 	private byte selection = 0; // 0 - general
 	
 	public MessagesCommand() {
-		super("mail");
+		super("mail", "see ur mails");
 		
 		// TODO Auto-generated constructor stub
 	}

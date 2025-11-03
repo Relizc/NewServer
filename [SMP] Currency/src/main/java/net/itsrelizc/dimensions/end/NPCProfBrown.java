@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -100,6 +101,12 @@ public class NPCProfBrown extends RelizcNPC {
         profile.getProperties().put("textures", new Property("textures", skinValue, skinSignature));
 	}
 	
+	@Override
+	public void sayDialoguePrivateChat(Player player, String message) {
+		super.sayDialoguePrivateChat(player, message);
+		player.playSound(lookloc, Sound.ENTITY_VILLAGER_TRADE, 0.5f, 1f);
+	}
+	
 	NPCDialogueSessionHandler<BrownishNPCDialogueSession> handler = new NPCDialogueSessionHandler<BrownishNPCDialogueSession>(this, BrownishNPCDialogueSession.class);
 	
 	
@@ -113,7 +120,14 @@ public class NPCProfBrown extends RelizcNPC {
 		
 		private void talkshit(int index) {
 			
+			this.refreshSession(5);
+			
 			String[] dialogue0 = Locale.a(getPlayer(), "npc.brown.dialogue0").split("\n");
+			String[] dialogue1 = Locale.a(getPlayer(), "npc.brown.dialogue1").split("\n");
+			String[] dialogue2 = Locale.a(getPlayer(), "npc.brown.dialogue2").split("\n");
+			String[] dialogue3 = Locale.a(getPlayer(), "npc.brown.dialogue3").split("\n");
+			
+			String[] dialogue_end = Locale.a(getPlayer(), "npc.brown.dialogue_end").split("\n");
 			
 			//this.waitForResponse(getPlayer(), Arrays.asList(new Response("ask_0", "npc.brown.ask0.ask0")), 20);
 			
@@ -122,30 +136,67 @@ public class NPCProfBrown extends RelizcNPC {
 			} else if (index >= 1 && index <= 2) {
 				this.getNPC().sayDialoguePrivateChat(getPlayer(), dialogue0[index - 1]);
 			} else if (index == 3) {
-				this.waitForResponse(getPlayer(), Arrays.asList(new Response("ask_0", "npc.brown.ask0.ask0")), 20);
+				this.waitForResponse(getPlayer(), Arrays.asList(new Response("0.0", "npc.brown.ask0.ask0"), new Response("0.1", "npc.brown.ask1"), new Response("end", "npc.general.goodbye")), 20);
+			} else if (index >= 4 && index <= 5) {
+				this.getNPC().sayDialoguePrivateChat(getPlayer(), dialogue1[index - 4]);
+			} else if (index >= 6 && index <= 8) {
+				this.getNPC().sayDialoguePrivateChat(getPlayer(), dialogue2[index - 6]);
+				if (index == 8) this.endSession();
+			} else if (index == 256) {
+				this.getNPC().sayDialoguePrivateChat(getPlayer(), Locale.a(getPlayer(), "npc.brown.goodbye"));
+				this.endSession();
+			} else if (index >= 12 && index <= 17) {
+				if (index == 17) {
+					this.waitForResponse(getPlayer(), Arrays.asList(new Response("0.1", "npc.brown.ask1"), new Response("end", "npc.general.goodbye")), 20);
+				} else {
+					this.getNPC().sayDialoguePrivateChat(getPlayer(), dialogue3[index - 12]);
+				}
+				
+			} else if (index >= 45 && index <= (45 + dialogue_end.length - 1) + 1) {
+				if (index == (45 + dialogue_end.length - 1) + 1) {
+					this.waitForResponse(getPlayer(), Arrays.asList(new Response("1.1", "npc.brown.ask1.1"), new Response("1.2", "npc.general.ask1.2"), new Response("end", "npc.general.goodbye")), 20);
+				} else {
+					this.getNPC().sayDialoguePrivateChat(getPlayer(), dialogue_end[index - 45]);
+				}
+				
 			}
 			
 			
 		}
-		
-		public void startTalking() {
+
+
+		public void startTalking(int initial, int endAt) {
 
 			new BukkitRunnable() {
 				
-				int index = 0;
+				int index = initial;
 
 				@Override
 				public void run() {
 					talkshit(index);
 					index ++;
 					
-					if (index == 4) {
+					if (index == endAt) {
 						this.cancel();
 						return;
 					}
 				}
 				
 			}.runTaskTimer(EventRegistery.main, 0l, 30l);
+		}
+		
+		@Override
+		public void recieveResponse(Player sender, String params) {
+			
+			super.recieveResponse(sender, params);
+			
+			if (params.equals("0.0")) {
+				this.startTalking(12, 18);
+			} else if (params.equals("0.1")) {
+				this.startTalking(45, 56);
+			} else if (params.equals("end")) {
+				this.startTalking(256, 257);
+			}
 		}
 	}
 	
@@ -156,7 +207,7 @@ public class NPCProfBrown extends RelizcNPC {
 		if (handler.hasSession(player)) return;
 		
 		BrownishNPCDialogueSession session = handler.getSession(player, 5);
-		session.startTalking();
+		session.startTalking(0, 4); // starts at 0, ends at 3
 	}
 
 }

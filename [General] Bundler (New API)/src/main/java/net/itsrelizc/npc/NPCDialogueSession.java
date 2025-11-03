@@ -1,5 +1,6 @@
 package net.itsrelizc.npc;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -87,12 +88,16 @@ public class NPCDialogueSession {
 		this.refreshSession(refreshSeconds);
 	}
 	
+	public static HashMap<String, NPCDialogueSession> sess = new HashMap<String, NPCDialogueSession>();
+	
+	
 	public void waitForResponse(Player player, List<Response> responses, long refreshSeconds) {
 		
 		this.refreshSession(refreshSeconds);
 		player.playSound(player, Sound.ENTITY_VILLAGER_TRADE, 0.5f, 1f);
 		
 		this.responseQuery = UUID.randomUUID();
+		sess.put(this.responseQuery.toString(), this);
 		
 		String da = "§8§m--------------------------------§r\n " + Locale.a(player, "npc.awaitresponse").formatted(Locale.a(player, this.npc.getRealName())) + "\n";
 		TextComponent a = new TextComponent(da);
@@ -111,6 +116,15 @@ public class NPCDialogueSession {
 		
 		player.spigot().sendMessage(a);
 		
+	}
+
+	public void recieveResponse(Player sender, String params) {
+		sess.remove(this.responseQuery.toString());
+	}
+	
+	public void endSession() {
+		this.end = System.currentTimeMillis() - 100;
+	
 	}
 
 }

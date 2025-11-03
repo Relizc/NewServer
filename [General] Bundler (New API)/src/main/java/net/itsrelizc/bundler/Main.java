@@ -5,9 +5,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Team;
 
@@ -20,6 +17,7 @@ import net.itsrelizc.commands.RelizcCommand;
 import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.nbt.CommandGetNBTOnHand;
 import net.itsrelizc.npc.CommandPath;
+import net.itsrelizc.npc.NPCSessionCommand;
 import net.itsrelizc.players.AFKDetector;
 import net.itsrelizc.players.Grouping;
 import net.itsrelizc.players.locales.CommandReloadLocale;
@@ -80,6 +78,7 @@ public class Main extends JavaPlugin {
 		CommandRegistery.register(new CommandVersion());
 		CommandRegistery.register(new CommandPath());
 		CommandRegistery.register(new CommandDebugStats());
+		CommandRegistery.register(new NPCSessionCommand());
 		
 		
 
