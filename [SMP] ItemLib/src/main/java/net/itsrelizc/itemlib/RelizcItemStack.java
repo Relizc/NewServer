@@ -334,7 +334,7 @@ public class RelizcItemStack {
 	 * 
 	 * @return A item name
 	 */
-	protected String renderName() {
+	public String renderName() {
 		// TODO Auto-generated method stub
 		String id = getID();
 		if (id.toLowerCase().startsWith("minecraft")) {

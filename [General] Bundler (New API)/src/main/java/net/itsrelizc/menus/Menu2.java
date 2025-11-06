@@ -1,7 +1,5 @@
 package net.itsrelizc.menus;
 
-import java.util.Optional;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView;
 import org.bukkit.entity.Player;
@@ -10,13 +8,17 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import net.itsrelizc.api.RelizcInteractiveMenu;
 import net.itsrelizc.api.RelizcInteractiveMenuTemplate;
 import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.nbt.NBT;
+import net.itsrelizc.players.locales.Locale;
 import net.minecraft.nbt.CompoundTag;
 
 public class Menu2 implements Listener, RelizcInteractiveMenu {
@@ -29,8 +31,7 @@ public class Menu2 implements Listener, RelizcInteractiveMenu {
 		if (tag == null) return false;
 		if (!tag.contains("generatedMenu")) return false;
 		
-		String val = tag.getString("generatedMenu");
-		return !val.equals(player.getOpenInventory().getTitle());
+		return true;
 		
 	}
 	
@@ -126,26 +127,62 @@ public class Menu2 implements Listener, RelizcInteractiveMenu {
 //		//("invclick by " + event.getWhoClicked().getName());
 	}
 	
-	public static void removeAllDupedItems(Player player) {
+	public static int removeAllDupedItems(Player player) {
+		int count = 0;
 		for (ItemStack item : player.getInventory()) {
 			
 			if (isDuped(player, item)) {
+				count += item.getAmount();
 				item.setAmount(0);
+				
 			}
 			
 		}
 		
 		for (ItemStack item : player.getInventory().getArmorContents()) {
 			if (isDuped(player, item)) {
+				count += item.getAmount();
 				item.setAmount(0);
 			}
 		}
 		
 		ItemStack off = player.getInventory().getItemInOffHand();
 		if (isDuped(player, off)) {
+			count += off.getAmount();
 			off.setAmount(0);
 		}
+		
+		return count;
 	}
+	
+	public static void startTimedDupeChecking() {
+		new BukkitRunnable() {
+
+			@Override
+			public void run() {
+				for (Player player : Bukkit.getOnlinePlayers()) {
+					int count = removeAllDupedItems(player);
+					if (count != 0) {
+						player.sendMessage(Locale.a(player, "inventory.duped"));
+					}
+					
+				}
+			}
+			
+		}.runTaskTimer(EventRegistery.main, 10 * 20l, 10 * 20l);
+	}
+	
+	@EventHandler
+	public void leave(PlayerQuitEvent event) {
+		removeAllDupedItems(event.getPlayer());
+	}
+	
+	@EventHandler
+	public void join(PlayerJoinEvent event) {
+		removeAllDupedItems(event.getPlayer());
+	}
+	
+	
 	
 	@EventHandler
 	public void event_onClose(InventoryCloseEvent event) {

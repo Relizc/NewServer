@@ -17,7 +17,6 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
-
 import net.itsrelizc.items.RelizcItemMeta;
 import net.itsrelizc.nbt.NBT.NBTTagType;
 import net.itsrelizc.players.Profile;
@@ -128,6 +127,7 @@ public class ItemUtils {
 		
 		meta.setLore(lore);
 		
+		
 		item.setItemMeta(meta);
 	}
 	
@@ -153,6 +153,7 @@ public class ItemUtils {
 	private static ItemMeta checkCustomNameAndSet(CompoundTag tag, ItemMeta meta, net.minecraft.world.item.ItemStack it, Language lang, ItemStack copy, String overlap, RelizcItem handle) {
 		
 		//Bukkit.broadcastMessage(tag.getString("CUSTOM_NAME"));
+		if (meta == null) return meta;
 		
 		if (tag.getString("CUSTOM_NAME") != null && tag.getString("CUSTOM_NAME").length() > 0) {
 			String name = tag.getString("CUSTOM_NAME")
@@ -563,6 +564,7 @@ public class ItemUtils {
 		
 		return getHandler(it).getAnnotation(RelizcItem.class);
 	}
+
 	
 	
 	

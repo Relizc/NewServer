@@ -1,6 +1,5 @@
 package net.itsrelizc.dimensions.end;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.bukkit.Bukkit;
@@ -23,6 +22,7 @@ import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.itsrelizc.events.EventRegistery;
 import net.itsrelizc.itemlib.ItemUtils;
+import net.itsrelizc.menus.Menu2;
 import net.itsrelizc.npc.LookAtPlayerTask;
 import net.itsrelizc.npc.NPCDialogueSession;
 import net.itsrelizc.npc.NPCDialogueSessionHandler;
@@ -243,6 +243,9 @@ public class NPCProfBrown extends RelizcNPC {
 			if (QuestUtils.isQuestCompleted(player, QuestToTheEnd.INSTANCE)) {
 				// open menu
 				player.playSound(lookloc, Sound.ENTITY_VILLAGER_YES, 0.5f, 1f);
+				
+				Menu2 menu = new Menu2(player, 6, new ToTheEndMenu(player));
+				menu.open();
 			} else {
 				BrownishNPCDialogueSession session = handler.getSession(player, 5);
 				session.startTalking(256, 257); // starts at 0, ends at 3

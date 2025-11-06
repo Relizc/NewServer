@@ -470,4 +470,12 @@ public class StringUtils {
         }
         return sb.toString();
     }
+
+	public static String quantify(long amount, String content) {
+		return "§7×" + amount + " " + content;
+	}
+
+	public static String quantifyCurrency(int i) {
+		return "§e" + String.format("%,d", i) + " rx§r";
+	}
 }

@@ -15,6 +15,7 @@ import net.itsrelizc.commands.CommandRegistery;
 import net.itsrelizc.commands.CommandTestSign;
 import net.itsrelizc.commands.RelizcCommand;
 import net.itsrelizc.events.EventRegistery;
+import net.itsrelizc.menus.Menu2;
 import net.itsrelizc.nbt.CommandGetNBTOnHand;
 import net.itsrelizc.npc.CommandPath;
 import net.itsrelizc.npc.NPCSessionCommand;
@@ -79,6 +80,8 @@ public class Main extends JavaPlugin {
 		CommandRegistery.register(new CommandPath());
 		CommandRegistery.register(new CommandDebugStats());
 		CommandRegistery.register(new NPCSessionCommand());
+		
+		Menu2.startTimedDupeChecking();
 		
 		
 
